@@ -196,6 +196,23 @@ diskcache = ["diskcache (>=5.2.1)", "multiprocess (>=0.70.12)", "psutil (>=5.8.0
 testing = ["beautifulsoup4 (>=4.8.2)", "cryptography (<3.4)", "dash-testing-stub (>=0.0.2)", "lxml (>=4.6.2)", "multiprocess (>=0.70.12)", "percy (>=2.0.2)", "psutil (>=5.8.0)", "pytest (>=6.0.2)", "requests[security] (>=2.21.0)", "selenium (>=3.141.0,<=4.2.0)", "waitress (>=1.4.4)"]
 
 [[package]]
+name = "dash-bootstrap-components"
+version = "1.5.0"
+description = "Bootstrap themed components for use in Plotly Dash"
+optional = false
+python-versions = ">=3.7, <4"
+files = [
+    {file = "dash-bootstrap-components-1.5.0.tar.gz", hash = "sha256:083158c07434b9965e2d6c3e8ca72dbbe47dab23e676258cef9bf0ad47d2e250"},
+    {file = "dash_bootstrap_components-1.5.0-py3-none-any.whl", hash = "sha256:b487fec1a85e3d6a8564fe04c0a9cd9e846f75ea9e563456ed3879592889c591"},
+]
+
+[package.dependencies]
+dash = ">=2.0.0"
+
+[package.extras]
+pandas = ["numpy", "pandas"]
+
+[[package]]
 name = "dash-core-components"
 version = "2.0.0"
 description = "Core component suite for Dash"
@@ -216,6 +233,25 @@ files = [
     {file = "dash_html_components-2.0.0-py3-none-any.whl", hash = "sha256:b42cc903713c9706af03b3f2548bda4be7307a7cf89b7d6eae3da872717d1b63"},
     {file = "dash_html_components-2.0.0.tar.gz", hash = "sha256:8703a601080f02619a6390998e0b3da4a5daabe97a1fd7a9cebc09d015f26e50"},
 ]
+
+[[package]]
+name = "dash-leaflet"
+version = "1.0.15"
+description = "Dash Leaflet is a light wrapper around React-Leaflet. The syntax is similar to other Dash components, with naming conventions following the React-Leaflet API."
+optional = false
+python-versions = "*"
+files = [
+    {file = "dash_leaflet-1.0.15-py3-none-any.whl", hash = "sha256:d7d06228a868bcf11120e1f7cb95db64c29c412b743686a9a8e1b30ac54a794e"},
+    {file = "dash_leaflet-1.0.15.tar.gz", hash = "sha256:79a3e19b0be9a5cf23873a0cd73153de224cbd756ddb30e2ffcee9ba23875e40"},
+]
+
+[package.dependencies]
+dash = ">=2.13.0"
+
+[package.extras]
+all = ["dash-extensions (>=1.0.3)", "dash-svg", "geobuf (==1.1.1)", "protobuf (==3.20.0)"]
+geobuf = ["geobuf (==1.1.1)", "protobuf (==3.20.0)"]
+svg = ["dash-svg"]
 
 [[package]]
 name = "dash-table"
@@ -589,4 +625,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "39fde491be85a14c24f6817050bf9a8f22bc1f310da955d4cf82b27027a98b1b"
+content-hash = "11dcec75a0fb892a620763cd9ba94a91eb3e35beb43202a9b9872d10f5856e50"
