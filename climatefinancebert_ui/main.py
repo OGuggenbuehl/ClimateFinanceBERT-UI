@@ -1,13 +1,12 @@
-import dash_leaflet as dl
-import polars as pl
-from components.layout import create_layout
 from dash import Dash
 from dash_bootstrap_components.themes import BOOTSTRAP
 
+from climatefinancebert_ui.components.layout import create_layout
 
-def main() -> None:
+
+def main():
     app = Dash(external_stylesheets=[BOOTSTRAP])
-    app.title = "ClimateFinanceBERT-UI"
+    app.title = "ClimateFinanceBERT UI"
     app.layout = create_layout(app)
     app.run()
 
