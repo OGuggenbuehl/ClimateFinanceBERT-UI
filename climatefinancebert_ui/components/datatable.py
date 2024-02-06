@@ -1,7 +1,6 @@
-import pandas as pd
 from dash import Dash, Input, Output, dash_table, html
 
-from climatefinancebert_ui.components import ids
+from climatefinancebert_ui.components import ids, utils
 
 
 def render(app: Dash):
@@ -15,23 +14,17 @@ def render(app: Dash):
         ],
     )
     def build_datatable(
-        type_value=None,
+        selected_type=None,
         click_data=None,
         selected_categories=None,
         selected_years=None,
     ):
-        url_prefix = (
-            "https://raw.githubusercontent.com/MalteToetzke"
-            "/consistent-and-replicable-estimation-of-bilateral-"
-            "climate-finance/main/Data"
-        )
-        if type_value == "donors":
-            data_url = url_prefix + "/Donors/donors.csv"
+        """
+        Build the datatable based on the input elements and
+        the selected map element.
+        """
 
-        else:
-            data_url = url_prefix + "/Recipients/recipients.csv"
-
-        TEST_DATA = pd.read_csv(data_url)
+        df_full = utils.fetch_data(selected_type)
 
         if not click_data:
             return html.H4("Click a country to render a datatable")
@@ -41,31 +34,32 @@ def render(app: Dash):
 
             header = [html.H4(f"Data for {country_name}:")]
 
-            filtered_df = TEST_DATA[
-                (TEST_DATA["country_code"] == country_code)
-                & (TEST_DATA["meta_category"].isin(selected_categories))
+            df_filtered = df_full[
+                (df_full["country_code"] == country_code)
+                & (df_full["meta_category"].isin(selected_categories))
                 & (
-                    TEST_DATA["effective_year"].between(
+                    df_full["effective_year"].between(
                         selected_years[0], selected_years[1]
                     )
                 )
             ]
 
-            if len(filtered_df.index) == 0:
+            if len(df_filtered.index) == 0:
                 return header + [html.P("No data available")]
             else:
                 # Render a DataTable with the filtered data
                 return header + [
                     dash_table.DataTable(
-                        data=filtered_df.to_dict("records"),
+                        data=df_filtered.to_dict("records"),
                         columns=[
                             {
                                 "name": i,
                                 "id": i,
+                                # TODO: style datatable values
                                 # "type": "numeric",
                                 # "format": {"specifier": ".2f"},
                             }
-                            for i in filtered_df.columns
+                            for i in df_filtered.columns
                         ],
                         page_size=15,
                         sort_action="native",
