@@ -1,4 +1,6 @@
 YEAR_DROPDOWN = "year_dropdown"
+TYPE_DROPDOWN = "type_dropdown"
+CATEGORIES_DROPDOWN = "categories_dropdown"
 INFO_BOX = "click_info"
 INFO = "info"
 MAP = "map"

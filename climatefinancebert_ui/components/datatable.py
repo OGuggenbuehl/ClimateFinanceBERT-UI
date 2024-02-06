@@ -19,14 +19,14 @@ def render(app: Dash):
     )
     def get_datatable(click_data=None):
         if not click_data:
-            return html.H4("Click a country")
+            return html.H4("Click a country to render a datatable")
         else:
-            clicked_country_code = click_data["id"]
-            clicked_country_name = click_data["properties"]["name"]
+            country_code = click_data["id"]
+            country_name = click_data["properties"]["name"]
 
-            header = [html.H4(f"Data for {clicked_country_name}:")]
+            header = [html.H4(f"Data for {country_name}:")]
             # Filter the DataFrame based on the clicked country
-            filtered_df = TEST_DATA[TEST_DATA["country_code"] == clicked_country_code]
+            filtered_df = TEST_DATA[TEST_DATA["country_code"] == country_code]
 
             if len(filtered_df.index) == 0:
                 return header + [html.P("No data available")]
@@ -34,8 +34,21 @@ def render(app: Dash):
                 # Render a DataTable with the filtered data
                 return header + [
                     dash_table.DataTable(
-                        filtered_df.to_dict("records"),
-                        [{"name": i, "id": i} for i in filtered_df.columns],
+                        data=filtered_df.to_dict("records"),
+                        columns=[
+                            {
+                                "name": i,
+                                "id": i,
+                                "type": "numeric",
+                                "format": {"specifier": ".2f"},
+                            }
+                            for i in filtered_df.columns
+                        ],
+                        style_cell={
+                            "overflow": "hidden",
+                            "textOverflow": "ellipsis",
+                            "maxWidth": 0,
+                        },
                     )
                 ]
 
