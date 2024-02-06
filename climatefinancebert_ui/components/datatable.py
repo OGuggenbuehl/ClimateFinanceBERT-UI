@@ -20,18 +20,16 @@ def render(app: Dash):
         selected_categories=None,
         selected_years=None,
     ):
+        url_prefix = (
+            "https://raw.githubusercontent.com/MalteToetzke"
+            "/consistent-and-replicable-estimation-of-bilateral-"
+            "climate-finance/main/Data"
+        )
         if type_value == "donors":
-            data_url = (
-                "https://raw.githubusercontent.com/MalteToetzke"
-                "/consistent-and-replicable-estimation-of-bilateral-climate-finance"
-                "/main/Data/Donors/donors.csv"
-            )
+            data_url = url_prefix + "/Donors/donors.csv"
+
         else:
-            data_url = (
-                "https://raw.githubusercontent.com/MalteToetzke"
-                "/consistent-and-replicable-estimation-of-bilateral-climate-finance"
-                "/main/Data/Recipients/recipients.csv"
-            )
+            data_url = url_prefix + "/Recipients/recipients.csv"
 
         TEST_DATA = pd.read_csv(data_url)
 
@@ -69,6 +67,8 @@ def render(app: Dash):
                             }
                             for i in filtered_df.columns
                         ],
+                        page_size=15,
+                        sort_action="native",
                         style_cell={
                             "overflow": "hidden",
                             "textOverflow": "ellipsis",
