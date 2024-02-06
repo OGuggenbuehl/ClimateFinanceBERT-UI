@@ -2,7 +2,7 @@ import dash_leaflet as dl
 from dash import Dash, html
 from dash_extensions.javascript import arrow_function
 
-from climatefinancebert_ui.components import ids
+from climatefinancebert_ui.components import ids, info_box
 
 url = (
     "https://raw.githubusercontent.com/"
@@ -14,7 +14,7 @@ def render(app: Dash) -> html.Div:
     return html.Div(
         children=[
             dl.Map(
-                [
+                children=[
                     dl.TileLayer(),
                     dl.GeoJSON(
                         url=url,
@@ -27,6 +27,7 @@ def render(app: Dash) -> html.Div:
                         interactive=True
                         # hideout=dict(selected=[]),
                     ),
+                    info_box.render(app),
                 ],
                 id=ids.MAP,
                 center=[51.4934, 0.0098],

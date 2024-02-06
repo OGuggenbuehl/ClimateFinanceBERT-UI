@@ -1,4 +1,5 @@
 YEAR_DROPDOWN = "year_dropdown"
 INFO_BOX = "click_info"
+INFO = "info"
 MAP = "map"
 COUNTRIES_LAYER = "countries"
