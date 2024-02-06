@@ -1,4 +1,4 @@
-YEAR_DROPDOWN = "year_dropdown"
+YEAR_SLIDER = "year_slider"
 TYPE_DROPDOWN = "type_dropdown"
 CATEGORIES_DROPDOWN = "categories_dropdown"
 INFO_BOX = "click_info"

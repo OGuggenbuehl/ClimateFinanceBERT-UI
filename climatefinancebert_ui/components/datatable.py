@@ -18,9 +18,14 @@ def render(app: Dash):
         [
             Input(ids.COUNTRIES_LAYER, "clickData"),
             Input(ids.CATEGORIES_DROPDOWN, "value"),
+            Input(ids.YEAR_SLIDER, "value"),
         ],
     )
-    def build_datatable(click_data=None, selected_categories=None):
+    def build_datatable(
+        click_data=None,
+        selected_categories=None,
+        selected_years=None,
+    ):
         if not click_data:
             return html.H4("Click a country to render a datatable")
         else:
@@ -32,6 +37,11 @@ def render(app: Dash):
             filtered_df = TEST_DATA[
                 (TEST_DATA["country_code"] == country_code)
                 & (TEST_DATA["meta_category"].isin(selected_categories))
+                & (
+                    TEST_DATA["effective_year"].between(
+                        selected_years[0], selected_years[1]
+                    )
+                )
             ]
 
             if len(filtered_df.index) == 0:

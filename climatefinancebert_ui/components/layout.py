@@ -6,7 +6,7 @@ from climatefinancebert_ui.components import (
     datatable,
     map,
     type_dropdown,
-    year_dropdown,
+    year_slider,
 )
 
 
@@ -39,10 +39,10 @@ def create_layout(app: Dash) -> html.Div:
                         html.Div(
                             className="dropdown-container",
                             children=[
-                                year_dropdown.render(app),
+                                year_slider.render(app),
                             ],
                         ),
-                        width=3,
+                        width=5,
                     ),
                     dbc.Col(
                         html.Div(
@@ -51,7 +51,7 @@ def create_layout(app: Dash) -> html.Div:
                                 type_dropdown.render(app),
                             ],
                         ),
-                        width=3,
+                        width=2,
                     ),
                     dbc.Col(
                         html.Div(
@@ -60,7 +60,7 @@ def create_layout(app: Dash) -> html.Div:
                                 categories_dropdown.render(app),
                             ],
                         ),
-                        width=6,
+                        width=5,
                     ),
                 ]
             ),

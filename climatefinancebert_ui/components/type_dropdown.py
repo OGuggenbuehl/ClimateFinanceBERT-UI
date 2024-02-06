@@ -12,8 +12,8 @@ def render(app: Dash) -> html.Div:
             dcc.Dropdown(
                 id=ids.TYPE_DROPDOWN,
                 options=[{"label": type.title(), "value": type} for type in types],
-                value=types,
-                multi=True,
+                value="recipients",
+                multi=False,
             ),
         ]
     )
