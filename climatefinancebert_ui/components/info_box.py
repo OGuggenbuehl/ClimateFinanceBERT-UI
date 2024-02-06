@@ -8,7 +8,7 @@ def render(app: Dash):
         Output(ids.INFO, "children"),
         Input(ids.COUNTRIES_LAYER, "hoverData"),
     )
-    def get_info(hover_data=None):
+    def build_infobox(hover_data=None):
         header = [html.H5("Country Information")]
         if not hover_data:
             return header + [html.P("Hover over a country")]
@@ -18,9 +18,8 @@ def render(app: Dash):
             html.P(f"it's ID is: {hover_data['id']}"),
         ]
 
-    # Create info control.
-    info = html.Div(
-        children=get_info(),
+    return html.Div(
+        children=build_infobox(),
         id=ids.INFO,
         className=ids.INFO,
         style={
@@ -30,4 +29,3 @@ def render(app: Dash):
             "zIndex": "1000",
         },
     )
-    return info

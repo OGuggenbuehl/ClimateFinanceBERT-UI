@@ -9,7 +9,7 @@ def render(app: Dash) -> html.Div:
         "adaption",
         "environment",
         "climate_finance",
-        "climate_finance_+_environment",
+        # "climate_finance_+_environment",
     ]
 
     return html.Div(
@@ -20,15 +20,11 @@ def render(app: Dash) -> html.Div:
                 options=[
                     {
                         "label": category.replace("_", " ").title(),
-                        "value": category,
+                        "value": category.replace("_", " ").title(),
                     }
                     for category in categories
                 ],
-                value=[
-                    category
-                    for category in categories
-                    if category != "climate_finance_+_environment"
-                ],
+                value=[category.replace("_", " ").title() for category in categories],
                 multi=True,
             ),
         ]

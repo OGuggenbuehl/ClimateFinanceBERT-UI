@@ -4,9 +4,9 @@ from dash import Dash, Input, Output, dash_table, html
 from climatefinancebert_ui.components import ids
 
 test_url = (
-    "https://raw.githubusercontent.com/MalteToetzke/"
-    "consistent-and-replicable-estimation-of-bilateral-climate-finance/"
-    "main/Data/Recipients/recipients_2016.csv"
+    "https://raw.githubusercontent.com/MalteToetzke"
+    "/consistent-and-replicable-estimation-of-bilateral-climate-finance"
+    "/main/Data/Recipients/recipients.csv"
 )
 
 TEST_DATA = pd.read_csv(test_url)
@@ -15,9 +15,12 @@ TEST_DATA = pd.read_csv(test_url)
 def render(app: Dash):
     @app.callback(
         Output(ids.DATATABLE, "children"),
-        Input(ids.COUNTRIES_LAYER, "clickData"),
+        [
+            Input(ids.COUNTRIES_LAYER, "clickData"),
+            Input(ids.CATEGORIES_DROPDOWN, "value"),
+        ],
     )
-    def get_datatable(click_data=None):
+    def build_datatable(click_data=None, selected_categories=None):
         if not click_data:
             return html.H4("Click a country to render a datatable")
         else:
@@ -25,8 +28,11 @@ def render(app: Dash):
             country_name = click_data["properties"]["name"]
 
             header = [html.H4(f"Data for {country_name}:")]
-            # Filter the DataFrame based on the clicked country
-            filtered_df = TEST_DATA[TEST_DATA["country_code"] == country_code]
+
+            filtered_df = TEST_DATA[
+                (TEST_DATA["country_code"] == country_code)
+                & (TEST_DATA["meta_category"].isin(selected_categories))
+            ]
 
             if len(filtered_df.index) == 0:
                 return header + [html.P("No data available")]
@@ -39,8 +45,8 @@ def render(app: Dash):
                             {
                                 "name": i,
                                 "id": i,
-                                "type": "numeric",
-                                "format": {"specifier": ".2f"},
+                                # "type": "numeric",
+                                # "format": {"specifier": ".2f"},
                             }
                             for i in filtered_df.columns
                         ],
@@ -52,9 +58,8 @@ def render(app: Dash):
                     )
                 ]
 
-    data_table = html.Div(
-        children=get_datatable(),
+    return html.Div(
+        children=build_datatable(),
         id=ids.DATATABLE,
         className=ids.DATATABLE,
     )
-    return data_table
