@@ -1,7 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import Dash, html
 
-from climatefinancebert_ui.components import map, year_dropdown
+from climatefinancebert_ui.components import datatable, map, year_dropdown
 
 
 def create_layout(app: Dash) -> html.Div:
@@ -33,6 +33,18 @@ def create_layout(app: Dash) -> html.Div:
                         className="dropdown-container",
                         children=[
                             year_dropdown.render(app),
+                        ],
+                    ),
+                    width=3,
+                )
+            ),
+            html.Br(),
+            dbc.Row(
+                dbc.Col(
+                    html.Div(
+                        className="datatable-container",
+                        children=[
+                            datatable.render(app),
                         ],
                     ),
                     width=3,

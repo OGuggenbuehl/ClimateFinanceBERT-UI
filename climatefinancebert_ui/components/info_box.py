@@ -1,15 +1,6 @@
-import pandas as pd
 from dash import Dash, Input, Output, html
 
 from climatefinancebert_ui.components import ids
-
-test_url = (
-    "https://raw.githubusercontent.com/MalteToetzke/"
-    "consistent-and-replicable-estimation-of-bilateral-climate-finance/"
-    "main/Data/Recipients/recipients_2016.csv"
-)
-
-TEST_DATA = pd.read_csv(test_url)
 
 
 def render(app: Dash):
@@ -31,7 +22,7 @@ def render(app: Dash):
     info = html.Div(
         children=get_info(),
         id=ids.INFO,
-        className="info",
+        className=ids.INFO,
         style={
             "position": "absolute",
             "top": "10px",
