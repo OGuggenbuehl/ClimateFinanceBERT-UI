@@ -3,29 +3,38 @@ from dash import Dash, Input, Output, dash_table, html
 
 from climatefinancebert_ui.components import ids
 
-test_url = (
-    "https://raw.githubusercontent.com/MalteToetzke"
-    "/consistent-and-replicable-estimation-of-bilateral-climate-finance"
-    "/main/Data/Recipients/recipients.csv"
-)
-
-TEST_DATA = pd.read_csv(test_url)
-
 
 def render(app: Dash):
     @app.callback(
         Output(ids.DATATABLE, "children"),
         [
+            Input(ids.TYPE_DROPDOWN, "value"),
             Input(ids.COUNTRIES_LAYER, "clickData"),
             Input(ids.CATEGORIES_DROPDOWN, "value"),
             Input(ids.YEAR_SLIDER, "value"),
         ],
     )
     def build_datatable(
+        type_value=None,
         click_data=None,
         selected_categories=None,
         selected_years=None,
     ):
+        if type_value == "donors":
+            data_url = (
+                "https://raw.githubusercontent.com/MalteToetzke"
+                "/consistent-and-replicable-estimation-of-bilateral-climate-finance"
+                "/main/Data/Donors/donors.csv"
+            )
+        else:
+            data_url = (
+                "https://raw.githubusercontent.com/MalteToetzke"
+                "/consistent-and-replicable-estimation-of-bilateral-climate-finance"
+                "/main/Data/Recipients/recipients.csv"
+            )
+
+        TEST_DATA = pd.read_csv(data_url)
+
         if not click_data:
             return html.H4("Click a country to render a datatable")
         else:
