@@ -4,10 +4,7 @@ from dash_extensions.javascript import arrow_function
 
 from climatefinancebert_ui.components import ids, info_box
 
-url = (
-    "https://raw.githubusercontent.com/"
-    "johan/world.geo.json/master/countries.geo.json"
-)
+url = "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
 
 
 def render(app: Dash) -> html.Div:
@@ -21,10 +18,14 @@ def render(app: Dash) -> html.Div:
                         # zoomToBounds=True,
                         id=ids.COUNTRIES_LAYER,
                         hoverStyle=arrow_function(
-                            dict(weight=4, color="#666", dashArray="")
+                            dict(
+                                weight=4,
+                                color="#666",
+                                dashArray="",
+                            )
                         ),
                         zoomToBoundsOnClick=False,
-                        interactive=True
+                        interactive=True,
                         # hideout=dict(selected=[]),
                     ),
                     info_box.render(app),
