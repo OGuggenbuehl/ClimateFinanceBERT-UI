@@ -15,6 +15,7 @@ numpy = "^1.26.3"
 pandas = "^2.2.0"
 dash-extensions = "^1.0.8"
 ruff = "^0.3.0"
+commitizen = "^3.17.0"
 
 
 [tool.poetry.group.dev.dependencies]
