@@ -24,8 +24,8 @@ def render(app: Dash):
         className=ids.INFO,
         style={
             "position": "absolute",
-            "top": "10px",
-            "right": "10px",
+            "top": "20px",
+            "right": "100px",
             "zIndex": "1000",
         },
     )

@@ -10,3 +10,11 @@
     margin: 0 0 5px;
     color: #777;
 }
+.map-card {
+    margin-top: 20px; 
+}
+.app-container {
+    background-color: #343a40; /* Bootstrap dark color */
+    color: #ffffff; /* Text color for better visibility */
+    min-height: 100vh; /* Ensures the container fills the entire viewport height */
+}

@@ -24,7 +24,7 @@ def render(app: Dash) -> html.Div:
                                 dashArray="",
                             )
                         ),
-                        zoomToBoundsOnClick=False,
+                        zoomToBoundsOnClick=True,
                         interactive=True,
                         # hideout=dict(selected=[]),
                     ),
@@ -33,9 +33,11 @@ def render(app: Dash) -> html.Div:
                 id=ids.MAP,
                 center=[51.4934, 0.0098],
                 zoom=2,
-                style={"height": "50vh"},
+                style={"height": "85vh"},
                 maxZoom=5,
                 minZoom=2,
+                maxBounds=[[-90, -180], [90, 180]],  # Set the maximum boundaries
+                maxBoundsViscosity=1.0,
             )
         ],
     )
