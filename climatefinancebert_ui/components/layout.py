@@ -38,7 +38,7 @@ def create_layout(app: Dash) -> html.Div:
                                         className="datatable-container",
                                         children=[
                                             dbc.Card(
-                                                datatable.render(app),
+                                                datatable.render(),
                                                 body=True,
                                             )
                                         ],

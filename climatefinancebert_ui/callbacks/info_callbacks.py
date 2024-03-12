@@ -9,7 +9,7 @@ def register(app):
         Output(ids.INFOBOX_COUNTRY, "children"),
         Input(ids.COUNTRIES_LAYER, "hoverData"),
     )
-    def build_infobox(hover_data=None):
+    def build_infobox_country(hover_data=None):
         # TODO: Add docstring
         header = [html.H5("Country Information")]
         if not hover_data:
