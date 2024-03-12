@@ -3,9 +3,15 @@ from dash import Dash, Input, Output, html
 from climatefinancebert_ui.components import ids
 
 
-def render(app: Dash):
+def render(
+    app: Dash,
+    top: str,
+    bottom: str,
+    right: str,
+    left: str,
+):
     @app.callback(
-        Output(ids.INFO, "children"),
+        Output(ids.INFOBOX_COUNTRY, "children"),
         Input(ids.COUNTRIES_LAYER, "hoverData"),
     )
     def build_infobox(hover_data=None):
@@ -20,12 +26,14 @@ def render(app: Dash):
 
     return html.Div(
         children=build_infobox(),
-        id=ids.INFO,
-        className=ids.INFO,
+        id=ids.INFOBOX_COUNTRY,
+        className=ids.INFOBOX,
         style={
             "position": "absolute",
-            "top": "20px",
-            "right": "100px",
+            "top": top,
+            "bottom": bottom,
+            "right": right,
+            "left": left,
             "zIndex": "1000",
         },
     )

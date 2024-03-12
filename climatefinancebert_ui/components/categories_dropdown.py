@@ -6,7 +6,7 @@ from climatefinancebert_ui.components import ids
 def render(app: Dash) -> html.Div:
     categories = [
         "mitigation",
-        "adaption",
+        "adaptation",
         "environment",
         "climate_finance",
         # "climate_finance_+_environment",
