@@ -23,11 +23,15 @@ def render(app: Dash) -> html.Div:
                     dl.GeoJSON(
                         url=url,
                         id=ids.COUNTRIES_LAYER,
-                        hoverStyle=arrow_function(dict(weight=4, color="#666", dashArray="")),
+                        hoverStyle=arrow_function(
+                            dict(weight=4, color="#666", dashArray="")
+                        ),
                         zoomToBoundsOnClick=True,
                         interactive=True,
                     ),
-                    infobox_country.render(app, top="20px", bottom=None, right="100px", left=None),
+                    infobox_country.render(
+                        app, top="20px", bottom=None, right="100px", left=None
+                    ),
                 ],
                 id=ids.MAP,
                 center=[51.4934, 0.0098],
@@ -37,6 +41,7 @@ def render(app: Dash) -> html.Div:
                 minZoom=2,
                 maxBounds=[[-90, -180], [90, 180]],
                 maxBoundsViscosity=1.0,
+                scrollWheelZoom=False,
             ),
             html.Div(
                 style={

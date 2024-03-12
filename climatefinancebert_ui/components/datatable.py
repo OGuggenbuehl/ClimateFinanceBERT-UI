@@ -1,20 +1,21 @@
+import pandas as pd
 from dash import Dash, Input, Output, dash_table, html
 
-from climatefinancebert_ui.components import ids, utils
+from climatefinancebert_ui.components import ids
 
 
 def render(app: Dash):
     @app.callback(
         Output(ids.DATATABLE, "children"),
         [
-            Input(ids.TYPE_DROPDOWN, "value"),
+            Input("stored-data", "data"),
             Input(ids.COUNTRIES_LAYER, "clickData"),
             Input(ids.CATEGORIES_DROPDOWN, "value"),
             Input(ids.YEAR_SLIDER, "value"),
         ],
     )
     def build_datatable(
-        selected_type=None,
+        stored_data=None,
         click_data=None,
         selected_categories=None,
         selected_years=None,
@@ -24,15 +25,15 @@ def render(app: Dash):
         the selected map element.
         """
 
-        df_full = utils.fetch_data(selected_type)
-
-        if not click_data:
+        if not click_data or not stored_data:
             return html.H4("Click a country to render a datatable")
         else:
             country_code = click_data["id"]
             country_name = click_data["properties"]["name"]
 
             header = [html.H4(f"Data for {country_name}:")]
+
+            df_full = pd.DataFrame(stored_data)
 
             df_filtered = df_full[
                 (df_full["country_code"] == country_code)
