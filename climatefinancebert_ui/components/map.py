@@ -23,15 +23,11 @@ def render(app: Dash) -> html.Div:
                     dl.GeoJSON(
                         url=url,
                         id=ids.COUNTRIES_LAYER,
-                        hoverStyle=arrow_function(
-                            dict(weight=4, color="#666", dashArray="")
-                        ),
-                        zoomToBoundsOnClick=True,
+                        hoverStyle=arrow_function(dict(weight=4, color="#666", dashArray="")),
+                        zoomToBoundsOnClick=False,
                         interactive=True,
                     ),
-                    infobox_country.render(
-                        app, top="20px", bottom=None, right="100px", left=None
-                    ),
+                    infobox_country.render(top="20px", bottom=None, right="100px", left=None),
                 ],
                 id=ids.MAP,
                 center=[51.4934, 0.0098],
@@ -56,10 +52,10 @@ def render(app: Dash) -> html.Div:
                     "padding": "0 20px",
                 },
                 children=[
-                    infobox_climatefinance.render(app),
-                    infobox_environment.render(app),
-                    infobox_adaptation.render(app),
-                    infobox_mitigation.render(app),
+                    infobox_climatefinance.render(),
+                    infobox_environment.render(),
+                    infobox_adaptation.render(),
+                    infobox_mitigation.render(),
                 ],
             ),
         ],

@@ -1,25 +1,11 @@
-from dash import Dash, Input, Output, html
+from dash import html
 
 from climatefinancebert_ui.components import ids
 
 
-def render(
-    app: Dash,
-):
-    @app.callback(
-        Output(ids.INFOBOX_CLIMATEFINANCE, "children"),
-        Input(ids.YEAR_SLIDER, "value"),
-    )
-    def build_infobox(year=None):
-        header = [html.H5("Climate-Finance Information")]
-        if not year:
-            return header + [html.P("Select a year")]
-        return header + [
-            html.P(f"Showing data from {year[0]} - {year[1]}"),
-        ]
-
+def render():
+    # Return an empty Div that will be filled by the callback
     return html.Div(
-        children=build_infobox(),
         id=ids.INFOBOX_CLIMATEFINANCE,
         className=ids.INFOBOX,
         style={
