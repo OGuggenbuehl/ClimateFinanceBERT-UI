@@ -1,0 +1,13 @@
+version: '0.1'
+name: climatefinancebert_ui
+
+services:
+  climatefinancebert_ui:
+    image: 'climatefinancebert_ui:latest'
+    build:
+      context: ./../
+      dockerfile: docker/climatefinancebert_ui/Dockerfile
+    ports: 
+      - "9000:9000"
+    env_file: ./../.env
+    tty: true
