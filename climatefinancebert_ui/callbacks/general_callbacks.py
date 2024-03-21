@@ -1,5 +1,7 @@
 from dash import Input, Output, State
 
+from climatefinancebert_ui.components import ids
+
 
 def register(app):
     @app.callback(
@@ -12,3 +14,10 @@ def register(app):
         if n1:
             return not is_open
         return is_open
+
+    @app.callback(
+        Output(ids.COUNTRIES_LAYER, "clickData"),
+        [Input("reset-country", "n_clicks")],
+    )
+    def reset_clickData(n_clicks):
+        return None

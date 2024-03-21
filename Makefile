@@ -32,7 +32,11 @@ test:
 .PHONY: lint
 lint:
 	git add --intent-to-add .
-	. $(VENV)/activate; $(VENV)/ruff format .
+	. $(VENV)/activate; $(VENV)/
+	
+.PHONY: format
+format:
+	ruff format .
 #################################################################################
 # DOCKER
 #################################################################################

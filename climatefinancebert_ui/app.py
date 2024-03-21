@@ -16,7 +16,7 @@ def main():
     info_callbacks.register(app)
     app.title = "ClimateFinanceBERT UI"
     app.layout = create_layout(app)
-    app.run()
+    app.run_server(debug=True, host="0.0.0.0", port=9000)
 
 
 if __name__ == "__main__":

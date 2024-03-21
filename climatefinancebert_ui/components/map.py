@@ -9,6 +9,7 @@ from climatefinancebert_ui.components import (
     infobox_country,
     infobox_environment,
     infobox_mitigation,
+    reset_button,
 )
 
 url = "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
@@ -27,7 +28,8 @@ def render(app: Dash) -> html.Div:
                         zoomToBoundsOnClick=False,
                         interactive=True,
                     ),
-                    infobox_country.render(top="20px", bottom=None, right="100px", left=None),
+                    infobox_country.render(top="20px", bottom=None, right=None, left="100px"),
+                    reset_button.render(top="20px", bottom=None, right="100px", left=None),
                 ],
                 id=ids.MAP,
                 center=[51.4934, 0.0098],
