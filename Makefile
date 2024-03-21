@@ -13,7 +13,7 @@ PYTHON_INTERPRETER = $(VENV)/python
 #################################################################################
 .PHONY: run
 run:
-	$(PYTHON_INTERPRETER) src/climatefinancebert_ui/app.py
+	$(PYTHON_INTERPRETER) climatefinancebert_ui/app.py
 
 .PHONY: clean
 clean:
