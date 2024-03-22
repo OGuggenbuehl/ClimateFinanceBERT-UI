@@ -3,6 +3,7 @@ from dash import Dash, html
 from dash_extensions.javascript import arrow_function
 
 from climatefinancebert_ui.components import (
+    constants,
     ids,
     infobox_adaptation,
     infobox_climatefinance,
@@ -12,7 +13,8 @@ from climatefinancebert_ui.components import (
     reset_button,
 )
 
-url = "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
+initial_center = [51.4934, 0.0098]
+initial_zoom = 2
 
 
 def render(app: Dash) -> html.Div:
@@ -22,7 +24,7 @@ def render(app: Dash) -> html.Div:
                 children=[
                     dl.TileLayer(),
                     dl.GeoJSON(
-                        url=url,
+                        url=constants.GEOJSON_URL,
                         id=ids.COUNTRIES_LAYER,
                         hoverStyle=arrow_function(dict(weight=4, color="#666", dashArray="")),
                         zoomToBoundsOnClick=True,
@@ -33,8 +35,8 @@ def render(app: Dash) -> html.Div:
                     reset_button.render(top="20px", bottom=None, right="100px", left=None),
                 ],
                 id=ids.MAP,
-                center=[51.4934, 0.0098],
-                zoom=2,
+                center=initial_center,
+                zoom=initial_zoom,
                 style={"height": "85vh"},
                 maxZoom=5,
                 minZoom=2,

@@ -17,7 +17,7 @@ def register(app):
 
     @app.callback(
         Output(ids.COUNTRIES_LAYER, "clickData"),
-        [Input("reset-country", "n_clicks")],
+        [Input(ids.RESET_MAP, "n_clicks")],
     )
     def reset_clickData(n_clicks):
         return None
