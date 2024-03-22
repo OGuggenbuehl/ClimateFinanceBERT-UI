@@ -40,6 +40,11 @@ def register(app):
                 html.Br(),
                 html.P(f"ID: {hover_data['id']}"),
             ]
+        except KeyError:
+            return header + [
+                html.Br(),
+                html.P(f"ID: {hover_data['id']}"),
+            ]
 
     @app.callback(
         Output(ids.INFOBOX_ADAPTATION, "children"),
@@ -57,16 +62,24 @@ def register(app):
 
         if click_data is not None:
             country_code = click_data["id"]
-            df_filtered = data[
-                (data["meta_category"].isin(["Adaptation"]))
-                & (data["country_code"] == country_code)
-            ]
+            try:
+                df_filtered = data[
+                    (data["meta_category"].isin(["Adaptation"]))
+                    & (data["country_code"] == country_code)
+                ]
+            except KeyError:
+                return header + [html.P("No data available for this timespan.")]
         else:
-            df_filtered = data[(data["meta_category"].isin(["Adaptation"]))]
+            try:
+                df_filtered = data[(data["meta_category"].isin(["Adaptation"]))]
+            except KeyError:
+                return header + [html.P("No data available for this timespan.")]
 
         volume = df_filtered.effective_funding.sum().round(2)
-
-        return header + [html.P(f"Volume: {volume}")]
+        try:
+            return header + [html.P(f"Volume: {volume}")]
+        except KeyError:
+            return header + [html.P("No data available for this timespan.")]
 
     @app.callback(
         Output(ids.INFOBOX_CLIMATEFINANCE, "children"),
@@ -94,7 +107,7 @@ def register(app):
         # volume = df_filtered.effective_funding.sum().round(2)
 
         # return header + [html.P(f"Volume: {volume}")]
-        return header + [html.P("There seems to be no data for ClimateFinance.")]
+        return header + [html.P("No data for ClimateFinance.")]
 
     @app.callback(
         Output(ids.INFOBOX_ENVIRONMENT, "children"),
@@ -112,16 +125,24 @@ def register(app):
 
         if click_data is not None:
             country_code = click_data["id"]
-            df_filtered = data[
-                (data["meta_category"].isin(["Environment"]))
-                & (data["country_code"] == country_code)
-            ]
+            try:
+                df_filtered = data[
+                    (data["meta_category"].isin(["Environment"]))
+                    & (data["country_code"] == country_code)
+                ]
+            except KeyError:
+                return header + [html.P("No data available for this timespan.")]
         else:
-            df_filtered = data[(data["meta_category"].isin(["Environment"]))]
+            try:
+                df_filtered = data[(data["meta_category"].isin(["Environment"]))]
+            except KeyError:
+                return header + [html.P("No data available for this timespan.")]
 
         volume = df_filtered.effective_funding.sum().round(2)
-
-        return header + [html.P(f"Volume: {volume}")]
+        try:
+            return header + [html.P(f"Volume: {volume}")]
+        except KeyError:
+            return header + [html.P("No data available for this timespan.")]
 
     @app.callback(
         Output(ids.INFOBOX_MITIGATION, "children"),
@@ -139,13 +160,22 @@ def register(app):
 
         if click_data is not None:
             country_code = click_data["id"]
-            df_filtered = data[
-                (data["meta_category"].isin(["Mitigation"]))
-                & (data["country_code"] == country_code)
-            ]
+            try:
+                df_filtered = data[
+                    (data["meta_category"].isin(["Mitigation"]))
+                    & (data["country_code"] == country_code)
+                ]
+            except KeyError:
+                return header + [html.P("No data available for this timespan.")]
         else:
-            df_filtered = data[(data["meta_category"].isin(["Mitigation"]))]
+            try:
+                df_filtered = data[(data["meta_category"].isin(["Mitigation"]))]
+            except KeyError:
+                return header + [html.P("No data available for this timespan.")]
 
         volume = df_filtered.effective_funding.sum().round(2)
 
-        return header + [html.P(f"Volume: {volume}")]
+        try:
+            return header + [html.P(f"Volume: {volume}")]
+        except KeyError:
+            return header + [html.P("No data available for this timespan.")]
