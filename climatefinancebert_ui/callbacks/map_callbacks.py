@@ -1,13 +1,10 @@
 import dash_leaflet as dl
 import pandas as pd
-import requests
 from dash import Input, Output, State, dash
 from dash_extensions.javascript import arrow_function
 
 from climatefinancebert_ui.components import constants, ids, infobox_country, reset_button
 from climatefinancebert_ui.components.utils import merge_data, prepare_data_for_merge
-
-response = requests.get(constants.GEOJSON_URL)
 
 
 def register(app):
@@ -36,7 +33,6 @@ def register(app):
     ):
         # retrieve stored dataframe and parse geojson
         df_stored = pd.DataFrame(stored_data)
-        geojson_data = response.json()
 
         # prepare data for merging
         df_prepared = prepare_data_for_merge(
@@ -44,7 +40,7 @@ def register(app):
             selected_categories=selected_categories,
         )
 
-        return merge_data(geojson_data, df_prepared)
+        return merge_data(constants.GEOJSON_BASE, df_prepared)
 
     @app.callback(
         Output(ids.MAP, "children"),
