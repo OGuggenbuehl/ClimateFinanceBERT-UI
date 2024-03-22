@@ -13,9 +13,6 @@ from climatefinancebert_ui.components import (
     reset_button,
 )
 
-initial_center = [51.4934, 0.0098]
-initial_zoom = 2
-
 
 def render(app: Dash) -> html.Div:
     return html.Div(
@@ -35,8 +32,8 @@ def render(app: Dash) -> html.Div:
                     reset_button.render(top="20px", bottom=None, right="100px", left=None),
                 ],
                 id=ids.MAP,
-                center=initial_center,
-                zoom=initial_zoom,
+                center=constants.INITIAL_CENTER,
+                zoom=constants.INITIAL_ZOOM,
                 style={"height": "85vh"},
                 maxZoom=5,
                 minZoom=2,

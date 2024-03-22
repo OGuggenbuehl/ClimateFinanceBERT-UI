@@ -3,9 +3,6 @@ from dash import Dash, dcc, html
 
 from climatefinancebert_ui.components import constants, datatable, ids, map, navbar, sidebar
 
-initial_center = [51.4934, 0.0098]
-initial_zoom = 2
-
 
 def create_layout(app: Dash) -> html.Div:
     return html.Div(
@@ -16,8 +13,8 @@ def create_layout(app: Dash) -> html.Div:
             dcc.Store(
                 id=ids.INITIAL_STATE,
                 data={
-                    "center": initial_center,
-                    "zoom": initial_zoom,
+                    "center": constants.INITIAL_CENTER,
+                    "zoom": constants.INITIAL_ZOOM,
                 },
             ),
             dbc.Container(
