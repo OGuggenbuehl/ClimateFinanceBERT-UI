@@ -10,19 +10,25 @@ def register(app):
         [
             Input(ids.STORED_DATA, "data"),
             Input(ids.COUNTRIES_LAYER, "hoverData"),
+            Input(ids.COUNTRIES_LAYER, "clickData"),
         ],
     )
     def build_infobox_country(
         stored_data,
         hover_data=None,
+        click_data=None,
     ):
         # TODO: Add docstring
-        if not hover_data:
+        if not click_data and not hover_data:
             header = [html.H5("Country Information")]
-            return header + [html.P("Hover over a country")]
+            return header + [html.P("Click on a country")]
 
-        country_name = hover_data["properties"]["name"]  # Fixed to access 'properties'
-        country_id = hover_data["id"]
+        if click_data:
+            country_name = click_data["properties"]["name"]
+            country_id = click_data["id"]
+        elif hover_data and not click_data:
+            country_name = hover_data["properties"]["name"]  # Fixed to access 'properties'
+            country_id = hover_data["id"]
 
         header = [html.H5(country_name)]
         try:
@@ -32,18 +38,13 @@ def register(app):
 
             return header + [
                 html.Br(),
-                html.P(f"ID: {hover_data['id']}"),
+                html.P(f"ID: {country_id}"),
                 html.P(f"GDP: {value.round(2)}"),
             ]
-        except IndexError:
+        except (IndexError, KeyError):
             return header + [
                 html.Br(),
-                html.P(f"ID: {hover_data['id']}"),
-            ]
-        except KeyError:
-            return header + [
-                html.Br(),
-                html.P(f"ID: {hover_data['id']}"),
+                html.P(f"ID: {country_id}"),
             ]
 
     @app.callback(
