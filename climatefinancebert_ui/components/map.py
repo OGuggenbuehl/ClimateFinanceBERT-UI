@@ -54,7 +54,7 @@ def render(app: Dash) -> html.Div:
                     "padding": "0 20px",
                 },
                 children=[
-                    infobox_climatefinance.render(),
+                    # infobox_climatefinance.render(),
                     infobox_environment.render(),
                     infobox_adaptation.render(),
                     infobox_mitigation.render(),
