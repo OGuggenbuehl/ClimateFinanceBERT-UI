@@ -66,17 +66,20 @@ def register(app):
             except KeyError:
                 return header + [html.H4("No data available for this country.")]
 
-            # Render a DataTable with the filtered data
-            return header + [
-                dash_table.DataTable(
-                    data=df_filtered.to_dict("records"),
-                    columns=[{"name": i, "id": i} for i in df_filtered.columns],
-                    page_size=15,
-                    sort_action="native",
-                    style_cell={
-                        "overflow": "hidden",
-                        "textOverflow": "ellipsis",
-                        "maxWidth": 0,
-                    },
-                )
-            ]
+            if len(df_filtered) == 0:
+                return header + [html.H4("No data available for this country.")]
+            else:
+                # Render a DataTable with the filtered data
+                return header + [
+                    dash_table.DataTable(
+                        data=df_filtered.to_dict("records"),
+                        columns=[{"name": i, "id": i} for i in df_filtered.columns],
+                        page_size=15,
+                        sort_action="native",
+                        style_cell={
+                            "overflow": "hidden",
+                            "textOverflow": "ellipsis",
+                            "maxWidth": 0,
+                        },
+                    )
+                ]
