@@ -23,13 +23,19 @@ def render(app: Dash) -> html.Div:
                     dl.GeoJSON(
                         url=constants.GEOJSON_URL,
                         id=ids.COUNTRIES_LAYER,
-                        hoverStyle=arrow_function(dict(weight=4, color="#666", dashArray="")),
+                        hoverStyle=arrow_function(
+                            dict(weight=4, color="#666", dashArray="")
+                        ),
                         zoomToBoundsOnClick=True,
                         # zoomToBounds=True,
                         interactive=True,
                     ),
-                    infobox_country.render(top="20px", bottom=None, right=None, left="100px"),
-                    reset_button.render(top="20px", bottom=None, right="100px", left=None),
+                    infobox_country.render(
+                        top="20px", bottom=None, right=None, left="100px"
+                    ),
+                    reset_button.render(
+                        top="20px", bottom=None, right="100px", left=None
+                    ),
                 ],
                 id=ids.MAP,
                 center=constants.INITIAL_CENTER,
