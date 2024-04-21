@@ -33,7 +33,7 @@ def merge_data(geojson, df):
     for feature in geojson["features"]:
         # Set the density value from the dataframe to the GeoJSON feature
         id = feature["id"]
-        feature["properties"]["value"] = merge_dict.get(id, None)
+        feature["properties"]["value"] = merge_dict.get(id, 0)
     return geojson
 
 

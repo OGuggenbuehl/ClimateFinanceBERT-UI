@@ -3,12 +3,12 @@ import pandas as pd
 from dash import Input, Output, State, dash
 from dash_extensions.javascript import arrow_function, assign
 
-from climatefinancebert_ui.components import constants, ids, infobox_country, reset_button
+from climatefinancebert_ui.components import constants, ids, infobox_country, map_mode, reset_button
 from climatefinancebert_ui.components.utils import merge_data, prepare_data_for_merge
 
 classes = [0, 10, 20, 50, 100, 200, 500, 1000]
 colorscale = [
-    "#FFEDA0",
+    "#eeeeee",
     "#FED976",
     "#FEB24C",
     "#FD8D3C",
@@ -70,25 +70,43 @@ def register(app):
     @app.callback(
         Output(ids.MAP, "children"),
         Input(ids.STORED_GEOJSON, "data"),
+        Input(ids.MAP_MODE, "value"),
     )
     def update_map(
         stored_geojson,
+        map_mode_value,
     ):
-        return [
-            dl.TileLayer(),
-            dl.GeoJSON(
-                id=ids.COUNTRIES_LAYER,
-                data=stored_geojson,
-                style=style_handle,  # how to style each polygon
-                hoverStyle=arrow_function(
-                    dict(weight=5, color="#666", dashArray="")
-                ),  # style applied on hover
-                hideout=dict(
-                    colorscale=colorscale, classes=classes, style=style, polyColoring="value"
+        if map_mode_value == "base":
+            return [
+                dl.TileLayer(),
+                # render dummy map to be replaced by the callback
+                dl.GeoJSON(
+                    url=constants.GEOJSON_URL,
+                    id=ids.COUNTRIES_LAYER,
+                    style={"fillColor": "dodgerblue", "color": "dodgerblue"},
                 ),
-                zoomToBoundsOnClick=True,
-                interactive=True,
-            ),
-            infobox_country.render(top="20px", bottom=None, right=None, left="100px"),
-            reset_button.render(top="20px", bottom=None, right="100px", left=None),
-        ]
+                infobox_country.render(top="20px", bottom=None, right=None, left="100px"),
+                reset_button.render(top="20px", bottom=None, right="100px", left=None),
+            ]
+        elif map_mode_value == "total":
+            return [
+                dl.TileLayer(),
+                dl.GeoJSON(
+                    id=ids.COUNTRIES_LAYER,
+                    data=stored_geojson,
+                    style=style_handle,  # how to style each polygon
+                    hoverStyle=arrow_function(
+                        dict(weight=5, color="#666", dashArray="")
+                    ),  # style applied on hover
+                    hideout=dict(
+                        colorscale=colorscale,
+                        classes=classes,
+                        style=style,
+                        polyColoring="value",
+                    ),
+                    zoomToBoundsOnClick=True,
+                    interactive=True,
+                ),
+                infobox_country.render(top="20px", bottom=None, right=None, left="100px"),
+                reset_button.render(top="20px", bottom=None, right="100px", left=None),
+            ]

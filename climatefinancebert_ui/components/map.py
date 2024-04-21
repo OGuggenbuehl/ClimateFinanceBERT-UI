@@ -10,6 +10,7 @@ from climatefinancebert_ui.components import (
     infobox_country,
     infobox_environment,
     infobox_mitigation,
+    map_mode,
     reset_button,
 )
 
@@ -17,6 +18,22 @@ from climatefinancebert_ui.components import (
 def render(app: Dash) -> html.Div:
     return html.Div(
         children=[
+            html.Div(
+                children=[
+                    map_mode.render(top="20px", bottom=None, right="500px", left=None),
+                ],
+                style={
+                    "display": "flex",
+                    "flexWrap": "wrap",
+                    "justifyContent": "space-around",
+                    "alignItems": "center",
+                    "position": "absolute",
+                    "top": "20px",
+                    "left": 0,
+                    "right": 0,
+                    "padding": "0 20px",
+                },
+            ),
             dl.Map(
                 children=[
                     dl.TileLayer(),
@@ -24,6 +41,7 @@ def render(app: Dash) -> html.Div:
                     dl.GeoJSON(
                         url=constants.GEOJSON_URL,
                         id=ids.COUNTRIES_LAYER,
+                        style={"fillColor": "dodgerblue", "color": "dodgerblue"},
                     ),
                     infobox_country.render(top="20px", bottom=None, right=None, left="100px"),
                     reset_button.render(top="20px", bottom=None, right="100px", left=None),
@@ -39,6 +57,12 @@ def render(app: Dash) -> html.Div:
                 scrollWheelZoom=False,
             ),
             html.Div(
+                children=[
+                    # infobox_climatefinance.render(),
+                    infobox_environment.render(),
+                    infobox_adaptation.render(),
+                    infobox_mitigation.render(),
+                ],
                 style={
                     "display": "flex",
                     "flexWrap": "wrap",
@@ -50,12 +74,6 @@ def render(app: Dash) -> html.Div:
                     "right": 0,
                     "padding": "0 20px",
                 },
-                children=[
-                    # infobox_climatefinance.render(),
-                    infobox_environment.render(),
-                    infobox_adaptation.render(),
-                    infobox_mitigation.render(),
-                ],
             ),
         ],
         style={"position": "relative"},
