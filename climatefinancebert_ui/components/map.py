@@ -1,6 +1,5 @@
 import dash_leaflet as dl
 from dash import Dash, html
-from dash_extensions.javascript import arrow_function
 
 from climatefinancebert_ui.components import (
     constants,
@@ -20,7 +19,9 @@ def render(app: Dash) -> html.Div:
         children=[
             html.Div(
                 children=[
-                    map_mode.render(top="20px", bottom=None, right="500px", left=None),
+                    infobox_country.render(top="0px", bottom=None, right=None, left="100px"),
+                    map_mode.render(top="0px", bottom=None, right="500px", left=None),
+                    reset_button.render(top="0px", bottom=None, right="100px", left=None),
                 ],
                 style={
                     "display": "flex",
@@ -43,8 +44,6 @@ def render(app: Dash) -> html.Div:
                         id=ids.COUNTRIES_LAYER,
                         style={"fillColor": "dodgerblue", "color": "dodgerblue"},
                     ),
-                    infobox_country.render(top="20px", bottom=None, right=None, left="100px"),
-                    reset_button.render(top="20px", bottom=None, right="100px", left=None),
                 ],
                 id=ids.MAP,
                 center=constants.INITIAL_CENTER,

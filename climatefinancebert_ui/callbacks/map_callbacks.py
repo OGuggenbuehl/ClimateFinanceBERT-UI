@@ -84,9 +84,8 @@ def register(app):
                     url=constants.GEOJSON_URL,
                     id=ids.COUNTRIES_LAYER,
                     style={"fillColor": "dodgerblue", "color": "dodgerblue"},
+                    hoverStyle=arrow_function(dict(weight=5, color="#666", dashArray="")),
                 ),
-                infobox_country.render(top="20px", bottom=None, right=None, left="100px"),
-                reset_button.render(top="20px", bottom=None, right="100px", left=None),
             ]
         elif map_mode_value == "total":
             return [
@@ -107,6 +106,4 @@ def register(app):
                     zoomToBoundsOnClick=True,
                     interactive=True,
                 ),
-                infobox_country.render(top="20px", bottom=None, right=None, left="100px"),
-                reset_button.render(top="20px", bottom=None, right="100px", left=None),
             ]
