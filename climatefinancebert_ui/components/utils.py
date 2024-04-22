@@ -1,5 +1,7 @@
 import pandas as pd
 
+from climatefinancebert_ui.components.constants import COUNTRY_IDS
+
 
 def fetch_data(selected_type: str):
     """
@@ -19,12 +21,22 @@ def fetch_data(selected_type: str):
     return pd.read_csv(data_url)
 
 
+# TODO: add 0 values for countries that are not in the dataframe
 def prepare_data_for_merge(df, selected_categories):
     """
     Prepare the data for merging with the GeoJSON data.
     """
     df_subset = df[df["climate_class"].isin(selected_categories)]
     df_aggregated = df_subset.groupby("country_code")["effective_funding"].sum().reset_index()
+
+    # TODO: check if necessary, maybe remove
+    missing_countries = []
+    for country_id in COUNTRY_IDS:
+        if country_id not in df_aggregated["country_code"].values:
+            missing_countries.append({"country_code": country_id, "effective_funding": 0})
+    df_missing = pd.DataFrame(missing_countries)
+    df_aggregated = pd.concat([df_aggregated, df_missing], ignore_index=True)
+
     return df_aggregated
 
 
@@ -33,7 +45,7 @@ def merge_data(geojson, df):
     for feature in geojson["features"]:
         # Set the density value from the dataframe to the GeoJSON feature
         id = feature["id"]
-        feature["properties"]["value"] = merge_dict.get(id, 0)
+        feature["properties"]["value"] = merge_dict.get(id, None)
     return geojson
 
 
@@ -51,7 +63,8 @@ if __name__ == "__main__":
 
     # Prepare data for merging
     df_prepared = prepare_data_for_merge(df_subset, selected_categories=["Bioenergy"])
+    print(df_prepared)
 
-    merged = merge_data(geojson_data, df_subset)
+    merged = merge_data(geojson_data, df_prepared)
     for feature in merged["features"]:
         print(f'{feature["id"]}: {feature["properties"]["value"]}')

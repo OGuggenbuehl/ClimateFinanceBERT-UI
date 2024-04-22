@@ -46,7 +46,7 @@ def register(app):
         if not click_data:
             return html.H4("Click a country to render a datatable")
         else:
-            # build the info header based on the hovered over country
+            # build the info header based on the clicked country
             country_name = click_data["properties"]["name"]
             header = [html.H4(f"Data for {country_name}:")]
 

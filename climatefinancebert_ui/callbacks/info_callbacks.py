@@ -32,8 +32,8 @@ def register(app):
 
         header = [html.H5(country_name)]
         try:
-            stored_data = pd.DataFrame(stored_data)
-            df_subset = stored_data[stored_data["country_code"] == country_id]
+            stored_df = pd.DataFrame(stored_data)
+            df_subset = stored_df[stored_df["country_code"] == country_id]
             value = df_subset["gdp"].iloc[0]
 
             return header + [

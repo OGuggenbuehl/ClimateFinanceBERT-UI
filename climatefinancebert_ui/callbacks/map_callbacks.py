@@ -3,7 +3,7 @@ import pandas as pd
 from dash import Input, Output, State, dash
 from dash_extensions.javascript import arrow_function, assign
 
-from climatefinancebert_ui.components import constants, ids, infobox_country, map_mode, reset_button
+from climatefinancebert_ui.components import constants, ids
 from climatefinancebert_ui.components.utils import merge_data, prepare_data_for_merge
 
 classes = [0, 10, 20, 50, 100, 200, 500, 1000]
@@ -84,7 +84,7 @@ def register(app):
                     url=constants.GEOJSON_URL,
                     id=ids.COUNTRIES_LAYER,
                     style={"fillColor": "dodgerblue", "color": "dodgerblue"},
-                    hoverStyle=arrow_function(dict(weight=5, color="#666", dashArray="")),
+                    hoverStyle=arrow_function(dict(weight=4, color="#666", dashArray="")),
                 ),
             ]
         elif map_mode_value == "total":
@@ -94,9 +94,10 @@ def register(app):
                     id=ids.COUNTRIES_LAYER,
                     data=stored_geojson,
                     style=style_handle,  # how to style each polygon
-                    hoverStyle=arrow_function(
-                        dict(weight=5, color="#666", dashArray="")
-                    ),  # style applied on hover
+                    # TODO: commented out due to buggy hover behavior
+                    # hoverStyle=arrow_function(
+                    #     dict(weight=4, color="#666", dashArray="")
+                    # ),  # style applied on hover
                     hideout=dict(
                         colorscale=colorscale,
                         classes=classes,
