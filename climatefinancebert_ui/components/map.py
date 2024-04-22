@@ -1,6 +1,5 @@
 import dash_leaflet as dl
 from dash import Dash, html
-from dash_extensions.javascript import arrow_function
 
 from climatefinancebert_ui.components import (
     constants,
@@ -10,6 +9,7 @@ from climatefinancebert_ui.components import (
     infobox_country,
     infobox_environment,
     infobox_mitigation,
+    map_mode,
     reset_button,
 )
 
@@ -17,25 +17,39 @@ from climatefinancebert_ui.components import (
 def render(app: Dash) -> html.Div:
     return html.Div(
         children=[
+            html.Div(
+                children=[
+                    infobox_country.render(top="0px", bottom=None, right=None, left="100px"),
+                    map_mode.render(top="0px", bottom=None, right="500px", left=None),
+                    reset_button.render(top="0px", bottom=None, right="100px", left=None),
+                ],
+                style={
+                    "display": "flex",
+                    "flexWrap": "wrap",
+                    "justifyContent": "space-around",
+                    "alignItems": "center",
+                    "position": "absolute",
+                    "top": "20px",
+                    "left": 0,
+                    "right": 0,
+                    "padding": "0 20px",
+                },
+            ),
             dl.Map(
                 children=[
                     dl.TileLayer(),
+                    # render dummy map to be replaced by the callback
                     dl.GeoJSON(
                         url=constants.GEOJSON_URL,
                         id=ids.COUNTRIES_LAYER,
-                        hoverStyle=arrow_function(
-                            dict(weight=4, color="#666", dashArray="")
-                        ),
+                        style={"fillColor": "dodgerblue", "color": "dodgerblue"},
+                        # hoverStyle=arrow_function(dict(weight=4, color="#666", dashArray="")),
                         zoomToBoundsOnClick=True,
                         # zoomToBounds=True,
                         interactive=True,
                     ),
-                    infobox_country.render(
-                        top="20px", bottom=None, right=None, left="100px"
-                    ),
-                    reset_button.render(
-                        top="20px", bottom=None, right="100px", left=None
-                    ),
+                    infobox_country.render(top="20px", bottom=None, right=None, left="100px"),
+                    reset_button.render(top="20px", bottom=None, right="100px", left=None),
                 ],
                 id=ids.MAP,
                 center=constants.INITIAL_CENTER,
@@ -48,6 +62,12 @@ def render(app: Dash) -> html.Div:
                 scrollWheelZoom=False,
             ),
             html.Div(
+                children=[
+                    # infobox_climatefinance.render(),
+                    infobox_environment.render(),
+                    infobox_adaptation.render(),
+                    infobox_mitigation.render(),
+                ],
                 style={
                     "display": "flex",
                     "flexWrap": "wrap",
@@ -59,12 +79,6 @@ def render(app: Dash) -> html.Div:
                     "right": 0,
                     "padding": "0 20px",
                 },
-                children=[
-                    # infobox_climatefinance.render(),
-                    infobox_environment.render(),
-                    infobox_adaptation.render(),
-                    infobox_mitigation.render(),
-                ],
             ),
         ],
         style={"position": "relative"},
