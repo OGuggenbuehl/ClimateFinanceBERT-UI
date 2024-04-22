@@ -48,8 +48,6 @@ def render(app: Dash) -> html.Div:
                         # zoomToBounds=True,
                         interactive=True,
                     ),
-                    infobox_country.render(top="20px", bottom=None, right=None, left="100px"),
-                    reset_button.render(top="20px", bottom=None, right="100px", left=None),
                 ],
                 id=ids.MAP,
                 center=constants.INITIAL_CENTER,
