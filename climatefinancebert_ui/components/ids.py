@@ -1,6 +1,7 @@
 YEAR_SLIDER = "year_slider"
 TYPE_DROPDOWN = "type_dropdown"
 CATEGORIES_DROPDOWN = "categories_dropdown"
+CATEGORIES_SUB_DROPDOWN = "categories_sub_dropdown"
 INFOBOX_COUNTRY = "country_info"
 INFOBOX_ADAPTATION = "adaptation_info"
 INFOBOX_MITIGATION = "mitigation_info"

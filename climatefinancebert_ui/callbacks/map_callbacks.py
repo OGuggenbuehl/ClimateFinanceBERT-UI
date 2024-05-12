@@ -8,7 +8,7 @@ from climatefinancebert_ui.components.utils import merge_data, prepare_data_for_
 
 classes = [0, 10, 20, 50, 100, 200, 500, 1000]
 colorscale = [
-    "#eeeeee",
+    "#A9A9A9",
     "#FED976",
     "#FEB24C",
     "#FD8D3C",
@@ -50,11 +50,13 @@ def register(app):
         [
             Input(ids.STORED_DATA, "data"),
             Input(ids.CATEGORIES_DROPDOWN, "value"),
+            Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
         ],
     )
     def update_stored_geojson(
         stored_data,
         selected_categories,
+        selected_subcategories,
     ):
         # retrieve stored dataframe and parse geojson
         df_stored = pd.DataFrame(stored_data)
@@ -63,6 +65,7 @@ def register(app):
         df_prepared = prepare_data_for_merge(
             df_stored,
             selected_categories=selected_categories,
+            selected_subcategories=selected_subcategories,
         )
 
         return merge_data(constants.GEOJSON_BASE, df_prepared)

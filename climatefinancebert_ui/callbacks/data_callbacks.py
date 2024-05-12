@@ -2,6 +2,7 @@ import pandas as pd
 from dash import Input, Output, dash_table, html
 
 from climatefinancebert_ui.components import ids, utils
+from climatefinancebert_ui.components.constants import CATEGORIES_DF
 
 
 def register(app):
@@ -10,11 +11,17 @@ def register(app):
         [
             Input(ids.TYPE_DROPDOWN, "value"),
             Input(ids.YEAR_SLIDER, "value"),
+            # TODO: find out how to implement categories filters into map coloring
+            # Input(ids.CATEGORIES_DROPDOWN, "value"),
+            # Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
         ],
     )
     def update_stored_data(
         selected_type,
         selected_years,
+        # TODO: activate categories filters if needed
+        # selected_categories,
+        # selected_subcategories,
     ):
         # TODO: Add docstring
         df_full = utils.fetch_data(selected_type)
@@ -22,19 +29,35 @@ def register(app):
         df_filtered = df_full[
             (df_full["effective_year"].between(selected_years[0], selected_years[1]))
         ]
-
+        # TODO: activate categories filters if needed for info boxes
+        # if selected_subcategories:
+        #     df_filtered = df_filtered[(df_filtered["climate_class"].isin(selected_subcategories))]
+        # elif selected_categories is not None:
+        #     df_filtered = df_filtered[(df_filtered["meta_category"].isin(selected_categories))]
         return df_filtered.to_dict("records")
+
+    @app.callback(
+        Output(ids.CATEGORIES_SUB_DROPDOWN, "options"),
+        Input(ids.CATEGORIES_DROPDOWN, "value"),
+    )
+    def set_meta_options(selected_climate_class):
+        # subset the available meta_categories based on the selected climate class
+        filtered_df = CATEGORIES_DF[CATEGORIES_DF["climate_class"].isin(selected_climate_class)]
+
+        return [{"label": i, "value": i} for i in filtered_df["meta_category"].unique()]
 
     @app.callback(
         Output(ids.DATATABLE, "children"),
         [
             Input(ids.CATEGORIES_DROPDOWN, "value"),
+            Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
             Input(ids.COUNTRIES_LAYER, "clickData"),
             Input(ids.STORED_DATA, "data"),
         ],
     )
     def build_datatable(
         selected_categories,
+        selected_subcategories,
         click_data=None,
         stored_data=None,
     ):
@@ -56,10 +79,16 @@ def register(app):
 
             # Filter the data based on the selected categories
             try:
-                df_filtered = df_stored[
-                    (df_stored["country_code"] == country_code)
-                    & (df_stored["meta_category"].isin(selected_categories))
-                ]
+                if selected_subcategories:
+                    df_filtered = df_stored[
+                        (df_stored["country_code"] == country_code)
+                        & (df_stored["climate_class"].isin(selected_subcategories))
+                    ]
+                else:
+                    df_filtered = df_stored[
+                        (df_stored["country_code"] == country_code)
+                        & (df_stored["meta_category"].isin(selected_categories))
+                    ]
             # this is needed to circumvent an error where filtering on a country
             # that has no data available for the selected categories and years
             # leads to a KeyError

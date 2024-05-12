@@ -1,8 +1,9 @@
 import dash_bootstrap_components as dbc
-from dash import Dash, Input, Output, State, html
+from dash import Dash, html
 
 from climatefinancebert_ui.components import (
     categories_dropdown,
+    categories_sub_dropdown,
     type_dropdown,
     year_slider,
 )
@@ -19,6 +20,8 @@ def render(app: Dash):
                             type_dropdown.render(app),
                             html.Br(),
                             categories_dropdown.render(app),
+                            html.Br(),
+                            categories_sub_dropdown.render(app),
                             html.Br(),
                             year_slider.render(app),
                         ],

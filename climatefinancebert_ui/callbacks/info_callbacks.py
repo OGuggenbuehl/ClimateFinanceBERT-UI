@@ -9,27 +9,35 @@ def register(app):
         Output(ids.INFOBOX_COUNTRY, "children"),
         [
             Input(ids.STORED_DATA, "data"),
+            Input(ids.MAP_MODE, "value"),
             Input(ids.COUNTRIES_LAYER, "hoverData"),
             Input(ids.COUNTRIES_LAYER, "clickData"),
         ],
     )
     def build_infobox_country(
         stored_data,
+        map_mode_value,
         hover_data=None,
         click_data=None,
     ):
         # TODO: Add docstring
         if not click_data and not hover_data:
             header = [html.H5("Country Information")]
-            return header + [html.P("Click on a country")]
+            if map_mode_value == "base":
+                return header + [
+                    html.Div("Hover over a country for information."),
+                ]
+            elif map_mode_value == "total":
+                return header + [
+                    html.Div("Hover over a country for information."),
+                    html.Div("Click on a country to zoom in."),
+                ]
 
         if click_data:
             country_name = click_data["properties"]["name"]
             country_id = click_data["id"]
         elif hover_data and not click_data:
-            country_name = hover_data["properties"][
-                "name"
-            ]  # Fixed to access 'properties'
+            country_name = hover_data["properties"]["name"]  # Fixed to access 'properties'
             country_id = hover_data["id"]
 
         header = [html.H5(country_name)]
