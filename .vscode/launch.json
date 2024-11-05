@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Dash",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/climatefinancebert_ui/app.py",
+            "console": "integratedTerminal",
+            "env": {
+                "FLASK_ENV": "development",
+                "FLASK_DEBUG": "1"
+            },
+            "args": []
+        }
+    ]
+}
