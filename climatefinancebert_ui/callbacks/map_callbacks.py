@@ -1,3 +1,5 @@
+import copy
+
 import dash_leaflet as dl
 import pandas as pd
 from dash import Input, Output, State, dash
@@ -68,7 +70,10 @@ def register(app):
             selected_subcategories=selected_subcategories,
         )
 
-        return merge_data(constants.GEOJSON_BASE, df_prepared)
+        # Create a deep copy of the base geojson to ensure it is not altered
+        geojson_copy = copy.deepcopy(constants.GEOJSON_BASE)
+
+        return merge_data(geojson_copy, df_prepared)
 
     @app.callback(
         Output(ids.MAP, "children"),
@@ -97,10 +102,10 @@ def register(app):
                     id=ids.COUNTRIES_LAYER,
                     data=stored_geojson,
                     style=style_handle,  # how to style each polygon
-                    # TODO: commented out due to buggy hover behavior
-                    # hoverStyle=arrow_function(
-                    #     dict(weight=4, color="#666", dashArray="")
-                    # ),  # style applied on hover
+                    # TODO: comment out due to buggy hover behavior
+                    hoverStyle=arrow_function(
+                        dict(weight=4, color="#666", dashArray="")
+                    ),  # style applied on hover
                     hideout=dict(
                         colorscale=colorscale,
                         classes=classes,

@@ -45,10 +45,18 @@ def prepare_data_for_merge(df, selected_categories, selected_subcategories):
 
 def merge_data(geojson, df):
     merge_dict = pd.Series(df.effective_funding.values, index=df["country_code"]).to_dict()
-    for feature in geojson["features"]:
-        # Set the density value from the dataframe to the GeoJSON feature
+
+    # Filter out features whose ID is not in the merge_dict
+    filtered_features = [feature for feature in geojson["features"] if feature["id"] in merge_dict]
+
+    # Update the properties of the remaining features
+    for feature in filtered_features:
         id = feature["id"]
         feature["properties"]["value"] = merge_dict.get(id, 0)
+
+    # Modify the GeoJSON to only include the filtered features
+    geojson["features"] = filtered_features
+
     return geojson
 
 
