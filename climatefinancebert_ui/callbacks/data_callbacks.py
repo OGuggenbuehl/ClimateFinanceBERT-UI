@@ -42,7 +42,9 @@ def register(app):
     )
     def set_meta_options(selected_climate_class):
         # subset the available meta_categories based on the selected climate class
-        filtered_df = CATEGORIES_DF[CATEGORIES_DF["climate_class"].isin(selected_climate_class)]
+        filtered_df = CATEGORIES_DF[
+            CATEGORIES_DF["climate_class"].isin(selected_climate_class)
+        ]
 
         return [{"label": i, "value": i} for i in filtered_df["meta_category"].unique()]
 

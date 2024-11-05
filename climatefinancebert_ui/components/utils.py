@@ -13,13 +13,12 @@ def fetch_data(selected_type: str):
     if selected_type == "donors":
         data_url = url_prefix + "/Donors/donors.csv"
 
-    else:
+    elif selected_type == "recipients":
         data_url = url_prefix + "/Recipients/recipients.csv"
 
     return pd.read_csv(data_url)
 
 
-# TODO: add 0 values for countries that are not in the dataframe
 def prepare_data_for_merge(df, selected_categories, selected_subcategories):
     """
     Prepare the data for merging with the GeoJSON data.
@@ -30,15 +29,9 @@ def prepare_data_for_merge(df, selected_categories, selected_subcategories):
         df_subset = df[df["meta_category"].isin(selected_categories)]
     else:
         df_subset = df
-    df_aggregated = df_subset.groupby("country_code")["effective_funding"].sum().reset_index()
 
-    # # TODO: check if necessary, maybe remove
-    # missing_countries = []
-    # for country_id in COUNTRY_IDS:
-    #     if country_id not in df_aggregated["country_code"].values:
-    #         missing_countries.append({"country_code": country_id, "effective_funding": 0})
-    # df_missing = pd.DataFrame(missing_countries)
-    # df_aggregated = pd.concat([df_aggregated, df_missing], ignore_index=True)
+    # aggregate data to country level
+    df_aggregated = df_subset.groupby("country_code")["effective_funding"].sum().reset_index()
 
     return df_aggregated
 

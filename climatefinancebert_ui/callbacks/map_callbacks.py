@@ -92,7 +92,9 @@ def register(app):
                     url=constants.GEOJSON_URL,
                     id=ids.COUNTRIES_LAYER,
                     style={"fillColor": "dodgerblue", "color": "dodgerblue"},
-                    hoverStyle=arrow_function(dict(weight=4, color="#666", dashArray="")),
+                    hoverStyle=arrow_function(
+                        dict(weight=4, color="#666", dashArray="")
+                    ),
                 ),
             ]
         elif map_mode_value == "total":

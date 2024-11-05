@@ -37,7 +37,9 @@ def register(app):
             country_name = click_data["properties"]["name"]
             country_id = click_data["id"]
         elif hover_data and not click_data:
-            country_name = hover_data["properties"]["name"]  # Fixed to access 'properties'
+            country_name = hover_data["properties"][
+                "name"
+            ]  # Fixed to access 'properties'
             country_id = hover_data["id"]
 
         header = [html.H5(country_name)]
