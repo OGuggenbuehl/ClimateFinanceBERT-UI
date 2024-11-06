@@ -1,7 +1,6 @@
+from components import ids
+from components.constants import CATEGORIES_DF
 from dash import Dash, dcc, html
-
-from climatefinancebert_ui.components import ids
-from climatefinancebert_ui.components.constants import CATEGORIES_DF
 
 
 def render(app: Dash) -> html.Div:

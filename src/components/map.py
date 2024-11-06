@@ -1,7 +1,5 @@
 import dash_leaflet as dl
-from dash import Dash, html
-
-from climatefinancebert_ui.components import (
+from components import (
     constants,
     ids,
     infobox_adaptation,
@@ -12,6 +10,7 @@ from climatefinancebert_ui.components import (
     map_mode,
     reset_button,
 )
+from dash import Dash, html
 
 
 def render(app: Dash) -> html.Div:
@@ -19,13 +18,9 @@ def render(app: Dash) -> html.Div:
         children=[
             html.Div(
                 children=[
-                    infobox_country.render(
-                        top="0px", bottom=None, right=None, left="100px"
-                    ),
+                    infobox_country.render(top="0px", bottom=None, right=None, left="100px"),
                     map_mode.render(top="0px", bottom=None, right="37.5%", left=None),
-                    reset_button.render(
-                        top="0px", bottom=None, right="100px", left=None
-                    ),
+                    reset_button.render(top="0px", bottom=None, right="100px", left=None),
                 ],
                 style={
                     "display": "flex",

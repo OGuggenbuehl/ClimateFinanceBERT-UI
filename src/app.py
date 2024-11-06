@@ -1,13 +1,12 @@
-from dash import Dash
-from dash_bootstrap_components.themes import BOOTSTRAP
-
-from climatefinancebert_ui.callbacks import (
+from callbacks import (
     data_callbacks,
     general_callbacks,
     info_callbacks,
     map_callbacks,
 )
-from climatefinancebert_ui.components.layout import create_layout
+from components.layout import create_layout
+from dash import Dash
+from dash_bootstrap_components.themes import BOOTSTRAP
 
 
 def main():

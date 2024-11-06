@@ -66,7 +66,11 @@ if __name__ == "__main__":
     df_subset = data[(data["climate_class"] == "Bioenergy") & (data["effective_year"] == 2012)]
 
     # Prepare data for merging
-    df_prepared = prepare_data_for_merge(df_subset, selected_categories=["Bioenergy"])
+    df_prepared = prepare_data_for_merge(
+        df_subset,
+        selected_categories=["Environment"],
+        selected_subcategories=["Bioenergy"],
+    )
     print(df_prepared)
 
     merged = merge_data(geojson_data, df_prepared)

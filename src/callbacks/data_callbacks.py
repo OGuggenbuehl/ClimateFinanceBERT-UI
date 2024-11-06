@@ -1,8 +1,7 @@
 import pandas as pd
+from components import ids, utils
+from components.constants import CATEGORIES_DF
 from dash import Input, Output, dash_table, html
-
-from climatefinancebert_ui.components import ids, utils
-from climatefinancebert_ui.components.constants import CATEGORIES_DF
 
 
 def register(app):
@@ -42,9 +41,7 @@ def register(app):
     )
     def set_meta_options(selected_climate_class):
         # subset the available meta_categories based on the selected climate class
-        filtered_df = CATEGORIES_DF[
-            CATEGORIES_DF["climate_class"].isin(selected_climate_class)
-        ]
+        filtered_df = CATEGORIES_DF[CATEGORIES_DF["climate_class"].isin(selected_climate_class)]
 
         return [{"label": i, "value": i} for i in filtered_df["meta_category"].unique()]
 

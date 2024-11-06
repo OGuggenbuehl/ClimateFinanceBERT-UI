@@ -2,11 +2,10 @@ import copy
 
 import dash_leaflet as dl
 import pandas as pd
+from components import constants, ids
+from components.utils import merge_data, prepare_data_for_merge
 from dash import Input, Output, State, dash
 from dash_extensions.javascript import arrow_function, assign
-
-from climatefinancebert_ui.components import constants, ids
-from climatefinancebert_ui.components.utils import merge_data, prepare_data_for_merge
 
 classes = [0, 10, 20, 50, 100, 200, 500, 1000]
 colorscale = [
@@ -92,9 +91,7 @@ def register(app):
                     url=constants.GEOJSON_URL,
                     id=ids.COUNTRIES_LAYER,
                     style={"fillColor": "dodgerblue", "color": "dodgerblue"},
-                    hoverStyle=arrow_function(
-                        dict(weight=4, color="#666", dashArray="")
-                    ),
+                    hoverStyle=arrow_function(dict(weight=4, color="#666", dashArray="")),
                 ),
             ]
         elif map_mode_value == "total":

@@ -2,10 +2,9 @@
 # GLOBALS                                                                       #
 #################################################################################
 
-ENVNAME := $(shell poetry env info --path)
+PROJECT_ROOT := $(shell pwd)
+ENVNAME := $(shell pwd)/.venv
 VENV := $(ENVNAME)/bin
-
-PROJECT_NAME = climatefinancebert_ui
 PYTHON_INTERPRETER = $(VENV)/python
 
 
@@ -15,16 +14,7 @@ PYTHON_INTERPRETER = $(VENV)/python
 
 .PHONY: run
 run:
-	$(PYTHON_INTERPRETER) climatefinancebert_ui/app.py
-
-.PHONY: clean
-clean:
-	find . -type f -name "*.py[co]" -delete
-	find . -type d -name "__pycache__" -delete
-
-	rm -rf .*_cache
-	rm -rf logs
-	rm -rf site
+	PYTHONPATH=$(PROJECT_ROOT) $(PYTHON_INTERPRETER) src/app.py
 
 .PHONY: test
 test:
@@ -39,6 +29,34 @@ lint:
 .PHONY: format
 format:
 	ruff format .
+
+
+#################################################################################
+# SETUP
+#################################################################################
+
+.PHONY: install
+install: _install_uv _create_venv _install_dependencies
+
+.PHONY: _install_uv
+_install_uv:
+	@echo "Installing uv"
+	# Install uv only if not already installed
+	if ! command -v uv > /dev/null 2>&1; then \
+		curl -LsSf https://astral.sh/uv/install.sh | sh; \
+	else \
+		echo "uv is already installed"; \
+	fi
+
+.PHONY: _create_venv
+_create_venv:
+	@echo "Creating virtual environment"
+	uv venv  # This will create the virtual environment in .venv
+
+.PHONY: _install_dependencies
+_install_dependencies:
+	@echo "Installing dependencies"
+	uv sync --all-extras  # This will install the dependencies based on uv configuration
 
 
 #################################################################################

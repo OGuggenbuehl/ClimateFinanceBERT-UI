@@ -1,6 +1,5 @@
+from components import ids
 from dash import Input, Output, State
-
-from climatefinancebert_ui.components import ids
 
 
 def register(app):
