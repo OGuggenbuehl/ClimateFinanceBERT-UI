@@ -1,6 +1,5 @@
+from components import ids
 from dash import html
-
-from climatefinancebert_ui.components import ids
 
 
 def render(top: str, bottom: str, right: str, left: str):

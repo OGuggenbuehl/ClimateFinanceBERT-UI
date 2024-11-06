@@ -1,7 +1,6 @@
 import pandas as pd
+from components import ids
 from dash import Input, Output, html
-
-from climatefinancebert_ui.components import ids
 
 
 def register(app):

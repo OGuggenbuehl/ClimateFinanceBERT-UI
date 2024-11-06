@@ -1,12 +1,11 @@
 import dash_bootstrap_components as dbc
-from dash import Dash, html
-
-from climatefinancebert_ui.components import (
+from components import (
     categories_dropdown,
     categories_sub_dropdown,
     type_dropdown,
     year_slider,
 )
+from dash import Dash, html
 
 
 def render(app: Dash):

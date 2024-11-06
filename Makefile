@@ -1,28 +1,20 @@
 #################################################################################
 # GLOBALS                                                                       #
 #################################################################################
-ENVNAME := $(shell poetry env info --path)
-VENV := $(ENVNAME)/bin
 
-PROJECT_NAME = climatefinancebert_ui
+PROJECT_ROOT := $(shell pwd)
+ENVNAME := $(shell pwd)/.venv
+VENV := $(ENVNAME)/bin
 PYTHON_INTERPRETER = $(VENV)/python
 
 
 #################################################################################
 # COMMANDS                                                                      #
 #################################################################################
+
 .PHONY: run
 run:
-	$(PYTHON_INTERPRETER) climatefinancebert_ui/app.py
-
-.PHONY: clean
-clean:
-	find . -type f -name "*.py[co]" -delete
-	find . -type d -name "__pycache__" -delete
-
-	rm -rf .*_cache
-	rm -rf logs
-	rm -rf site
+	PYTHONPATH=$(PROJECT_ROOT) $(PYTHON_INTERPRETER) src/app.py
 
 .PHONY: test
 test:
@@ -37,6 +29,43 @@ lint:
 .PHONY: format
 format:
 	ruff format .
+
+
+#################################################################################
+# SETUP
+#################################################################################
+
+.PHONY: install
+install: _install_uv _create_venv _install_dependencies
+	@echo "Installation complete"
+	@echo "Execute make run to start the application"
+
+.PHONY: _install_uv
+_install_uv:
+	@echo "Installing uv"
+	@if ! command -v uv > /dev/null 2>&1; then \
+		curl -LsSf https://astral.sh/uv/install.sh | sh; \
+	else \
+		echo "uv is already installed"; \
+	fi
+
+
+.PHONY: _create_venv
+_create_venv:
+	@if [ ! -d ".venv" ]; then \
+		echo "Creating virtual environment"; \
+		uv venv; \
+	else \
+		echo "Virtual environment already exists"; \
+	fi
+
+
+.PHONY: _install_dependencies
+_install_dependencies:
+	@echo "Installing dependencies"
+	uv sync --all-extras
+
+
 #################################################################################
 # DOCKER
 #################################################################################

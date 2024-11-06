@@ -1,8 +1,7 @@
 import pandas as pd
+from components import ids, utils
+from components.constants import CATEGORIES_DF
 from dash import Input, Output, dash_table, html
-
-from climatefinancebert_ui.components import ids, utils
-from climatefinancebert_ui.components.constants import CATEGORIES_DF
 
 
 def register(app):

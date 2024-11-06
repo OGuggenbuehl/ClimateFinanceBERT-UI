@@ -1,7 +1,6 @@
+import components.ids as ids
 import dash_bootstrap_components as dbc
 from dash import html
-
-import climatefinancebert_ui.components.ids as ids
 
 
 def render(top: str, bottom: str, right: str, left: str):

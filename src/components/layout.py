@@ -1,7 +1,5 @@
 import dash_bootstrap_components as dbc
-from dash import Dash, dcc, html
-
-from climatefinancebert_ui.components import (
+from components import (
     constants,
     datatable,
     ids,
@@ -9,6 +7,7 @@ from climatefinancebert_ui.components import (
     navbar,
     sidebar,
 )
+from dash import Dash, dcc, html
 
 
 def create_layout(app: Dash) -> html.Div:
