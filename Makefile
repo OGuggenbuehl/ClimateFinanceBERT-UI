@@ -37,26 +37,33 @@ format:
 
 .PHONY: install
 install: _install_uv _create_venv _install_dependencies
+	@echo "Installation complete"
+	@echo "Execute make run to start the application"
 
 .PHONY: _install_uv
 _install_uv:
 	@echo "Installing uv"
-	# Install uv only if not already installed
-	if ! command -v uv > /dev/null 2>&1; then \
+	@if ! command -v uv > /dev/null 2>&1; then \
 		curl -LsSf https://astral.sh/uv/install.sh | sh; \
 	else \
 		echo "uv is already installed"; \
 	fi
 
+
 .PHONY: _create_venv
 _create_venv:
-	@echo "Creating virtual environment"
-	uv venv  # This will create the virtual environment in .venv
+	@if [ ! -d ".venv" ]; then \
+		echo "Creating virtual environment"; \
+		uv venv; \
+	else \
+		echo "Virtual environment already exists"; \
+	fi
+
 
 .PHONY: _install_dependencies
 _install_dependencies:
 	@echo "Installing dependencies"
-	uv sync --all-extras  # This will install the dependencies based on uv configuration
+	uv sync --all-extras
 
 
 #################################################################################
