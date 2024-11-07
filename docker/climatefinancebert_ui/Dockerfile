@@ -1,6 +1,3 @@
-# UV Image to fetch binary from
-ARG UV_VERSION=latest
-
 ### Base Image
 FROM python:3.12-slim-bookworm as base
 
@@ -26,8 +23,8 @@ WORKDIR /app
 COPY --from=ghcr.io/astral-sh/uv:0.4.30 /uv /uvx /bin/
 
 # Install python development dependencies
-RUN apt-get update && apt-get -y upgrade && \
-    apt-get install -y --no-install-recommends build-essential && \
+RUN apt-get update && \
+    apt-get -y upgrade && \
     rm -rf /var/lib/apt/lists/*
 
 # Install dependencies into virtual environment
