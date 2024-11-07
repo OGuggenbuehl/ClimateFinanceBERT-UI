@@ -36,7 +36,7 @@ format:
 #################################################################################
 
 .PHONY: install
-install: _install_uv _create_venv _install_dependencies
+install: _install_uv _create_venv _install_dependencies _install_direnv
 	@echo "Installation complete"
 	@echo "Execute make run to start the application"
 
@@ -64,6 +64,16 @@ _create_venv:
 _install_dependencies:
 	@echo "Installing dependencies"
 	uv sync --all-extras
+
+
+.PHONY: _install_direnv
+_install_direnv:
+	@echo "Installing direnv"
+	@if ! command -v direnv > /dev/null 2>&1; then \
+		curl -sfL https://direnv.net/install.sh | bash; \
+	else \
+		echo "direnv is already installed"; \
+	fi
 
 
 #################################################################################
