@@ -1,64 +1,63 @@
+# UV Image to fetch binary from
+ARG UV_VERSION=latest
+
 ### Base Image
-FROM python:3.11.5-slim-bullseye as base
+FROM python:3.12-slim-bookworm as base
 
 # Python settings
 ENV PYTHONFAULTHANDLER=1 \
     PYTHONHASHSEED=random \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 
 
 # Update system libraries
-RUN apt-get update -y && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+# Create a non-root user
+RUN useradd --create-home --shell /bin/bash appuser
 
 ### Build Image
 FROM base as builder
+
+# Set the working directory to /app during the build stage
+WORKDIR /app
+
+COPY --from=ghcr.io/astral-sh/uv:0.4.30 /uv /uvx /bin/
 
 # Install python development dependencies
 RUN apt-get update && apt-get -y upgrade && \
     apt-get install -y --no-install-recommends build-essential && \
     rm -rf /var/lib/apt/lists/*
 
-# Python settings
-ENV PIP_DEFAULT_TIMEOUT=100 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_NO_CACHE_DIR=1 \
-    POETRY_VERSION=1.7.1
-
-# Install Poetry
-RUN pip install "poetry==$POETRY_VERSION"
-
-# Create virtual environment
-RUN python -m venv /venv
-
 # Install dependencies into virtual environment
-COPY pyproject.toml poetry.lock ./
-RUN poetry export --no-ansi --no-interaction --without-hashes --format requirements.txt --output requirements.txt
-RUN /venv/bin/pip install --pre -r requirements.txt
-
-# Install app
-COPY . .
-RUN poetry build --no-ansi --no-interaction --format wheel && /venv/bin/pip install dist/*.whl
+COPY pyproject.toml uv.lock ./
+RUN uv venv
+RUN uv sync --frozen
 
 ### Final Image
 FROM base as final
 
+# Set the working directory to /home/app
+WORKDIR /home/app
+
 # Copy virtual environment with app and dependencies
-COPY --from=builder /venv /venv
+COPY --from=builder /app/.venv /home/app/.venv
+ENV VIRTUAL_ENV=/home/app/.venv
+ENV PATH="/home/app/.venv/bin:$PATH"
 
-# Activate virtual environment
-ENV VIRTUAL_ENV=/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+# Copy app code to /home/app
+COPY /src /home/app
 
-# copy app
-COPY /climatefinancebert_ui /app
+# Change ownership of the app directory to appuser
+RUN chown -R appuser:appuser /home/app
 
-# set workdir
-WORKDIR /app
+# Switch to non-root user
+USER appuser
 
 # Expose Dash
 EXPOSE 9000
 
-# run app
-ENTRYPOINT ["python"]
-CMD ["./app.py"]
+# Run app
+ENTRYPOINT [ "python" ]
+CMD [ "app.py" ]
