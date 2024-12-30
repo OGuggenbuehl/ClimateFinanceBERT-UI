@@ -3,9 +3,9 @@ import copy
 import dash_leaflet as dl
 import pandas as pd
 from components import constants, ids
-from components.utils import merge_data, prepare_data_for_merge
 from dash import Input, Output, State, dash
 from dash_extensions.javascript import arrow_function, assign
+from functions.data_operations import merge_data, prepare_data_for_merge
 
 classes = [0, 10, 20, 50, 100, 200, 500, 1000]
 colorscale = [

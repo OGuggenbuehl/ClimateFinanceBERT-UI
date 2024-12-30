@@ -1,7 +1,8 @@
 import pandas as pd
-from components import ids, utils
+from components import ids
 from components.constants import CATEGORIES_DF
 from dash import Input, Output, dash_table, html
+from functions import data_operations
 
 
 def register(app):
@@ -23,7 +24,7 @@ def register(app):
         # selected_subcategories,
     ):
         # TODO: Add docstring
-        df_full = utils.fetch_data(selected_type)
+        df_full = data_operations.fetch_data(selected_type)
 
         df_filtered = df_full[
             (df_full["effective_year"].between(selected_years[0], selected_years[1]))
