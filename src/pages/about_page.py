@@ -4,6 +4,7 @@ from dash import Dash, html
 
 def render(app: Dash) -> html.Div:
     return html.Div(
+        id="about-page",
         children=[
             dbc.Col(
                 [
@@ -22,5 +23,5 @@ def render(app: Dash) -> html.Div:
                     "offset": 3,
                 },
             ),
-        ]
+        ],
     )

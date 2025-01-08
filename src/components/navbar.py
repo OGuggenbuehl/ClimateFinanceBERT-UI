@@ -10,16 +10,15 @@ def render(app: Dash):
                 id="open-offcanvas",
                 n_clicks=0,
             ),
-            dbc.NavItem(dbc.NavLink("Map", href="#")),
             dbc.DropdownMenu(
                 children=[
-                    dbc.DropdownMenuItem("Home", header=True, href="/map"),
+                    dbc.DropdownMenuItem("Home", href="/"),
                     dbc.DropdownMenuItem("About", href="/about"),
                     dbc.DropdownMenuItem("Contact", href="/contact"),
                 ],
                 nav=True,
                 in_navbar=True,
-                label="More",
+                label="Pages",
             ),
         ],
         brand=app.title,
