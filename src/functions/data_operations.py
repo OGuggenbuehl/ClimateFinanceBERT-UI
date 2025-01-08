@@ -1,7 +1,8 @@
 import pandas as pd
+from typing import Literal
 
 
-def fetch_data(selected_type: str):
+def fetch_data(selected_type: Literal["donors", "recipients"]) -> pd.DataFrame:
     """
     Fetch the data from Github depending on the type dropdown.
     """
