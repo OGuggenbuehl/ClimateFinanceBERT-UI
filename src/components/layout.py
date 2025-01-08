@@ -1,17 +1,16 @@
 import dash_bootstrap_components as dbc
 from components import (
     constants,
-    datatable,
     ids,
-    map,
     navbar,
-    sidebar,
 )
 from dash import Dash, dcc, html
+from pages import map_page
 
 
 def create_layout(app: Dash) -> html.Div:
     return html.Div(
+        # dcc.Location(id=ids.URL, refresh=False),
         className="app-container",
         children=[
             navbar.render(app),
@@ -25,47 +24,10 @@ def create_layout(app: Dash) -> html.Div:
                 },
             ),
             dbc.Container(
-                fluid=True,  # Set the container to be fluid
+                id=ids.PAGE_CONTENT,
+                fluid=True,
                 children=[
-                    dbc.Col(
-                        [
-                            sidebar.render(app),
-                            dbc.Row(
-                                dbc.Col(
-                                    html.Div(
-                                        className="map-container",
-                                        children=[
-                                            dbc.Card(
-                                                map.render(app),
-                                                body=True,
-                                                className="map-card",
-                                            )
-                                        ],
-                                    ),
-                                    width=12,
-                                )
-                            ),
-                            html.Br(),
-                            dbc.Row(
-                                dbc.Col(
-                                    html.Div(
-                                        className="datatable-container",
-                                        children=[
-                                            dbc.Card(
-                                                datatable.render(),
-                                                body=True,
-                                            )
-                                        ],
-                                    ),
-                                    width=12,
-                                )
-                            ),
-                        ],
-                        width={
-                            "size": 12,
-                            "offset": 0,
-                        },
-                    ),
+                    map_page.render(app),
                 ],
             ),
         ],

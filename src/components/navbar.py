@@ -13,9 +13,9 @@ def render(app: Dash):
             dbc.NavItem(dbc.NavLink("Map", href="#")),
             dbc.DropdownMenu(
                 children=[
-                    dbc.DropdownMenuItem("More pages", header=True),
-                    dbc.DropdownMenuItem("About", href="#"),
-                    dbc.DropdownMenuItem("Contact", href="#"),
+                    dbc.DropdownMenuItem("Home", header=True, href="/map"),
+                    dbc.DropdownMenuItem("About", href="/about"),
+                    dbc.DropdownMenuItem("Contact", href="/contact"),
                 ],
                 nav=True,
                 in_navbar=True,
