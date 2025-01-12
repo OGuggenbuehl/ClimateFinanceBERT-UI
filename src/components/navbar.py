@@ -5,21 +5,9 @@ from dash import Dash
 def render(app: Dash):
     navbar = dbc.NavbarSimple(
         children=[
-            dbc.Button(
-                "Open Filters",
-                id="open-offcanvas",
-                n_clicks=0,
-            ),
-            dbc.DropdownMenu(
-                children=[
-                    dbc.DropdownMenuItem("Home", href="/"),
-                    dbc.DropdownMenuItem("About", href="/about"),
-                    dbc.DropdownMenuItem("Contact", href="/contact"),
-                ],
-                nav=True,
-                in_navbar=True,
-                label="Pages",
-            ),
+            dbc.NavItem(dbc.NavLink("Home", href="/")),
+            dbc.NavItem(dbc.NavLink("About", href="/about")),
+            dbc.NavItem(dbc.NavLink("Contact", href="/contact")),
         ],
         brand=app.title,
         brand_href="#",

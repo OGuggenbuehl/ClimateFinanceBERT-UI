@@ -5,11 +5,11 @@ from dash import Input, Output, State
 def register(app):
     @app.callback(
         Output("offcanvas", "is_open"),
-        Input("open-offcanvas", "n_clicks"),
+        Input(ids.OPEN_FILTERS, "n_clicks"),
         [State("offcanvas", "is_open")],
     )
     def toggle_sidebar(n1, is_open):
-        # TODO: Add docstring
+        """Toggle the sidebar when the button is clicked."""
         if n1:
             return not is_open
         return is_open
