@@ -11,7 +11,11 @@ from dash_bootstrap_components.themes import BOOTSTRAP
 
 
 def main():
-    app = Dash(__name__, external_stylesheets=[BOOTSTRAP])
+    app = Dash(
+        __name__,
+        external_stylesheets=[BOOTSTRAP],
+        suppress_callback_exceptions=True,
+    )
     page_callbacks.register(app)
     general_callbacks.register(app)
     data_callbacks.register(app)
