@@ -12,5 +12,8 @@
     "notebook.source.fixAll": "explicit",
     "notebook.source.organizeImports": "explicit"
   },
-    "python.envFile": "${workspaceFolder}/.env"
+    "python.envFile": "${workspaceFolder}/.env",
+    "editor.quickSuggestions": {
+    "strings": true
+  },
 }
