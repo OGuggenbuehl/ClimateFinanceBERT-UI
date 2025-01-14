@@ -1,14 +1,13 @@
 import dash_leaflet as dl
 from components import (
+    action_button,
     constants,
     ids,
     infobox_adaptation,
-    infobox_climatefinance,
     infobox_country,
     infobox_environment,
     infobox_mitigation,
     map_mode,
-    reset_button,
 )
 from dash import Dash, html
 
@@ -18,9 +17,22 @@ def render(app: Dash) -> html.Div:
         children=[
             html.Div(
                 children=[
-                    infobox_country.render(top="0px", bottom=None, right=None, left="100px"),
+                    infobox_country.render(
+                        top="0px", bottom=None, right=None, left="100px"
+                    ),
                     map_mode.render(top="0px", bottom=None, right="37.5%", left=None),
-                    reset_button.render(top="0px", bottom=None, right="100px", left=None),
+                    action_button.render(
+                        name="Open Filters",
+                        id=ids.OPEN_FILTERS,
+                        top="0px",
+                        right="100px",
+                    ),
+                    action_button.render(
+                        name="Reset Map",
+                        id=ids.RESET_MAP,
+                        top="50px",
+                        right="100px",
+                    ),
                 ],
                 style={
                     "display": "flex",
@@ -35,6 +47,7 @@ def render(app: Dash) -> html.Div:
                 },
             ),
             dl.Map(
+                id=ids.MAP,
                 children=[
                     dl.TileLayer(),
                     # render dummy map to be replaced by the callback
@@ -44,7 +57,6 @@ def render(app: Dash) -> html.Div:
                         style={"fillColor": "dodgerblue", "color": "dodgerblue"},
                     ),
                 ],
-                id=ids.MAP,
                 center=constants.INITIAL_CENTER,
                 zoom=constants.INITIAL_ZOOM,
                 style={"height": "85vh"},

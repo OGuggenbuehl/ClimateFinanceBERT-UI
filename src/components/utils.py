@@ -1,7 +1,9 @@
 import pandas as pd
 
 
-def fetch_data(selected_type: str):
+def fetch_data(
+    selected_type: str,
+) -> pd.DataFrame:
     """
     Fetch the data from Github depending on the type dropdown.
     """
@@ -19,9 +21,14 @@ def fetch_data(selected_type: str):
     return pd.read_csv(data_url)
 
 
-def prepare_data_for_merge(df, selected_categories, selected_subcategories):
+def prepare_data_for_merge(
+    df: pd.DataFrame,
+    selected_categories: str,
+    selected_subcategories: str,
+) -> pd.DataFrame:
     """
-    Prepare the data for merging with the GeoJSON data.
+    Prepare the data for merging with the GeoJSON data by aggregating the data to the country level
+    and filtering based on the selected categories and subcategories.
     """
     if selected_subcategories:
         df_subset = df[df["climate_class"].isin(selected_subcategories)]
@@ -31,16 +38,28 @@ def prepare_data_for_merge(df, selected_categories, selected_subcategories):
         df_subset = df
 
     # aggregate data to country level
-    df_aggregated = df_subset.groupby("country_code")["effective_funding"].sum().reset_index()
+    df_aggregated = (
+        df_subset.groupby("country_code")["effective_funding"].sum().reset_index()
+    )
 
     return df_aggregated
 
 
-def merge_data(geojson, df):
-    merge_dict = pd.Series(df.effective_funding.values, index=df["country_code"]).to_dict()
+def merge_data(
+    geojson: dict,
+    df: pd.DataFrame,
+) -> dict:
+    """
+    Merge the GeoJSON data with the DataFrame using country_code as the key.
+    """
+    merge_dict = pd.Series(
+        df.effective_funding.values, index=df["country_code"]
+    ).to_dict()
 
     # Filter out features whose ID is not in the merge_dict
-    filtered_features = [feature for feature in geojson["features"] if feature["id"] in merge_dict]
+    filtered_features = [
+        feature for feature in geojson["features"] if feature["id"] in merge_dict
+    ]
 
     # Update the properties of the remaining features
     for feature in filtered_features:
@@ -62,8 +81,10 @@ if __name__ == "__main__":
     geojson_data = response.json()
 
     # get df
-    data = fetch_data(selected_type="recipients")
-    df_subset = data[(data["climate_class"] == "Bioenergy") & (data["effective_year"] == 2012)]
+    data = fetch_data(selected_type="donors")
+    df_subset = data[
+        (data["climate_class"] == "Bioenergy") & (data["effective_year"] == 2012)
+    ]
 
     # Prepare data for merging
     df_prepared = prepare_data_for_merge(
