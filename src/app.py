@@ -1,3 +1,5 @@
+import os
+
 from callbacks import (
     data_callbacks,
     general_callbacks,
@@ -23,7 +25,11 @@ def main():
     map_callbacks.register(app)
     app.title = "ClimateFinanceBERT UI"
     app.layout = create_layout(app)
-    app.run_server(debug=True, host="0.0.0.0", port=9000)
+    app.run_server(
+        debug=True,
+        host=os.getenv("DOCKER_HOST", "127.0.0.1"),
+        port=os.getenv("DOCKER_PORT", "8050"),
+    )
 
 
 if __name__ == "__main__":

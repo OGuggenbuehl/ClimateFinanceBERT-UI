@@ -3,9 +3,9 @@ import copy
 import dash_leaflet as dl
 import pandas as pd
 from components import constants, ids
-from components.utils import merge_data, prepare_data_for_merge
 from dash import Input, Output, State, dash
 from dash_extensions.javascript import arrow_function, assign
+from functions.data_operations import merge_data, prepare_data_for_merge
 
 classes = [0, 10, 20, 50, 100, 200, 500, 1000]
 colorscale = [
@@ -52,21 +52,33 @@ def register(app):
             Input(ids.STORED_DATA, "data"),
             Input(ids.CATEGORIES_DROPDOWN, "value"),
             Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
+            Input(ids.YEAR_SLIDER, "value"),
         ],
     )
     def update_stored_geojson(
         stored_data,
         selected_categories,
         selected_subcategories,
+        selected_years,
     ):
         # retrieve stored dataframe and parse geojson
         df_stored = pd.DataFrame(stored_data)
+
+        # import pdb
+
+        # pdb.set_trace()
+        # import logging
+        # import os
+
+        # logger = logging.getLogger(__name__)
+        # logger.info(f"cwd: {os.getcwd()}")
 
         # prepare data for merging
         df_prepared = prepare_data_for_merge(
             df_stored,
             selected_categories=selected_categories,
             selected_subcategories=selected_subcategories,
+            year_range=selected_years,
         )
 
         # Create a deep copy of the base geojson to ensure it is not altered
@@ -91,7 +103,9 @@ def register(app):
                     url=constants.GEOJSON_URL,
                     id=ids.COUNTRIES_LAYER,
                     style={"fillColor": "dodgerblue", "color": "dodgerblue"},
-                    hoverStyle=arrow_function(dict(weight=4, color="#666", dashArray="")),
+                    hoverStyle=arrow_function(
+                        dict(weight=4, color="#666", dashArray="")
+                    ),
                 ),
             ]
         elif map_mode_value == "total":

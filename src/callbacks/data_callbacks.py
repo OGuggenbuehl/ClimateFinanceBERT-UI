@@ -1,7 +1,9 @@
 import pandas as pd
-from components import ids, utils
-from components.constants import CATEGORIES_DF
+from components import ids
+from components.constants import CATEGORIES_DF, COLS, SOURCE
 from dash import Input, Output, dash_table, html
+from functions import data_operations
+from functions.data_operations import subset_data_by_filters
 
 
 def register(app):
@@ -22,17 +24,31 @@ def register(app):
         # selected_categories,
         # selected_subcategories,
     ):
-        # TODO: Add docstring
-        df_full = utils.fetch_data(selected_type)
+        """Reads, subsets and stores data based on the set UI inputs.
 
-        df_filtered = df_full[
-            (df_full["effective_year"].between(selected_years[0], selected_years[1]))
-        ]
-        # TODO: activate categories filters if needed for info boxes
-        # if selected_subcategories:
-        #     df_filtered = df_filtered[(df_filtered["climate_class"].isin(selected_subcategories))]
-        # elif selected_categories is not None:
-        #     df_filtered = df_filtered[(df_filtered["meta_category"].isin(selected_categories))]
+        Args:
+            selected_type (str): Either 'donors' or 'recipients'
+            selected_years (list): A list of two integers representing the selected year range.
+
+        Returns:
+            list(dict): The stored data as a list of dictionaries.
+        """
+        # TODO: decouple the initial data read from the callback? (performance)
+        # read data from disk
+        df_full = data_operations.read_data(
+            selected_type,
+            source=SOURCE,
+            columns=COLS,
+        )
+        # subset data based on UI inputs
+        df_filtered = subset_data_by_filters(
+            df_full,
+            # TODO: activate categories filters if needed for info boxes
+            # selected_categories=None,
+            # selected_subcategories=None,
+            year_range=selected_years,
+        )
+        # return the filtered data as a list of dictionaries
         return df_filtered.to_dict("records")
 
     @app.callback(
@@ -41,7 +57,9 @@ def register(app):
     )
     def set_meta_options(selected_climate_class):
         # subset the available meta_categories based on the selected climate class
-        filtered_df = CATEGORIES_DF[CATEGORIES_DF["climate_class"].isin(selected_climate_class)]
+        filtered_df = CATEGORIES_DF[
+            CATEGORIES_DF["climate_class"].isin(selected_climate_class)
+        ]
 
         return [{"label": i, "value": i} for i in filtered_df["meta_category"].unique()]
 
@@ -80,12 +98,12 @@ def register(app):
             try:
                 if selected_subcategories:
                     df_filtered = df_stored[
-                        (df_stored["country_code"] == country_code)
+                        (df_stored["CountryCode"] == country_code)
                         & (df_stored["climate_class"].isin(selected_subcategories))
                     ]
                 else:
                     df_filtered = df_stored[
-                        (df_stored["country_code"] == country_code)
+                        (df_stored["CountryCode"] == country_code)
                         & (df_stored["meta_category"].isin(selected_categories))
                     ]
             # this is needed to circumvent an error where filtering on a country
