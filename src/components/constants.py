@@ -8,7 +8,7 @@ GEOJSON_URL = (
 GEOJSON_BASE = requests.get(GEOJSON_URL).json()
 
 # ClimateFinance-DataFrame
-SOURCE = "data/sampled_df.csv"
+SOURCE = "./data/sampled_df.csv"
 COLS = [
     "Year",
     "DEDonorcode",

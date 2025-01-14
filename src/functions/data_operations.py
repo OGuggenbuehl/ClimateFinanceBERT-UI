@@ -30,7 +30,10 @@ def read_data(
     return data.to_pandas()
 
 
-def reshape_by_type(df: pl.DataFrame, selected_type: str) -> pl.DataFrame:
+def reshape_by_type(
+    df: pl.DataFrame,
+    selected_type: str,
+) -> pl.DataFrame:
     """Reshape the table based on the selected type."""
     reshape_config = {
         "donors": {
@@ -61,7 +64,8 @@ def reshape_by_type(df: pl.DataFrame, selected_type: str) -> pl.DataFrame:
 
 
 def filter_data_by_donor_type(
-    df: pl.DataFrame, donor_type: Literal["bilateral", "multilateral", "all"]
+    df: pl.DataFrame,
+    donor_type: Literal["bilateral", "multilateral", "all"],
 ) -> pl.DataFrame:
     """Filter the data based on the donor type."""
     if donor_type not in ["bilateral", "multilateral", "all"]:
@@ -78,6 +82,25 @@ def filter_data_by_donor_type(
         return df.filter(df["DonorType"] == donor_type_map[donor_type])
 
     return df  # No filtering needed if donor_type is "all"
+
+
+def prepare_data_for_merge(
+    df: pd.DataFrame,
+    selected_categories: Optional[list[str]] = None,
+    selected_subcategories: Optional[list[str]] = None,
+    year_range: Optional[tuple[int, int]] = None,
+) -> pd.DataFrame:
+    """Prepare the data for merging with the GeoJSON data."""
+    # Filter the data according to inputs set in UI
+    df_subset = subset_data_by_filters(
+        df,
+        selected_categories=selected_categories,
+        selected_subcategories=selected_subcategories,
+        year_range=year_range,
+    )
+
+    # Aggregate data to country level for display
+    return aggregate_to_country_level(df_subset)
 
 
 def subset_data_by_filters(
@@ -105,31 +128,12 @@ def subset_data_by_filters(
 
 
 def aggregate_to_country_level(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Aggregate data to the country level by summing USD_Disbursement.
-    """
+    """Aggregate data to the country level by summing USD_Disbursement."""
     return df.groupby("CountryCode")["USD_Disbursement"].sum().reset_index()
 
 
-def prepare_data_for_merge(
-    df: pd.DataFrame,
-    selected_categories: Optional[list[str]] = None,
-    selected_subcategories: Optional[list[str]] = None,
-    year_range: Optional[tuple[int, int]] = None,
-) -> pd.DataFrame:
-    """
-    Prepare the data for merging with the GeoJSON data.
-    """
-    # Filter the data
-    df_subset = subset_data_by_filters(
-        df, selected_categories, selected_subcategories, year_range
-    )
-
-    # Aggregate data to country level
-    return aggregate_to_country_level(df_subset)
-
-
 def merge_data(geojson: dict, df: pd.DataFrame) -> dict:
+    """Merge the GeoJSON data with the DataFrame data to add the ClimFin-Data to each polygon."""
     merge_dict = pd.Series(
         df.USD_Disbursement.values, index=df["CountryCode"]
     ).to_dict()

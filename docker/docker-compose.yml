@@ -7,6 +7,9 @@ services:
       context: ./../
       dockerfile: docker/climatefinancebert_ui/Dockerfile
     ports: 
-      - "9000:9000"
+      - 9000:9000
+    environment:
+      - DOCKER_HOST=0.0.0.0
+      - DOCKER_PORT=9000 
     # env_file: ./../.env
     tty: true

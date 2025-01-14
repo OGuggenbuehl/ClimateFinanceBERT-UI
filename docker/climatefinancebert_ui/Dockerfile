@@ -41,6 +41,9 @@ ENV PATH="/home/app/.venv/bin:$PATH"
 
 # Copy app source code
 COPY /src /home/app
+COPY /data /home/app/data 
+## TODO: remove data copying once we have a DB
+
 
 # Change ownership of the app directory and switch to non-root user 
 RUN chown -R appuser:appuser /home/app

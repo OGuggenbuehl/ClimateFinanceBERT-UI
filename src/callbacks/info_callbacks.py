@@ -36,13 +36,15 @@ def register(app):
             country_name = click_data["properties"]["name"]
             country_id = click_data["id"]
         elif hover_data and not click_data:
-            country_name = hover_data["properties"]["name"]  # Fixed to access 'properties'
+            country_name = hover_data["properties"][
+                "name"
+            ]  # Fixed to access 'properties'
             country_id = hover_data["id"]
 
         header = [html.H5(country_name)]
         try:
             stored_df = pd.DataFrame(stored_data)
-            df_subset = stored_df[stored_df["country_code"] == country_id]
+            df_subset = stored_df[stored_df["CountryCode"] == country_id]
             value = df_subset["gdp"].iloc[0]
 
             return header + [
@@ -79,7 +81,7 @@ def register(app):
             try:
                 df_filtered = data[
                     (data["meta_category"].isin(["Adaptation"]))
-                    & (data["country_code"] == country_code)
+                    & (data["CountryCode"] == country_code)
                 ]
             except KeyError:
                 return header + [html.P("No data available for this timespan.")]
@@ -91,7 +93,7 @@ def register(app):
                 return header + [html.P("No data available for this timespan.")]
 
         # Calculate the total volume of effective funding for the selected category
-        volume = df_filtered["effective_funding"].sum().round(2)
+        volume = df_filtered["USD_Disbursement"].sum().round(2)
 
         # Create a list to store the components of the infobox
         infobox_components = []
@@ -138,7 +140,7 @@ def register(app):
             try:
                 df_filtered = data[
                     (data["meta_category"].isin(["Environment"]))
-                    & (data["country_code"] == country_code)
+                    & (data["CountryCode"] == country_code)
                 ]
             except KeyError:
                 return header + [html.P("No data available for this timespan.")]
@@ -150,7 +152,7 @@ def register(app):
                 return header + [html.P("No data available for this timespan.")]
 
         # Calculate the total volume of effective funding for the selected category
-        volume = df_filtered["effective_funding"].sum().round(2)
+        volume = df_filtered["USD_Disbursement"].sum().round(2)
 
         # Create a list to store the components of the infobox
         infobox_components = []
@@ -197,7 +199,7 @@ def register(app):
             try:
                 df_filtered = data[
                     (data["meta_category"].isin(["Mitigation"]))
-                    & (data["country_code"] == country_code)
+                    & (data["CountryCode"] == country_code)
                 ]
             except KeyError:
                 return header + [html.P("No data available for this timespan.")]
@@ -209,7 +211,7 @@ def register(app):
                 return header + [html.P("No data available for this timespan.")]
 
         # Calculate the total volume of effective funding for the selected category
-        volume = df_filtered["effective_funding"].sum().round(2)
+        volume = df_filtered["USD_Disbursement"].sum().round(2)
 
         # Create a list to store the components of the infobox
         infobox_components = []
@@ -253,12 +255,12 @@ def register(app):
     #         country_code = click_data["id"]
     #         df_filtered = data[
     #             (data["meta_category"].isin(["Mitigation"]))
-    #             & (data["country_code"] == country_code)
+    #             & (data["CountryCode"] == country_code)
     #         ]
     #     else:
     #         df_filtered = data[(data["meta_category"].isin(["Mitigation"]))]
 
-    #     volume = df_filtered.effective_funding.sum().round(2)
+    #     volume = df_filtered.USD_Disbursement.sum().round(2)
 
     #     # return header + [html.P(f"Volume: {volume}")]
     #     return header + [html.P("No data for ClimateFinance.")]
