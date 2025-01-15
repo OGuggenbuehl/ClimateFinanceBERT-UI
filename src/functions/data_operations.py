@@ -154,7 +154,7 @@ def build_oecd_table(
     selected_type: Literal["donors", "recipients"],
     year_range: Optional[tuple[int, int]],
     selected_categories: Optional[list[str]],
-):
+) -> pd.DataFrame:
     """
     Build the OECD table based on the selected type, year range, and selected categories.
     Args:
@@ -215,7 +215,7 @@ def build_ClimFinBERT_table(
     year_range: Optional[tuple[int, int]],
     selected_categories: Optional[list[str]],
     selected_subcategories: Optional[list[str]] = None,
-):
+) -> pd.DataFrame:
     """Build the ClimFinBERT table based on the selected type, year range, selected categories, and selected subcategories.
 
     Args:
@@ -263,7 +263,7 @@ def build_difference_table(
     selected_type: Literal["donors", "recipients"],
     year_range: Optional[tuple[int, int]],
     selected_categories: Optional[list[str]],
-):
+) -> pd.DataFrame:
     """Build the difference table based on the selected type, year range, and selected categories.
 
     Args:
@@ -291,7 +291,19 @@ def build_difference_table(
     return diff_df
 
 
-def calculate_difference(oecd_df, ClimFinBERT_df):
+def calculate_difference(
+    oecd_df: pd.DataFrame,
+    ClimFinBERT_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """Calculate the difference between the OECD and ClimFinBERT data.
+
+    Args:
+        oecd_df (pd.DataFrame): The OECD DataFrame.
+        ClimFinBERT_df (pd.DataFrame): The ClimFinBERT DataFrame.
+
+    Returns:
+        pd.DataFrame: The difference DataFrame between the OECD and ClimFinBERT data.
+    """
     diff_df = pd.merge(
         oecd_df,
         ClimFinBERT_df,
