@@ -4,29 +4,24 @@ import pandas as pd
 import polars as pl
 
 
-def read_data(
+def prepare_data_for_types(
+    df: pl.DataFrame,
     selected_type: Literal["donors", "recipients"],
-    source: str,
-    columns: list,
     donor_type: Literal["bilateral", "multilateral", "all"] = "bilateral",
 ) -> pd.DataFrame:
-    """Read the data from the source and return the data based on the selected type and donor type.
+    """Prepare the data for the selected type and donor type.
 
     Args:
-        selected_type (Literal["donors", "recipients"]): Whether to return the donors or recipients
-        source (str): The path to the source file
-        columns (list): The columns to read from the source
-        donor_type (Literal["bilateral", "multilateral", "all"]): The type of donor to filter the data. Defaults to "bilateral".
+        df (pl.DataFrame): The input DataFrame as read from disk.
+        selected_type (str): The selected type of data to prepare. Either 'donors' or 'recipients'.
+        donor_type (str): The selected donor type if selected_type is 'donors'. Defaults to "bilateral".
 
     Returns:
-        pl.DataFrame: The data based on the selected type and donor type
+        pd.DataFrame: The prepared data based on the selected type and donor type.
     """
-    df = pl.read_csv(source=source, columns=columns)
-
     data = reshape_by_type(df, selected_type)
-
-    data = filter_data_by_donor_type(data, donor_type)
-
+    if selected_type == "donors":
+        data = filter_data_by_donor_type(data, donor_type)
     return data.to_pandas()
 
 
@@ -166,23 +161,29 @@ if __name__ == "__main__":
     import pandas as pd
     import polars as pl
     from components.constants import COLS, SOURCE
+    from components.dataset import load_full_dataset
 
-    data = read_data(
-        selected_type="donors",
+    # load full dataset
+    data_full = load_full_dataset(
         source=SOURCE,
         columns=COLS,
+    )
+    # prepare full dataset by transorming it based on selected types
+    data_prepared_for_types = prepare_data_for_types(
+        data_full,
+        selected_type="donors",
         donor_type="bilateral",
     )
-
     # Prepare data for merging
-    df_prepared = prepare_data_for_merge(
-        data,
+    df_prepared_for_merge = prepare_data_for_merge(
+        data_prepared_for_types,
         selected_categories=["Adaptation"],
         selected_subcategories=["Adaptation"],
         year_range=(2012, 2012),
     )
-    print(df_prepared)
+    # Merge the GeoJSON data with the DataFrame data
+    merged = merge_data(geojson_data, df_prepared_for_merge)
 
-    merged = merge_data(geojson_data, df_prepared)
+    # print out values of newly merged geojson
     for feature in merged["features"]:
         print(f'{feature["id"]}: {feature["properties"]["value"]}')

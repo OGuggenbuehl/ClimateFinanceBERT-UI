@@ -11,7 +11,7 @@ def render(top: str, bottom: str, right: str, left: str):
                 options=[
                     {"label": "Base", "value": "base"},
                     {"label": "Total Flows", "value": "total"},
-                    {"label": "Rio Markers", "value": "rio_markers", "disabled": True},
+                    {"label": "Rio Markers", "value": "rio_markers", "disabled": False},
                 ],
                 value="base",
                 id=ids.MAP_MODE,

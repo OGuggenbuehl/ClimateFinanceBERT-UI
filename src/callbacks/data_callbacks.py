@@ -1,9 +1,12 @@
 import pandas as pd
 from components import ids
-from components.constants import CATEGORIES_DF, COLS, SOURCE
+from components.constants import CATEGORIES_DF
+from components.dataset import get_dataset
 from dash import Input, Output, dash_table, html
-from functions import data_operations
-from functions.data_operations import subset_data_by_filters
+from functions.data_operations import (
+    prepare_data_for_types,
+    subset_data_by_filters,
+)
 
 
 def register(app):
@@ -33,16 +36,13 @@ def register(app):
         Returns:
             list(dict): The stored data as a list of dictionaries.
         """
-        # TODO: decouple the initial data read from the callback? (performance)
-        # read data from disk
-        df_full = data_operations.read_data(
-            selected_type,
-            source=SOURCE,
-            columns=COLS,
+        df_prepared = prepare_data_for_types(
+            df=get_dataset(),
+            selected_type=selected_type,
         )
         # subset data based on UI inputs
         df_filtered = subset_data_by_filters(
-            df_full,
+            df_prepared,
             # TODO: activate categories filters if needed for info boxes
             # selected_categories=None,
             # selected_subcategories=None,

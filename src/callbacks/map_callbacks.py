@@ -63,16 +63,6 @@ def register(app):
     ):
         # retrieve stored dataframe and parse geojson
         df_stored = pd.DataFrame(stored_data)
-
-        # import pdb
-
-        # pdb.set_trace()
-        # import logging
-        # import os
-
-        # logger = logging.getLogger(__name__)
-        # logger.info(f"cwd: {os.getcwd()}")
-
         # prepare data for merging
         df_prepared = prepare_data_for_merge(
             df_stored,
@@ -119,6 +109,26 @@ def register(app):
                     hoverStyle=arrow_function(
                         dict(weight=4, color="#666", dashArray="")
                     ),  # style applied on hover
+                    hideout=dict(
+                        colorscale=colorscale,
+                        classes=classes,
+                        style=style,
+                        polyColoring="value",
+                    ),
+                    zoomToBoundsOnClick=True,
+                    interactive=True,
+                ),
+            ]
+        elif map_mode_value == "rio_markers":
+            return [
+                dl.TileLayer(),
+                dl.GeoJSON(
+                    id=ids.COUNTRIES_LAYER,
+                    data=stored_geojson,
+                    style=style_handle,
+                    hoverStyle=arrow_function(
+                        dict(weight=4, color="#666", dashArray="")
+                    ),
                     hideout=dict(
                         colorscale=colorscale,
                         classes=classes,
