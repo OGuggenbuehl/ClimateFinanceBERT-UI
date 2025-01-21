@@ -11,7 +11,17 @@ def render(top: str, bottom: str, right: str, left: str):
                 options=[
                     {"label": "Base", "value": "base"},
                     {"label": "Total Flows", "value": "total"},
-                    {"label": "Rio Markers", "value": "rio_markers", "disabled": False},
+                    {
+                        "label": "OECD Rio Markers",
+                        "value": "rio_oecd",
+                        "disabled": False,
+                    },
+                    {
+                        "label": "ClimateFinanceBERT Predictions",
+                        "value": "rio_climfinbert",
+                        "disabled": False,
+                    },
+                    {"label": "Difference", "value": "rio_diff", "disabled": False},
                 ],
                 value="base",
                 id=ids.MAP_MODE,

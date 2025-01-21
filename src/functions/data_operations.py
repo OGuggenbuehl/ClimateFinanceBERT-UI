@@ -95,7 +95,11 @@ def prepare_data_for_merge(
     )
 
     # Aggregate data to country level for display
-    return aggregate_to_country_level(df_subset)
+    return aggregate_to_country_level(
+        df_subset,
+        group_by="CountryCode",
+        target="USD_Disbursement",
+    )
 
 
 def subset_data_by_filters(
@@ -122,9 +126,13 @@ def subset_data_by_filters(
     return df_subset
 
 
-def aggregate_to_country_level(df: pd.DataFrame) -> pd.DataFrame:
-    """Aggregate data to the country level by summing USD_Disbursement."""
-    return df.groupby("CountryCode")["USD_Disbursement"].sum().reset_index()
+def aggregate_to_country_level(
+    df: pd.DataFrame,
+    group_by: str | list[str],
+    target: str = "USD_Disbursement",
+) -> pd.DataFrame:
+    """Aggregate data to the country level by summing the target variable (default USD_Disbursement)."""
+    return df.groupby(group_by).agg({target: "sum"}).reset_index()
 
 
 def merge_data(geojson: dict, df: pd.DataFrame) -> dict:
@@ -195,15 +203,10 @@ def build_oecd_table(
     df = df[filter_condition]
 
     # Aggregate data to country level by summing USD_Disbursement
-    df = (
-        df.groupby(
-            [
-                "CountryCode",
-                "Year",
-            ]
-        )
-        .agg({"USD_Disbursement": "sum"})
-        .reset_index()
+    df = aggregate_to_country_level(
+        df,
+        group_by=["CountryCode", "Year"],
+        target="USD_Disbursement",
     )
 
     return df
@@ -253,7 +256,11 @@ def build_ClimFinBERT_table(
         grouping_columns.append("climate_class")
 
     # Group and aggregate data based on the filters
-    df = df.groupby(grouping_columns).agg({"USD_Disbursement": "sum"}).reset_index()
+    df = aggregate_to_country_level(
+        df,
+        group_by=grouping_columns,
+        target="USD_Disbursement",
+    )
 
     return df
 

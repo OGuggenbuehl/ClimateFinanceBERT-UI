@@ -13,6 +13,7 @@ def register(app):
     @app.callback(
         Output(ids.STORED_DATA, "data"),
         [
+            # Input(ids.MAP_MODE, "value"),
             Input(ids.TYPE_DROPDOWN, "value"),
             Input(ids.YEAR_SLIDER, "value"),
             # TODO: find out how to implement categories filters into map coloring
@@ -21,6 +22,7 @@ def register(app):
         ],
     )
     def update_stored_data(
+        # map_mode,
         selected_type,
         selected_years,
         # TODO: activate categories filters if needed
@@ -78,10 +80,7 @@ def register(app):
         click_data=None,
         stored_data=None,
     ):
-        """
-        Build the datatable based on the input elements and
-        the selected map element.
-        """
+        """Build the datatable based on the input elements and the selected map element."""
         # TODO: Bugfix when no data is available
         if not click_data:
             return html.H4("Click a country to render a datatable")

@@ -4,33 +4,9 @@ import dash_leaflet as dl
 import pandas as pd
 from components import constants, ids
 from dash import Input, Output, State, dash
-from dash_extensions.javascript import arrow_function, assign
+from dash_extensions.javascript import arrow_function
 from functions.data_operations import merge_data, prepare_data_for_merge
-
-classes = [0, 10, 20, 50, 100, 200, 500, 1000]
-colorscale = [
-    "#A9A9A9",
-    "#FED976",
-    "#FEB24C",
-    "#FD8D3C",
-    "#FC4E2A",
-    "#E31A1C",
-    "#BD0026",
-    "#800026",
-]
-style = dict(weight=2, opacity=1, color="white", dashArray="3", fillOpacity=0.7)
-
-# Geojson rendering logic, must be JavaScript as it is executed in clientside.
-style_handle = assign("""function(feature, context){
-    const {classes, colorscale, style, polyColoring} = context.hideout;  // get props from hideout
-    const value = feature.properties[polyColoring];  // get value the determines the color
-    for (let i = 0; i < classes.length; ++i) {
-        if (value > classes[i]) {
-            style.fillColor = colorscale[i];  // set the fill color according to the class
-        }
-    }
-    return style;
-}""")
+from functions.map_styler import style_map
 
 
 def register(app):
@@ -92,13 +68,14 @@ def register(app):
                 dl.GeoJSON(
                     url=constants.GEOJSON_URL,
                     id=ids.COUNTRIES_LAYER,
-                    style={"fillColor": "dodgerblue", "color": "dodgerblue"},
+                    style=style_map(map_mode_value),
                     hoverStyle=arrow_function(
                         dict(weight=4, color="#666", dashArray="")
                     ),
                 ),
             ]
-        elif map_mode_value == "total":
+        else:
+            classes, colorscale, style, style_handle = style_map(map_mode_value)
             return [
                 dl.TileLayer(),
                 dl.GeoJSON(
@@ -109,26 +86,6 @@ def register(app):
                     hoverStyle=arrow_function(
                         dict(weight=4, color="#666", dashArray="")
                     ),  # style applied on hover
-                    hideout=dict(
-                        colorscale=colorscale,
-                        classes=classes,
-                        style=style,
-                        polyColoring="value",
-                    ),
-                    zoomToBoundsOnClick=True,
-                    interactive=True,
-                ),
-            ]
-        elif map_mode_value == "rio_markers":
-            return [
-                dl.TileLayer(),
-                dl.GeoJSON(
-                    id=ids.COUNTRIES_LAYER,
-                    data=stored_geojson,
-                    style=style_handle,
-                    hoverStyle=arrow_function(
-                        dict(weight=4, color="#666", dashArray="")
-                    ),
                     hideout=dict(
                         colorscale=colorscale,
                         classes=classes,
