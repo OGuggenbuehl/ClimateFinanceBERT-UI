@@ -81,25 +81,46 @@ def filter_data_by_donor_type(
 
 def prepare_data_for_merge(
     df: pd.DataFrame,
+    map_mode: Literal["base", "total", "rio_oecd", "rio_climfinbert", "rio_diff"],
     selected_categories: Optional[list[str]] = None,
     selected_subcategories: Optional[list[str]] = None,
     year_range: Optional[tuple[int, int]] = None,
 ) -> pd.DataFrame:
     """Prepare the data for merging with the GeoJSON data."""
-    # Filter the data according to inputs set in UI
-    df_subset = subset_data_by_filters(
-        df,
-        selected_categories=selected_categories,
-        selected_subcategories=selected_subcategories,
-        year_range=year_range,
-    )
+    if map_mode == "total":
+        # Filter the data according to inputs set in UI
+        df_subset = subset_data_by_filters(
+            df,
+            selected_categories=selected_categories,
+            selected_subcategories=selected_subcategories,
+            year_range=year_range,
+        )
 
-    # Aggregate data to country level for display
-    return aggregate_to_country_level(
-        df_subset,
-        group_by="CountryCode",
-        target="USD_Disbursement",
-    )
+        # Aggregate data to country level for display
+        return aggregate_to_country_level(
+            df_subset,
+            group_by="CountryCode",
+            target="USD_Disbursement",
+        )
+    elif map_mode == "rio_oecd":
+        return build_oecd_table(
+            df,
+            year_range=year_range,
+            selected_categories=selected_categories,
+        )
+    elif map_mode == "rio_climfinbert":
+        return build_ClimFinBERT_table(
+            df,
+            year_range=year_range,
+            selected_categories=selected_categories,
+            selected_subcategories=selected_subcategories,
+        )
+    elif map_mode == "rio_diff":
+        return build_difference_table(
+            df,
+            year_range=year_range,
+            selected_categories=selected_categories,
+        )
 
 
 def subset_data_by_filters(
@@ -159,7 +180,6 @@ def merge_data(geojson: dict, df: pd.DataFrame) -> dict:
 
 def build_oecd_table(
     df: pd.DataFrame,
-    selected_type: Literal["donors", "recipients"],
     year_range: Optional[tuple[int, int]],
     selected_categories: Optional[list[str]],
 ) -> pd.DataFrame:
@@ -167,15 +187,13 @@ def build_oecd_table(
     Build the OECD table based on the selected type, year range, and selected categories.
     Args:
         df (pd.DataFrame): The input DataFrame as read from the global variable.
-        selected_type (str): The selected type of data to prepare. Either 'donors' or 'recipients'.
         year_range (tuple): A tuple of two integers representing the selected year range.
         selected_categories (list): A list of selected categories to filter the data.
 
     Returns:
         pd.DataFrame: The OECD table based on the selected type, year range, and selected categories, aggregated to the country level.
     """
-    df = prepare_data_for_types(df, selected_type)
-
+    # Apply filters based on categories and subcategories
     df = subset_data_by_filters(
         df,
         selected_categories=selected_categories,
@@ -205,7 +223,7 @@ def build_oecd_table(
     # Aggregate data to country level by summing USD_Disbursement
     df = aggregate_to_country_level(
         df,
-        group_by=["CountryCode", "Year"],
+        group_by="CountryCode",
         target="USD_Disbursement",
     )
 
@@ -214,7 +232,6 @@ def build_oecd_table(
 
 def build_ClimFinBERT_table(
     df: pd.DataFrame,
-    selected_type: Literal["donors", "recipients"],
     year_range: Optional[tuple[int, int]],
     selected_categories: Optional[list[str]],
     selected_subcategories: Optional[list[str]] = None,
@@ -223,7 +240,6 @@ def build_ClimFinBERT_table(
 
     Args:
         df (pd.DataFrame): The input DataFrame as read from the global variable.
-        selected_type (str): The selected type of data to prepare. Either 'donors' or 'recipients'.
         year_range (tuple[int, int], optional): A tuple of two integers representing the selected year range.
         selected_categories (list[str], optional): A list of selected categories to filter the data.
         selected_subcategories (list[str], optional): A list of selected subcategories to filter the data. Defaults to None.
@@ -231,9 +247,6 @@ def build_ClimFinBERT_table(
     Returns:
         pd.DataFrame: The ClimFinBERT table based on the selected type, year range, selected categories, and selected subcategories, aggregated to the country level.
     """
-    # Prepare data based on the selected type
-    df = prepare_data_for_types(df, selected_type)
-
     # Apply filters based on categories and subcategories
     df = subset_data_by_filters(
         df,
@@ -250,15 +263,10 @@ def build_ClimFinBERT_table(
     if selected_subcategories:
         df = df[df["climate_class"].isin(selected_subcategories)]
 
-    # Determine grouping columns based on the filters
-    grouping_columns = ["CountryCode", "Year", "meta_category"]
-    if selected_subcategories:
-        grouping_columns.append("climate_class")
-
     # Group and aggregate data based on the filters
     df = aggregate_to_country_level(
         df,
-        group_by=grouping_columns,
+        group_by="CountryCode",
         target="USD_Disbursement",
     )
 
@@ -267,7 +275,6 @@ def build_ClimFinBERT_table(
 
 def build_difference_table(
     df: pd.DataFrame,
-    selected_type: Literal["donors", "recipients"],
     year_range: Optional[tuple[int, int]],
     selected_categories: Optional[list[str]],
 ) -> pd.DataFrame:
@@ -275,7 +282,6 @@ def build_difference_table(
 
     Args:
         df (pd.DataFrame): The input DataFrame as read from the global variable.
-        selected_type (str): The selected type of data to prepare. Either 'donors' or 'recipients'.
         year_range (tuple[int, int], optional): A tuple of two integers representing the selected year range
         selected_categories (list[str], optional): A list of selected categories to filter the data.
 
@@ -284,13 +290,11 @@ def build_difference_table(
     """
     oecd_df = build_oecd_table(
         df,
-        selected_type,
         year_range,
         selected_categories,
     )
     ClimFinBERT_df = build_ClimFinBERT_table(
         df,
-        selected_type,
         year_range,
         selected_categories,
     )
@@ -314,7 +318,7 @@ def calculate_difference(
     diff_df = pd.merge(
         oecd_df,
         ClimFinBERT_df,
-        on=["CountryCode", "Year"],
+        on=["CountryCode"],
         how="outer",
         suffixes=("_OECD", "_ClimFinBERT"),
     )
@@ -357,9 +361,10 @@ if __name__ == "__main__":
         selected_subcategories=["Adaptation"],
         year_range=(2012, 2012),
     )
-    # Merge the GeoJSON data with the DataFrame data
-    merged = merge_data(geojson_data, df_prepared_for_merge)
+    print(df_prepared_for_merge)
+    # # Merge the GeoJSON data with the DataFrame data
+    # merged = merge_data(geojson_data, df_prepared_for_merge)
 
-    # print out values of newly merged geojson
-    for feature in merged["features"]:
-        print(f'{feature["id"]}: {feature["properties"]["value"]}')
+    # # print out values of newly merged geojson
+    # for feature in merged["features"]:
+    #     print(f'{feature["id"]}: {feature["properties"]["value"]}')

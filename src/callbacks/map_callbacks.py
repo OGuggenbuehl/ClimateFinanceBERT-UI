@@ -29,6 +29,7 @@ def register(app):
             Input(ids.CATEGORIES_DROPDOWN, "value"),
             Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
             Input(ids.YEAR_SLIDER, "value"),
+            Input(ids.MAP_MODE, "value"),
         ],
     )
     def update_stored_geojson(
@@ -36,6 +37,7 @@ def register(app):
         selected_categories,
         selected_subcategories,
         selected_years,
+        map_mode,
     ):
         # retrieve stored dataframe and parse geojson
         df_stored = pd.DataFrame(stored_data)
@@ -45,6 +47,7 @@ def register(app):
             selected_categories=selected_categories,
             selected_subcategories=selected_subcategories,
             year_range=selected_years,
+            map_mode=map_mode,
         )
 
         # Create a deep copy of the base geojson to ensure it is not altered
