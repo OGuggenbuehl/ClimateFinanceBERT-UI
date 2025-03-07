@@ -2,14 +2,22 @@ import logging
 
 import polars as pl
 
-# Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 def convert_csv_to_parquet(
-    csv_file: str, parquet_file: str, separator: str = ","
+    csv_file: str,
+    parquet_file: str,
+    separator: str = ",",
 ) -> None:
+    """Convert a CSV file to Parquet format.
+
+    Args:
+        csv_file (str): The path to the CSV file
+        parquet_file (str): The path to the resulting Parquet file
+        separator (str, optional): The separator used in the CSV file. Defaults to ",".
+    """
     logger.info(f"Converting {csv_file} to {parquet_file}...")
 
     # Read CSV lazily to avoid memory overload
@@ -24,5 +32,5 @@ def convert_csv_to_parquet(
 if __name__ == "__main__":
     convert_csv_to_parquet(
         csv_file="data/all_crs_labelled.csv",
-        parquet_file="data/testing_large.parquet",
+        parquet_file="data/ClimFinBERT_DB.parquet",
     )
