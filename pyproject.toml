@@ -13,6 +13,7 @@ dependencies = [
     "pandas>=2.2.3",
     "polars>=1.16.0",
     "pyarrow>=18.1.0",
+    "duckdb>=1.2.1",
 ]
 
 [tool.ruff]
