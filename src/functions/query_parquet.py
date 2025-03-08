@@ -34,8 +34,12 @@ def query_parquet_with_duckdb(
 
 
 if __name__ == "__main__":
-    db_path = "./data/ClimFinBERT_DB.parquet"
-    query = "SELECT * FROM parquet_scan('{parquet_db}') WHERE DEDonorcode = 'GBR' AND Year >= 2018;"
+    from components.constants import COLUMN_TYPES, PARQUET_SOURCE
 
-    result = query_parquet_with_duckdb(parquet_db=db_path, query=query)
+    columns_str = ", ".join(COLUMN_TYPES.keys())
+
+    query = f"SELECT {columns_str} FROM parquet_scan('{{parquet_db}}') WHERE DEDonorcode = 'GBR' AND Year >= 2018;"
+
+    result = query_parquet_with_duckdb(parquet_db=PARQUET_SOURCE, query=query)
     print(f"Resulting dataframe has dimensions: {result.shape}")
+    print(result.head())

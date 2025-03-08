@@ -8,32 +8,35 @@ GEOJSON_URL = (
 GEOJSON_BASE = requests.get(GEOJSON_URL).json()
 
 # ClimateFinance-DataFrame
-SOURCE = "./data/sampled_df.csv"
-COLS = [
-    "Year",
-    "DEDonorcode",
-    "DonorName",
-    "DERecipientcode",
-    "RecipientName",
-    "FlowCode",
-    "FlowName",
-    "USD_Commitment",
-    "USD_Disbursement",
-    "USD_Received",
-    "USD_Commitment_Defl",
-    "USD_Disbursement_Defl",
-    "USD_Received_Defl",
-    "Biodiversity",
-    "ClimateMitigation",
-    "ClimateAdaptation",
-    "Desertification",
-    "climate_relevance",
-    "climate_class_number",
-    "climate_class",
-    "meta_category",
-    "labelled_bilateral",
-    "DonorType",
-]
+RAW_SOURCE = "./data/all_crs_labelled.csv"
+PARQUET_SOURCE = "./data/ClimFinBERT_DB.parquet"
+DUCKDB_PATH = "./data/ClimFinBERT_DB.duckdb"
+
+COLUMN_TYPES = {
+    "Year": "INTEGER",
+    "DEDonorcode": "VARCHAR",
+    "DonorName": "VARCHAR",
+    "DERecipientcode": "VARCHAR",
+    "RecipientName": "VARCHAR",
+    "FlowCode": "BIGINT",
+    "FlowName": "VARCHAR",
+    "USD_Commitment": "DOUBLE",
+    "USD_Disbursement": "DOUBLE",
+    "USD_Received": "DOUBLE",
+    "USD_Commitment_Defl": "DOUBLE",
+    "USD_Disbursement_Defl": "DOUBLE",
+    "USD_Received_Defl": "DOUBLE",
+    "Biodiversity": "DOUBLE",
+    "ClimateMitigation": "DOUBLE",
+    "ClimateAdaptation": "DOUBLE",
+    "Desertification": "DOUBLE",
+    "climate_relevance": "DOUBLE",
+    "climate_class_number": "DOUBLE",
+    "climate_class": "VARCHAR",
+    "meta_category": "VARCHAR",
+    "labelled_bilateral": "BIGINT",
+    "DonorType": "VARCHAR",
+}
 
 # Initial map center and zoom level
 INITIAL_CENTER = [51.4934, 0.0098]
