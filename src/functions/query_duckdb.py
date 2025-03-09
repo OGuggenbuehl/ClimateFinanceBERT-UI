@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def query_duckdb_with_duckdb(
+def query_duckdb(
     duckdb_db: str,
     query: str,
 ) -> pd.DataFrame:
@@ -39,6 +39,6 @@ if __name__ == "__main__":
 
     query = "SELECT * FROM my_table WHERE DEDonorcode = 'GBR' AND Year >= 2018;"
 
-    result = query_duckdb_with_duckdb(duckdb_db=DUCKDB_PATH, query=query)
+    result = query_duckdb(duckdb_db=DUCKDB_PATH, query=query)
     print(f"Resulting dataframe has dimensions: {result.shape}")
     print(result.head())

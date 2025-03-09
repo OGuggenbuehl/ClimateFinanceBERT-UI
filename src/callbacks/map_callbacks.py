@@ -64,15 +64,6 @@ def register(app):
         # retrieve stored dataframe and parse geojson
         df_stored = pd.DataFrame(stored_data)
 
-        # import pdb
-
-        # pdb.set_trace()
-        # import logging
-        # import os
-
-        # logger = logging.getLogger(__name__)
-        # logger.info(f"cwd: {os.getcwd()}")
-
         # prepare data for merging
         df_prepared = prepare_data_for_merge(
             df_stored,

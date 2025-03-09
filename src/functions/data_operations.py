@@ -1,39 +1,12 @@
 from typing import Literal, Optional
 
 import pandas as pd
-import polars as pl
-
-
-def read_data(
-    selected_type: Literal["donors", "recipients"],
-    source: str,
-    columns: list,
-    donor_type: Literal["bilateral", "multilateral", "all"] = "bilateral",
-) -> pd.DataFrame:
-    """Read the data from the source and return the data based on the selected type and donor type.
-
-    Args:
-        selected_type (Literal["donors", "recipients"]): Whether to return the donors or recipients
-        source (str): The path to the source file
-        columns (list): The columns to read from the source
-        donor_type (Literal["bilateral", "multilateral", "all"]): The type of donor to filter the data. Defaults to "bilateral".
-
-    Returns:
-        pl.DataFrame: The data based on the selected type and donor type
-    """
-    df = pl.read_csv(source=source, columns=columns)
-
-    data = reshape_by_type(df, selected_type)
-
-    data = filter_data_by_donor_type(data, donor_type)
-
-    return data.to_pandas()
 
 
 def reshape_by_type(
-    df: pl.DataFrame,
+    df: pd.DataFrame,
     selected_type: str,
-) -> pl.DataFrame:
+) -> pd.DataFrame:
     """Reshape the table based on the selected type."""
     reshape_config = {
         "donors": {
@@ -52,21 +25,19 @@ def reshape_by_type(
         },
     }
 
-    # Validate the selected type
     if selected_type not in reshape_config:
         raise ValueError(
             "Invalid selected type. Please select either 'donors' or 'recipients'."
         )
 
-    # Apply the reshaping logic based on the selected type
     config = reshape_config[selected_type]
-    return df.drop(config["drop"]).rename(config["rename"])
+    return df.drop(config["drop"], axis=1).rename(config["rename"], axis=1)
 
 
 def filter_data_by_donor_type(
-    df: pl.DataFrame,
+    df: pd.DataFrame,
     donor_type: Literal["bilateral", "multilateral", "all"],
-) -> pl.DataFrame:
+) -> pd.DataFrame:
     """Filter the data based on the donor type."""
     if donor_type not in ["bilateral", "multilateral", "all"]:
         raise ValueError(
@@ -79,7 +50,7 @@ def filter_data_by_donor_type(
     }
 
     if donor_type in donor_type_map:
-        return df.filter(df["DonorType"] == donor_type_map[donor_type])
+        return df[df["DonorType"] == donor_type_map[donor_type]]
 
     return df  # No filtering needed if donor_type is "all"
 
@@ -156,30 +127,32 @@ def merge_data(geojson: dict, df: pd.DataFrame) -> dict:
 
 if __name__ == "__main__":
     import requests
+    from components.constants import DUCKDB_PATH
+    from functions.query_duckdb import query_duckdb
 
     # Retrieve GeoJSON data from URL
     geojson_url = "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
     response = requests.get(geojson_url)
     geojson_data = response.json()
 
-    # read sample df
-    import pandas as pd
-    import polars as pl
-    from components.constants import COLS, SOURCE
-
-    data = read_data(
-        selected_type="donors",
-        source=SOURCE,
-        columns=COLS,
-        donor_type="bilateral",
+    selected_years = (2014, 2020)
+    query = f"""
+            SELECT * FROM my_table
+            WHERE Year >= {selected_years[0]} AND Year <= {selected_years[1]};
+            """
+    df_queried = query_duckdb(
+        duckdb_db=DUCKDB_PATH,
+        query=query,
     )
+    df_type = reshape_by_type(df_queried, selected_type="donors")
+    data = filter_data_by_donor_type(df_type, donor_type="bilateral")
 
     # Prepare data for merging
     df_prepared = prepare_data_for_merge(
         data,
         selected_categories=["Adaptation"],
         selected_subcategories=["Adaptation"],
-        year_range=(2012, 2012),
+        year_range=(2016, 2016),
     )
     print(df_prepared)
 

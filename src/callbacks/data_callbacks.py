@@ -1,9 +1,9 @@
 import pandas as pd
 from components import ids
-from components.constants import CATEGORIES_DF, COLS, SOURCE
+from components.constants import CATEGORIES_DF, DUCKDB_PATH
 from dash import Input, Output, dash_table, html
-from functions import data_operations
-from functions.data_operations import subset_data_by_filters
+from functions.data_operations import filter_data_by_donor_type, reshape_by_type
+from functions.query_duckdb import query_duckdb
 
 
 def register(app):
@@ -33,23 +33,20 @@ def register(app):
         Returns:
             list(dict): The stored data as a list of dictionaries.
         """
-        # TODO: decouple the initial data read from the callback? (performance)
-        # read data from disk
-        df_full = data_operations.read_data(
-            selected_type,
-            source=SOURCE,
-            columns=COLS,
+        query = f"""
+            SELECT * FROM my_table
+            WHERE Year >= {selected_years[0]} AND Year <= {selected_years[1]};
+            """
+        df_filtered = query_duckdb(
+            duckdb_db=DUCKDB_PATH,
+            query=query,
         )
-        # subset data based on UI inputs
-        df_filtered = subset_data_by_filters(
-            df_full,
-            # TODO: activate categories filters if needed for info boxes
-            # selected_categories=None,
-            # selected_subcategories=None,
-            year_range=selected_years,
-        )
+        # process the returned data based on selected_type and donor_type
+        df_type = reshape_by_type(df_filtered, selected_type)
+        df_storage = filter_data_by_donor_type(df_type, donor_type="bilateral")
+
         # return the filtered data as a list of dictionaries
-        return df_filtered.to_dict("records")
+        return df_storage.to_dict("records")
 
     @app.callback(
         Output(ids.CATEGORIES_SUB_DROPDOWN, "options"),
