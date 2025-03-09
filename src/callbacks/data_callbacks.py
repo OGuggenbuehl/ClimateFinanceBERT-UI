@@ -1,9 +1,14 @@
+import logging
+
 import pandas as pd
 from components import ids
 from components.constants import CATEGORIES_DF, DUCKDB_PATH
 from dash import Input, Output, dash_table, html
-from functions.data_operations import filter_data_by_donor_type, reshape_by_type
+from functions.data_operations import reshape_by_type
 from functions.query_duckdb import query_duckdb
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def register(app):
@@ -12,6 +17,9 @@ def register(app):
         [
             Input(ids.TYPE_DROPDOWN, "value"),
             Input(ids.YEAR_SLIDER, "value"),
+            Input(ids.DONORTYPE_DROPDOWN, "value"),
+            Input(ids.CATEGORIES_DROPDOWN, "value"),
+            Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
             # TODO: find out how to implement categories filters into map coloring
             # Input(ids.CATEGORIES_DROPDOWN, "value"),
             # Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
@@ -20,9 +28,9 @@ def register(app):
     def update_stored_data(
         selected_type,
         selected_years,
-        # TODO: activate categories filters if needed
-        # selected_categories,
-        # selected_subcategories,
+        selected_donor_types,
+        selected_categories,
+        selected_subcategories,
     ):
         """Reads, subsets and stores data based on the set UI inputs.
 
@@ -33,20 +41,50 @@ def register(app):
         Returns:
             list(dict): The stored data as a list of dictionaries.
         """
+
+        # Construct SQL query
         query = f"""
-            SELECT * FROM my_table
-            WHERE Year >= {selected_years[0]} AND Year <= {selected_years[1]};
-            """
+        SELECT *
+        FROM my_table
+        WHERE Year BETWEEN {selected_years[0]} AND {selected_years[1]}
+        """
+
+        # construct type filter query if selected
+        if selected_categories:
+            if isinstance(selected_categories, list):
+                category_list = ",".join(f"'{cat}'" for cat in selected_categories)
+                query += f"AND meta_category IN ({category_list})"
+            else:
+                query += f"AND meta_category = '{selected_categories}'"
+
+        # construct subcategory filter query if selected
+        if selected_subcategories:
+            if isinstance(selected_subcategories, list):
+                subcategory_list = ",".join(
+                    f"'{sub}'" for sub in selected_subcategories
+                )
+                query += f" AND climate_class IN ({subcategory_list})"
+            else:
+                query += f" AND climate_class = '{selected_subcategories}'"
+
+        # construct donor type filter query if selected
+        if selected_donor_types:
+            if isinstance(selected_donor_types, list):
+                formatted_donor_types = tuple(
+                    donor_type for donor_type in selected_donor_types
+                )
+                query += f" AND DonorType IN {formatted_donor_types};"
+            else:
+                query += f" AND DonorType = '{selected_donor_types}';"
+
         df_filtered = query_duckdb(
             duckdb_db=DUCKDB_PATH,
             query=query,
         )
-        # process the returned data based on selected_type and donor_type
-        df_type = reshape_by_type(df_filtered, selected_type)
-        df_storage = filter_data_by_donor_type(df_type, donor_type="bilateral")
+        df_reshaped = reshape_by_type(df_filtered, selected_type)
 
-        # return the filtered data as a list of dictionaries
-        return df_storage.to_dict("records")
+        # return the filtered data as a list of  for storage
+        return df_reshaped.to_dict("records")
 
     @app.callback(
         Output(ids.CATEGORIES_SUB_DROPDOWN, "options"),

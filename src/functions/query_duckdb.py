@@ -25,8 +25,8 @@ def query_duckdb(
     start = time.time()
 
     con = duckdb.connect(database=duckdb_db)
-    formatted_query = query.format(duckdb_db=duckdb_db)
-    result_df = con.execute(formatted_query).fetchdf()
+    # formatted_query = query.format(duckdb_db=duckdb_db)
+    result_df = con.execute(query).fetchdf()
     con.close()
 
     end = time.time()

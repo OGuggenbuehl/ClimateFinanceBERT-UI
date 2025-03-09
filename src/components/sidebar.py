@@ -2,6 +2,7 @@ import dash_bootstrap_components as dbc
 from components import (
     categories_dropdown,
     categories_sub_dropdown,
+    donor_type_dropdown,
     type_dropdown,
     year_slider,
 )
@@ -17,6 +18,8 @@ def render(app: Dash):
                     dbc.Nav(
                         [
                             type_dropdown.render(app),
+                            html.Br(),
+                            donor_type_dropdown.render(app),
                             html.Br(),
                             categories_dropdown.render(app),
                             html.Br(),

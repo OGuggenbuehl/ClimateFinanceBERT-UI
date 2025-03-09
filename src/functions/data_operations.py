@@ -63,15 +63,15 @@ def prepare_data_for_merge(
 ) -> pd.DataFrame:
     """Prepare the data for merging with the GeoJSON data."""
     # Filter the data according to inputs set in UI
-    df_subset = subset_data_by_filters(
-        df,
-        selected_categories=selected_categories,
-        selected_subcategories=selected_subcategories,
-        year_range=year_range,
-    )
+    # df_subset = subset_data_by_filters(
+    #     df,
+    #     selected_categories=selected_categories,
+    #     selected_subcategories=selected_subcategories,
+    #     year_range=year_range,
+    # )
 
     # Aggregate data to country level for display
-    return aggregate_to_country_level(df_subset)
+    return aggregate_to_country_level(df)
 
 
 def subset_data_by_filters(
