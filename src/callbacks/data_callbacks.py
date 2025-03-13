@@ -5,7 +5,7 @@ from components import ids
 from components.constants import CATEGORIES_DF, DUCKDB_PATH
 from dash import Input, Output, dash_table, html
 from functions.data_operations import reshape_by_type
-from functions.query_duckdb import query_duckdb
+from functions.query_duckdb import construct_query, query_duckdb
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -20,9 +20,6 @@ def register(app):
             Input(ids.DONORTYPE_DROPDOWN, "value"),
             Input(ids.CATEGORIES_DROPDOWN, "value"),
             Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
-            # TODO: find out how to implement categories filters into map coloring
-            # Input(ids.CATEGORIES_DROPDOWN, "value"),
-            # Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
         ],
     )
     def update_stored_data(
@@ -42,46 +39,19 @@ def register(app):
             list(dict): The stored data as a list of dictionaries.
         """
 
-        # Construct SQL query
-        query = f"""
-        SELECT *
-        FROM my_table
-        WHERE Year BETWEEN {selected_years[0]} AND {selected_years[1]}
-        """
-
-        # construct type filter query if selected
-        if selected_categories:
-            if isinstance(selected_categories, list):
-                category_list = ",".join(f"'{cat}'" for cat in selected_categories)
-                query += f"AND meta_category IN ({category_list})"
-            else:
-                query += f"AND meta_category = '{selected_categories}'"
-
-        # construct subcategory filter query if selected
-        if selected_subcategories:
-            if isinstance(selected_subcategories, list):
-                subcategory_list = ",".join(
-                    f"'{sub}'" for sub in selected_subcategories
-                )
-                query += f" AND climate_class IN ({subcategory_list})"
-            else:
-                query += f" AND climate_class = '{selected_subcategories}'"
-
-        # construct donor type filter query if selected
-        if selected_donor_types:
-            if isinstance(selected_donor_types, list):
-                formatted_donor_types = tuple(
-                    donor_type for donor_type in selected_donor_types
-                )
-                query += f" AND DonorType IN {formatted_donor_types};"
-            else:
-                query += f" AND DonorType = '{selected_donor_types}';"
+        query = construct_query(
+            selected_years=selected_years,
+            selected_categories=selected_categories,
+            selected_subcategories=selected_subcategories,
+            selected_donor_types=selected_donor_types,
+        )
 
         df_filtered = query_duckdb(
             duckdb_db=DUCKDB_PATH,
             query=query,
         )
         df_reshaped = reshape_by_type(df_filtered, selected_type)
+        # TODO: aggregate before storing?
 
         # return the filtered data as a list of  for storage
         return df_reshaped.to_dict("records")

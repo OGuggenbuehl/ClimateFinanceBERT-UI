@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import Optional
 
 import pandas as pd
 
@@ -34,46 +34,6 @@ def reshape_by_type(
     return df.drop(config["drop"], axis=1).rename(config["rename"], axis=1)
 
 
-def filter_data_by_donor_type(
-    df: pd.DataFrame,
-    donor_type: Literal["bilateral", "multilateral", "all"],
-) -> pd.DataFrame:
-    """Filter the data based on the donor type."""
-    if donor_type not in ["bilateral", "multilateral", "all"]:
-        raise ValueError(
-            "Invalid donor type. Please select either 'bilateral', 'multilateral', or 'all'."
-        )
-
-    donor_type_map = {
-        "bilateral": "Donor Country",
-        "multilateral": "Multilateral Donor",
-    }
-
-    if donor_type in donor_type_map:
-        return df[df["DonorType"] == donor_type_map[donor_type]]
-
-    return df  # No filtering needed if donor_type is "all"
-
-
-def prepare_data_for_merge(
-    df: pd.DataFrame,
-    selected_categories: Optional[list[str]] = None,
-    selected_subcategories: Optional[list[str]] = None,
-    year_range: Optional[tuple[int, int]] = None,
-) -> pd.DataFrame:
-    """Prepare the data for merging with the GeoJSON data."""
-    # Filter the data according to inputs set in UI
-    # df_subset = subset_data_by_filters(
-    #     df,
-    #     selected_categories=selected_categories,
-    #     selected_subcategories=selected_subcategories,
-    #     year_range=year_range,
-    # )
-
-    # Aggregate data to country level for display
-    return aggregate_to_country_level(df)
-
-
 def subset_data_by_filters(
     df: pd.DataFrame,
     selected_categories: Optional[list[str]] = None,
@@ -83,15 +43,15 @@ def subset_data_by_filters(
     """Subset the data based on the selected categories, subcategories, and year range."""
     df_subset = df
 
-    # Apply subcategory filter if provided
+    # apply subcategory filter if provided
     if selected_subcategories:
         df_subset = df_subset[df_subset["climate_class"].isin(selected_subcategories)]
 
-    # Apply category filter if subcategories are not provided and categories exist
+    # apply category filter if subcategories are not provided and categories exist
     elif selected_categories:
         df_subset = df_subset[df_subset["meta_category"].isin(selected_categories)]
 
-    # Apply year range filter if provided
+    # apply year range filter if provided
     if year_range:
         df_subset = df_subset[df_subset["Year"].between(year_range[0], year_range[1])]
 
@@ -109,17 +69,18 @@ def merge_data(geojson: dict, df: pd.DataFrame) -> dict:
         df.USD_Disbursement.values, index=df["CountryCode"]
     ).to_dict()
 
-    # Filter out features whose ID is not in the merge_dict
+    # filter out features whose ID is not in the merge_dict
+    # NOTE: this prevents buggy polygon coloring behavior
     filtered_features = [
         feature for feature in geojson["features"] if feature["id"] in merge_dict
     ]
 
-    # Update the properties of the remaining features
+    # merge the values to the remaining features
     for feature in filtered_features:
         id = feature["id"]
         feature["properties"]["value"] = merge_dict.get(id, 0)
 
-    # Modify the GeoJSON to only include the filtered features
+    # subset geojson to only include the remaining features
     geojson["features"] = filtered_features
 
     return geojson
@@ -128,34 +89,36 @@ def merge_data(geojson: dict, df: pd.DataFrame) -> dict:
 if __name__ == "__main__":
     import requests
     from components.constants import DUCKDB_PATH
-    from functions.query_duckdb import query_duckdb
+    from functions.query_duckdb import construct_query, query_duckdb
 
-    # Retrieve GeoJSON data from URL
+    # retrieve geojson
     geojson_url = "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
     response = requests.get(geojson_url)
     geojson_data = response.json()
 
-    selected_years = (2014, 2020)
-    query = f"""
-            SELECT * FROM my_table
-            WHERE Year >= {selected_years[0]} AND Year <= {selected_years[1]};
-            """
+    # query data
+    selected_years = (2018, 2020)
+    query = construct_query(
+        selected_years=selected_years,
+        selected_categories=["Adaptation"],
+        selected_subcategories=["Adaptation"],
+        selected_donor_types=[
+            "Donor Country"
+        ],  # 'bilateral' as mapped in frontend component
+    )
     df_queried = query_duckdb(
         duckdb_db=DUCKDB_PATH,
         query=query,
     )
-    df_type = reshape_by_type(df_queried, selected_type="donors")
-    data = filter_data_by_donor_type(df_type, donor_type="bilateral")
 
-    # Prepare data for merging
-    df_prepared = prepare_data_for_merge(
-        data,
-        selected_categories=["Adaptation"],
-        selected_subcategories=["Adaptation"],
-        year_range=(2016, 2016),
-    )
-    print(df_prepared)
+    # aggregate to country level
+    df_reshaped = reshape_by_type(df_queried, selected_type="donors")
+    df_aggregated = aggregate_to_country_level(df_reshaped)
+    print("aggregated data:")
+    print(df_aggregated)
 
-    merged = merge_data(geojson_data, df_prepared)
+    # merge to geojson
+    merged = merge_data(geojson_data, df_aggregated)
+    print("\nmerged data as pulled from geojson:")
     for feature in merged["features"]:
         print(f'{feature["id"]}: {feature["properties"]["value"]}')
