@@ -1,12 +1,14 @@
+import logging
+
 import pandas as pd
 from components import ids
-from components.constants import CATEGORIES_DF
-from components.dataset import get_dataset
+from components.constants import CATEGORIES_DF, DUCKDB_PATH
 from dash import Input, Output, dash_table, html
-from functions.data_operations import (
-    prepare_data_for_types,
-    subset_data_by_filters,
-)
+from functions.data_operations import reshape_by_type
+from functions.query_duckdb import construct_query, query_duckdb
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def register(app):
@@ -16,18 +18,18 @@ def register(app):
             # Input(ids.MAP_MODE, "value"),
             Input(ids.TYPE_DROPDOWN, "value"),
             Input(ids.YEAR_SLIDER, "value"),
-            # TODO: find out how to implement categories filters into map coloring
-            # Input(ids.CATEGORIES_DROPDOWN, "value"),
-            # Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
+            Input(ids.DONORTYPE_DROPDOWN, "value"),
+            Input(ids.CATEGORIES_DROPDOWN, "value"),
+            Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
         ],
     )
     def update_stored_data(
         # map_mode,
         selected_type,
         selected_years,
-        # TODO: activate categories filters if needed
-        # selected_categories,
-        # selected_subcategories,
+        selected_donor_types,
+        selected_categories,
+        selected_subcategories,
     ):
         """Reads, subsets and stores data based on the set UI inputs.
 
@@ -38,20 +40,23 @@ def register(app):
         Returns:
             list(dict): The stored data as a list of dictionaries.
         """
-        df_prepared = prepare_data_for_types(
-            df=get_dataset(),
-            selected_type=selected_type,
+
+        query = construct_query(
+            selected_years=selected_years,
+            selected_categories=selected_categories,
+            selected_subcategories=selected_subcategories,
+            selected_donor_types=selected_donor_types,
         )
-        # subset data based on UI inputs
-        df_filtered = subset_data_by_filters(
-            df_prepared,
-            # TODO: activate categories filters if needed for info boxes
-            # selected_categories=None,
-            # selected_subcategories=None,
-            year_range=selected_years,
+
+        df_filtered = query_duckdb(
+            duckdb_db=DUCKDB_PATH,
+            query=query,
         )
-        # return the filtered data as a list of dictionaries
-        return df_filtered.to_dict("records")
+        df_reshaped = reshape_by_type(df_filtered, selected_type)
+        # TODO: aggregate before storing?
+
+        # return the filtered data as a list of  for storage
+        return df_reshaped.to_dict("records")
 
     @app.callback(
         Output(ids.CATEGORIES_SUB_DROPDOWN, "options"),

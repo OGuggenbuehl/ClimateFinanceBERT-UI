@@ -1,34 +1,12 @@
 from typing import Literal, Optional
 
 import pandas as pd
-import polars as pl
-
-
-def prepare_data_for_types(
-    df: pl.DataFrame,
-    selected_type: Literal["donors", "recipients"],
-    donor_type: Literal["bilateral", "multilateral", "all"] = "bilateral",
-) -> pd.DataFrame:
-    """Prepare the data for the selected type and donor type.
-
-    Args:
-        df (pl.DataFrame): The input DataFrame as read from disk.
-        selected_type (str): The selected type of data to prepare. Either 'donors' or 'recipients'.
-        donor_type (str): The selected donor type if selected_type is 'donors'. Defaults to "bilateral".
-
-    Returns:
-        pd.DataFrame: The prepared data based on the selected type and donor type.
-    """
-    data = reshape_by_type(df, selected_type)
-    if selected_type == "donors":
-        data = filter_data_by_donor_type(data, donor_type)
-    return data.to_pandas()
 
 
 def reshape_by_type(
-    df: pl.DataFrame,
+    df: pd.DataFrame,
     selected_type: str,
-) -> pl.DataFrame:
+) -> pd.DataFrame:
     """Reshape the table based on the selected type."""
     reshape_config = {
         "donors": {
@@ -47,109 +25,60 @@ def reshape_by_type(
         },
     }
 
-    # Validate the selected type
     if selected_type not in reshape_config:
         raise ValueError(
             "Invalid selected type. Please select either 'donors' or 'recipients'."
         )
 
-    # Apply the reshaping logic based on the selected type
     config = reshape_config[selected_type]
-    return df.drop(config["drop"]).rename(config["rename"])
+    return df.drop(config["drop"], axis=1).rename(config["rename"], axis=1)
 
 
-def filter_data_by_donor_type(
-    df: pl.DataFrame,
-    donor_type: Literal["bilateral", "multilateral", "all"],
-) -> pl.DataFrame:
-    """Filter the data based on the donor type."""
-    if donor_type not in ["bilateral", "multilateral", "all"]:
-        raise ValueError(
-            "Invalid donor type. Please select either 'bilateral', 'multilateral', or 'all'."
-        )
-
-    donor_type_map = {
-        "bilateral": "Donor Country",
-        "multilateral": "Multilateral Donor",
-    }
-
-    if donor_type in donor_type_map:
-        return df.filter(df["DonorType"] == donor_type_map[donor_type])
-
-    return df  # No filtering needed if donor_type is "all"
-
-
-def prepare_data_for_merge(
+def create_mode_data(
     df: pd.DataFrame,
     map_mode: Literal["base", "total", "rio_oecd", "rio_climfinbert", "rio_diff"],
     selected_categories: Optional[list[str]] = None,
     selected_subcategories: Optional[list[str]] = None,
-    year_range: Optional[tuple[int, int]] = None,
 ) -> pd.DataFrame:
-    """Prepare the data for merging with the GeoJSON data."""
-    if map_mode == "total":
-        # Filter the data according to inputs set in UI
-        df_subset = subset_data_by_filters(
-            df,
-            selected_categories=selected_categories,
-            selected_subcategories=selected_subcategories,
-            year_range=year_range,
-        )
+    """Create the mode DataFrame based on the selected mode.
 
+    Args:
+        df (pd.DataFrame): The input DataFrame as read from storage.
+        map_mode (str): The selected map mode.
+        selected_categories (Optional[list[str]], optional): The selected categories. Defaults to None.
+        selected_subcategories (Optional[list[str]], optional): The selected subcategories. Defaults to None.
+
+    Returns:
+        pd.DataFrame: The mode DataFrame based on the selected mode. Ready to be merged with the GeoJSON data.
+    """
+    if map_mode == "total":
         # Aggregate data to country level for display
         return aggregate_to_country_level(
-            df_subset,
+            df=df,
             group_by="CountryCode",
             target="USD_Disbursement",
         )
     elif map_mode == "rio_oecd":
         return build_oecd_table(
             df,
-            year_range=year_range,
             selected_categories=selected_categories,
         )
     elif map_mode == "rio_climfinbert":
         return build_ClimFinBERT_table(
             df,
-            year_range=year_range,
             selected_categories=selected_categories,
             selected_subcategories=selected_subcategories,
         )
     elif map_mode == "rio_diff":
         return build_difference_table(
             df,
-            year_range=year_range,
             selected_categories=selected_categories,
         )
 
 
-def subset_data_by_filters(
-    df: pd.DataFrame,
-    selected_categories: Optional[list[str]] = None,
-    selected_subcategories: Optional[list[str]] = None,
-    year_range: Optional[tuple[int, int]] = None,
-) -> pd.DataFrame:
-    """Subset the data based on the selected categories, subcategories, and year range."""
-    df_subset = df
-
-    # Apply subcategory filter if provided
-    if selected_subcategories:
-        df_subset = df_subset[df_subset["climate_class"].isin(selected_subcategories)]
-
-    # Apply category filter if subcategories are not provided and categories exist
-    elif selected_categories:
-        df_subset = df_subset[df_subset["meta_category"].isin(selected_categories)]
-
-    # Apply year range filter if provided
-    if year_range:
-        df_subset = df_subset[df_subset["Year"].between(year_range[0], year_range[1])]
-
-    return df_subset
-
-
 def aggregate_to_country_level(
     df: pd.DataFrame,
-    group_by: str | list[str],
+    group_by: str | list[str] = "CountryCode",
     target: str = "USD_Disbursement",
 ) -> pd.DataFrame:
     """Aggregate data to the country level by summing the target variable (default USD_Disbursement)."""
@@ -162,17 +91,18 @@ def merge_data(geojson: dict, df: pd.DataFrame) -> dict:
         df.USD_Disbursement.values, index=df["CountryCode"]
     ).to_dict()
 
-    # Filter out features whose ID is not in the merge_dict
+    # filter out features whose ID is not in the merge_dict
+    # NOTE: this prevents buggy polygon coloring behavior
     filtered_features = [
         feature for feature in geojson["features"] if feature["id"] in merge_dict
     ]
 
-    # Update the properties of the remaining features
+    # merge the values to the remaining features
     for feature in filtered_features:
         id = feature["id"]
         feature["properties"]["value"] = merge_dict.get(id, 0)
 
-    # Modify the GeoJSON to only include the filtered features
+    # subset geojson to only include the remaining features
     geojson["features"] = filtered_features
 
     return geojson
@@ -180,26 +110,17 @@ def merge_data(geojson: dict, df: pd.DataFrame) -> dict:
 
 def build_oecd_table(
     df: pd.DataFrame,
-    year_range: Optional[tuple[int, int]],
     selected_categories: Optional[list[str]],
 ) -> pd.DataFrame:
     """
     Build the OECD table based on the selected type, year range, and selected categories.
     Args:
         df (pd.DataFrame): The input DataFrame as read from the global variable.
-        year_range (tuple): A tuple of two integers representing the selected year range.
         selected_categories (list): A list of selected categories to filter the data.
 
     Returns:
         pd.DataFrame: The OECD table based on the selected type, year range, and selected categories, aggregated to the country level.
     """
-    # Apply filters based on categories and subcategories
-    df = subset_data_by_filters(
-        df,
-        selected_categories=selected_categories,
-        selected_subcategories=None,
-        year_range=year_range,
-    )
 
     # Handle multiple selected categories
     categories_mapping = {
@@ -232,7 +153,6 @@ def build_oecd_table(
 
 def build_ClimFinBERT_table(
     df: pd.DataFrame,
-    year_range: Optional[tuple[int, int]],
     selected_categories: Optional[list[str]],
     selected_subcategories: Optional[list[str]] = None,
 ) -> pd.DataFrame:
@@ -240,20 +160,12 @@ def build_ClimFinBERT_table(
 
     Args:
         df (pd.DataFrame): The input DataFrame as read from the global variable.
-        year_range (tuple[int, int], optional): A tuple of two integers representing the selected year range.
         selected_categories (list[str], optional): A list of selected categories to filter the data.
         selected_subcategories (list[str], optional): A list of selected subcategories to filter the data. Defaults to None.
 
     Returns:
         pd.DataFrame: The ClimFinBERT table based on the selected type, year range, selected categories, and selected subcategories, aggregated to the country level.
     """
-    # Apply filters based on categories and subcategories
-    df = subset_data_by_filters(
-        df,
-        selected_categories=selected_categories,
-        selected_subcategories=selected_subcategories,
-        year_range=year_range,
-    )
 
     # Apply category filter if categories are provided
     if selected_categories:
@@ -275,14 +187,12 @@ def build_ClimFinBERT_table(
 
 def build_difference_table(
     df: pd.DataFrame,
-    year_range: Optional[tuple[int, int]],
     selected_categories: Optional[list[str]],
 ) -> pd.DataFrame:
     """Build the difference table based on the selected type, year range, and selected categories.
 
     Args:
         df (pd.DataFrame): The input DataFrame as read from the global variable.
-        year_range (tuple[int, int], optional): A tuple of two integers representing the selected year range
         selected_categories (list[str], optional): A list of selected categories to filter the data.
 
     Returns:
@@ -290,12 +200,10 @@ def build_difference_table(
     """
     oecd_df = build_oecd_table(
         df,
-        year_range,
         selected_categories,
     )
     ClimFinBERT_df = build_ClimFinBERT_table(
         df,
-        year_range,
         selected_categories,
     )
     diff_df = calculate_difference(oecd_df, ClimFinBERT_df)
@@ -331,40 +239,44 @@ def calculate_difference(
 
 if __name__ == "__main__":
     import requests
+    from components.constants import DUCKDB_PATH
+    from functions.query_duckdb import construct_query, query_duckdb
 
-    # Retrieve GeoJSON data from URL
+    # retrieve geojson
     geojson_url = "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
     response = requests.get(geojson_url)
     geojson_data = response.json()
 
-    # read sample df
-    import pandas as pd
-    import polars as pl
-    from components.constants import COLS, SOURCE
-    from components.dataset import load_full_dataset
-
-    # load full dataset
-    data_full = load_full_dataset(
-        source=SOURCE,
-        columns=COLS,
-    )
-    # prepare full dataset by transorming it based on selected types
-    data_prepared_for_types = prepare_data_for_types(
-        data_full,
-        selected_type="donors",
-        donor_type="bilateral",
-    )
-    # Prepare data for merging
-    df_prepared_for_merge = prepare_data_for_merge(
-        data_prepared_for_types,
+    # query data
+    selected_years = (2018, 2020)
+    query = construct_query(
+        selected_years=selected_years,
         selected_categories=["Adaptation"],
         selected_subcategories=["Adaptation"],
-        year_range=(2012, 2012),
+        selected_donor_types=[
+            "Donor Country"
+        ],  # 'bilateral' as mapped in frontend component
     )
-    print(df_prepared_for_merge)
-    # # Merge the GeoJSON data with the DataFrame data
-    # merged = merge_data(geojson_data, df_prepared_for_merge)
+    df_queried = query_duckdb(
+        duckdb_db=DUCKDB_PATH,
+        query=query,
+    )
+    # aggregate to country level
+    df_reshaped = reshape_by_type(df_queried, selected_type="donors")
 
-    # # print out values of newly merged geojson
-    # for feature in merged["features"]:
-    #     print(f'{feature["id"]}: {feature["properties"]["value"]}')
+    # prepare data for chosen mode
+    df_prepared = create_mode_data(
+        df_reshaped,
+        map_mode="rio_oecd",
+        selected_categories=["Adaptation"],
+        selected_subcategories=["Adaptation"],
+    )
+    # df_prepared = aggregate_to_country_level(df_reshaped)
+    print("prepared data:")
+    print(df_prepared)
+
+    # merge to geojson
+    merged = merge_data(geojson_data, df_prepared)
+    print("\nmerged data as pulled from geojson:")
+    for feature in merged["features"]:
+        print(f'{feature["id"]}: {feature["properties"]["value"]}')
