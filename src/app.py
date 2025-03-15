@@ -7,15 +7,12 @@ from callbacks import (
     map_callbacks,
     page_callbacks,
 )
-from components.constants import COLS, SOURCE
-from components.dataset import load_full_dataset
 from components.layout import create_layout
 from dash import Dash
 from dash_bootstrap_components.themes import BOOTSTRAP
 
 
 def main():
-    load_full_dataset(SOURCE, COLS)
     app = Dash(
         __name__,
         external_stylesheets=[BOOTSTRAP],

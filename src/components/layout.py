@@ -13,9 +13,9 @@ def create_layout(app: Dash) -> html.Div:
         children=[
             dcc.Location(id=ids.URL, refresh=False),
             navbar.render(app),
-            dcc.Store(id=ids.STORED_DATA),  # The store to keep the selected dataset
-            dcc.Store(id=ids.STORED_GEOJSON),  # The store to keep the geojson data
-            dcc.Store(  # The store to keep the initial state of the map
+            dcc.Store(id=ids.STORED_DATA),  # storage for queried dataset
+            dcc.Store(id=ids.STORED_GEOJSON),  # storage for geojson
+            dcc.Store(  # storage for the initial map state
                 id=ids.INITIAL_STATE,
                 data={
                     "center": constants.INITIAL_CENTER,
