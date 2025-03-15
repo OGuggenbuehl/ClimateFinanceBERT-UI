@@ -15,18 +15,27 @@ def register(app):
     )
     def build_infobox_country(
         stored_data,
-        map_mode_value,
+        map_mode,
         hover_data=None,
         click_data=None,
     ):
-        # TODO: Add docstring
+        """Build the infobox for the selected country polygon.
+
+        Args:
+            stored_data (dict): The stored data from the data query.
+            map_mode (str): The selected map mode.
+            hover_data (dict, optional): The hover data from the countries layer. Defaults to None.
+            click_data (_type_, optional): The click data from the countries layer. Defaults to None.
+        Returns:
+            html: The infobox for the selected country polygon.
+        """
         if not click_data and not hover_data:
             header = [html.H5("Country Information")]
-            if map_mode_value == "base":
+            if map_mode == "base":
                 return header + [
                     html.Div("Hover over a country for information."),
                 ]
-            elif map_mode_value == "total":
+            else:
                 return header + [
                     html.Div("Hover over a country for information."),
                     html.Div("Click on a country to zoom in."),
