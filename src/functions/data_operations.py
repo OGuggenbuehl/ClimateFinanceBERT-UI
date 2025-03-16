@@ -51,29 +51,36 @@ def create_mode_data(
     Returns:
         pd.DataFrame: The mode DataFrame based on the selected mode. Ready to be merged with the GeoJSON data.
     """
-    if map_mode == "total":
-        # Aggregate data to country level for display
-        return aggregate_to_country_level(
+    # DEBUG: map modes do not seem to influence data construction, only polygon coloring
+    # TODO: investigate why
+    mode_functions = {
+        "base": lambda: df,
+        "total": lambda: aggregate_to_country_level(
             df=df,
             group_by="CountryCode",
             target="USD_Disbursement",
-        )
-    elif map_mode == "rio_oecd":
-        return build_oecd_table(
+        ),
+        "rio_oecd": lambda: build_oecd_table(
             df,
             selected_categories=selected_categories,
-        )
-    elif map_mode == "rio_climfinbert":
-        return build_ClimFinBERT_table(
+        ),
+        "rio_climfinbert": lambda: build_ClimFinBERT_table(
             df,
             selected_categories=selected_categories,
             selected_subcategories=selected_subcategories,
-        )
-    elif map_mode == "rio_diff":
-        return build_difference_table(
+        ),
+        "rio_diff": lambda: build_difference_table(
             df,
             selected_categories=selected_categories,
+        ),
+    }
+
+    if map_mode not in mode_functions:
+        raise ValueError(
+            f"Invalid map_mode: {map_mode}. Please select a valid map mode."
         )
+
+    return mode_functions[map_mode]()
 
 
 def aggregate_to_country_level(

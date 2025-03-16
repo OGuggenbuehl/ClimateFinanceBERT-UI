@@ -5,7 +5,7 @@ import pandas as pd
 from components import constants, ids
 from dash import Input, Output, State, dash
 from dash_extensions.javascript import arrow_function, assign
-from functions.data_operations import aggregate_to_country_level, merge_data
+from functions.data_operations import create_mode_data, merge_data
 from functions.map_styler import style_map
 
 # TODO: move to constants
@@ -57,6 +57,7 @@ def register(app):
             Input(ids.YEAR_SLIDER, "value"),
             Input(ids.MAP_MODE, "value"),
         ],
+        prevent_initial_call=True,
     )
     # TODO: when to update and does aggregation really need to be done after storing?
     def update_stored_geojson(
@@ -70,12 +71,17 @@ def register(app):
         df_stored = pd.DataFrame(stored_data)
 
         # prepare data for merging
-        df_aggregated = aggregate_to_country_level(df_stored)
+        df_mode = create_mode_data(
+            df_stored,
+            map_mode,
+            selected_categories,
+            selected_subcategories,
+        )
 
         # Create a deep copy of the base geojson to ensure it is not altered
         geojson_copy = copy.deepcopy(constants.GEOJSON_BASE)
 
-        return merge_data(geojson_copy, df_aggregated)
+        return merge_data(geojson_copy, df_mode)
 
     @app.callback(
         Output(ids.MAP, "children"),

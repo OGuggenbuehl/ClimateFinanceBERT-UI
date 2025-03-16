@@ -14,21 +14,6 @@ window.dashExtensions = Object.assign({}, window.dashExtensions, {
                 }
             }
             return style;
-        },
-        function1: function(feature, context) {
-            const {
-                classes,
-                colorscale,
-                style,
-                polyColoring
-            } = context.hideout; // get props from hideout
-            const value = feature.properties[polyColoring]; // get value the determines the color
-            for (let i = 0; i < classes.length; ++i) {
-                if (value > classes[i]) {
-                    style.fillColor = colorscale[i]; // set the fill color according to the class
-                }
-            }
-            return style;
         }
     }
 });

@@ -4,7 +4,13 @@ from dash_extensions.javascript import assign
 
 
 def style_map(
-    map_mode: Literal["base", "total", "rio_oecd", "rio_climfinbert", "rio_diff"],
+    map_mode: Literal[
+        "base",
+        "total",
+        "rio_oecd",
+        "rio_climfinbert",
+        "rio_diff",
+    ],
 ):
     """Style the map based on the selected map mode.
 

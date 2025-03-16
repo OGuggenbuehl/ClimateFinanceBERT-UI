@@ -4,6 +4,8 @@ import pandas as pd
 from components import ids
 from components.constants import CATEGORIES_DF, DUCKDB_PATH
 from dash import Input, Output, dash_table, html
+
+# from dash.exceptions import PreventUpdate
 from functions.data_operations import reshape_by_type
 from functions.query_duckdb import construct_query, query_duckdb
 
@@ -15,16 +17,17 @@ def register(app):
     @app.callback(
         Output(ids.STORED_DATA, "data"),
         [
-            # Input(ids.MAP_MODE, "value"),
+            Input(ids.MAP_MODE, "value"),
             Input(ids.TYPE_DROPDOWN, "value"),
             Input(ids.YEAR_SLIDER, "value"),
             Input(ids.DONORTYPE_DROPDOWN, "value"),
             Input(ids.CATEGORIES_DROPDOWN, "value"),
             Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
         ],
+        prevent_initial_call=True,
     )
     def update_stored_data(
-        # map_mode,
+        map_mode,
         selected_type,
         selected_years,
         selected_donor_types,
@@ -40,6 +43,8 @@ def register(app):
         Returns:
             list(dict): The stored data as a list of dictionaries.
         """
+        # if map_mode == "base":
+        #     raise PreventUpdate
 
         query = construct_query(
             selected_years=selected_years,
@@ -48,19 +53,20 @@ def register(app):
             selected_donor_types=selected_donor_types,
         )
 
-        df_filtered = query_duckdb(
+        df_queried = query_duckdb(
             duckdb_db=DUCKDB_PATH,
             query=query,
         )
-        df_reshaped = reshape_by_type(df_filtered, selected_type)
+        df_reshaped = reshape_by_type(df_queried, selected_type)
         # TODO: aggregate before storing?
 
-        # return the filtered data as a list of  for storage
+        # return the filtered data as a list of dicts for storage
         return df_reshaped.to_dict("records")
 
     @app.callback(
         Output(ids.CATEGORIES_SUB_DROPDOWN, "options"),
         Input(ids.CATEGORIES_DROPDOWN, "value"),
+        prevent_initial_call=True,
     )
     def set_meta_options(selected_climate_class):
         # subset the available meta_categories based on the selected climate class
@@ -78,6 +84,7 @@ def register(app):
             Input(ids.COUNTRIES_LAYER, "clickData"),
             Input(ids.STORED_DATA, "data"),
         ],
+        prevent_initial_call=True,
     )
     def build_datatable(
         selected_categories,
@@ -86,7 +93,6 @@ def register(app):
         stored_data=None,
     ):
         """Build the datatable based on the input elements and the selected map element."""
-        # TODO: Bugfix when no data is available
         if not click_data:
             return html.H4("Click a country to render a datatable")
         else:
@@ -98,7 +104,8 @@ def register(app):
             country_code = click_data["id"]
             df_stored = pd.DataFrame(stored_data)
 
-            # Filter the data based on the selected categories
+            # filter the data based on the selected categories
+            # TODO: is this needed or can we just use the queried data?
             try:
                 if selected_subcategories:
                     df_filtered = df_stored[
@@ -119,7 +126,7 @@ def register(app):
             if len(df_filtered) == 0:
                 return header + [html.H4("No data available for this country.")]
             else:
-                # Render a DataTable with the filtered data
+                # render DataTable with the filtered data
                 return header + [
                     dash_table.DataTable(
                         data=df_filtered.to_dict("records"),

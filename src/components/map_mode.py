@@ -8,6 +8,7 @@ def render(top: str, bottom: str, right: str, left: str):
         [
             html.P("Choose a map mode"),
             dbc.RadioItems(
+                # TODO: add linebreak for options due to length and overlap
                 options=[
                     {"label": "Base", "value": "base"},
                     {"label": "Total Flows", "value": "total"},
