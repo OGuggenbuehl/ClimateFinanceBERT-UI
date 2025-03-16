@@ -94,9 +94,13 @@ def aggregate_to_country_level(
 
 def merge_data(geojson: dict, df: pd.DataFrame) -> dict:
     """Merge the GeoJSON data with the DataFrame data to add the ClimFin-Data to each polygon."""
-    merge_dict = pd.Series(
-        df.USD_Disbursement.values, index=df["CountryCode"]
-    ).to_dict()
+    merge_dict = (
+        pd.Series(df.USD_Disbursement.values, index=df["CountryCode"]).to_dict()
+        if "USD_Disbursement" in df.columns
+        else pd.Series(
+            df.USD_Disbursement_diff.values, index=df["CountryCode"]
+        ).to_dict()
+    )
 
     # filter out features whose ID is not in the merge_dict
     # NOTE: this prevents buggy polygon coloring behavior
