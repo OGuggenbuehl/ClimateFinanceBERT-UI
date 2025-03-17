@@ -38,6 +38,7 @@ def render(app: Dash) -> html.Div:
                                     dbc.Card(
                                         datatable.render(),
                                         body=True,
+                                        id="datatable-card",
                                     )
                                 ],
                             ),

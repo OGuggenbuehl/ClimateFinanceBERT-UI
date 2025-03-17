@@ -140,3 +140,12 @@ def register(app):
                         },
                     )
                 ]
+
+    @app.callback(
+        Output(ids.DATATABLE_CARD, "style"),
+        Input(ids.MAP_MODE, "value"),
+    )
+    def toggle_table_visibility(map_mode):
+        if map_mode == "base":
+            return {"display": "none"}  # Hide the table
+        return {"display": "block"}  # Show the table

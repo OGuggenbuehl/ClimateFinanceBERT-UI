@@ -11,7 +11,7 @@ def render(top: str, bottom: str, right: str, left: str):
                 # TODO: add linebreak for options due to length and overlap
                 options=[
                     {"label": "Base", "value": "base"},
-                    {"label": "Total Flows", "value": "total"},
+                    # {"label": "Total Flows", "value": "total"}, ## removed 'total' mode for now
                     {
                         "label": "OECD Rio Markers",
                         "value": "rio_oecd",

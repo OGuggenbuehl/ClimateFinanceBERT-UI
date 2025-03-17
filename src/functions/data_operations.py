@@ -94,6 +94,7 @@ def aggregate_to_country_level(
 
 def merge_data(geojson: dict, df: pd.DataFrame) -> dict:
     """Merge the GeoJSON data with the DataFrame data to add the ClimFin-Data to each polygon."""
+    # TODO: simplify by simply renaming colname in diff df?
     merge_dict = (
         pd.Series(df.USD_Disbursement.values, index=df["CountryCode"]).to_dict()
         if "USD_Disbursement" in df.columns
