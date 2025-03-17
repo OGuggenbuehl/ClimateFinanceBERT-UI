@@ -97,9 +97,9 @@ if __name__ == "__main__":
     geojson_data = response.json()
 
     # query data
-    selected_years = (2018, 2020)
+    selected_year = 2018
     query = construct_query(
-        selected_years=selected_years,
+        selected_year=selected_year,
         selected_categories=["Adaptation"],
         selected_subcategories=["Adaptation"],
         selected_donor_types=[

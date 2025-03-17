@@ -3,6 +3,7 @@ import copy
 import dash_leaflet as dl
 import pandas as pd
 from components import constants, ids
+from components.slider_player import PlaybackSliderAIO
 from dash import Input, Output, State, dash
 from dash_extensions.javascript import arrow_function, assign
 from functions.data_operations import aggregate_to_country_level, merge_data
@@ -53,7 +54,7 @@ def register(app):
             Input(ids.STORED_DATA, "data"),
             Input(ids.CATEGORIES_DROPDOWN, "value"),
             Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
-            Input(ids.YEAR_SLIDER, "value"),
+            Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
         ],
     )
     # TODO: when to update and does aggregation really need to be done after storing?
@@ -61,7 +62,7 @@ def register(app):
         stored_data,
         selected_categories,
         selected_subcategories,
-        selected_years,
+        selected_year,
     ):
         # retrieve stored dataframe and parse geojson
         df_stored = pd.DataFrame(stored_data)

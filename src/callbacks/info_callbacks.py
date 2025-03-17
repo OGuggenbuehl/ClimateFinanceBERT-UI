@@ -1,5 +1,6 @@
 import pandas as pd
 from components import ids
+from components.slider_player import PlaybackSliderAIO
 from dash import Input, Output, html
 
 
@@ -63,13 +64,13 @@ def register(app):
         [
             Input(ids.COUNTRIES_LAYER, "clickData"),
             Input(ids.STORED_DATA, "data"),
-            Input(ids.YEAR_SLIDER, "value"),
+            Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
         ],
     )
     def build_infobox_adaptation(
         click_data,
         stored_data=None,
-        years=None,
+        selected_year=None,
     ):
         data = pd.DataFrame(stored_data)
         header = [html.H5("Adaptation")]
@@ -106,7 +107,7 @@ def register(app):
         infobox_components.extend(
             [
                 html.Div(f"Volume: {volume}"),
-                html.Div(f"Timespan: {years[0]} - {years[1]}"),
+                html.Div(f"Timespan: {selected_year}"),
             ]
         )
 
@@ -122,13 +123,13 @@ def register(app):
         [
             Input(ids.COUNTRIES_LAYER, "clickData"),
             Input(ids.STORED_DATA, "data"),
-            Input(ids.YEAR_SLIDER, "value"),
+            Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
         ],
     )
     def build_infobox_environment(
         click_data,
         stored_data=None,
-        years=None,
+        selected_year=None,
     ):
         data = pd.DataFrame(stored_data)
         header = [html.H5("Environment")]
@@ -165,7 +166,7 @@ def register(app):
         infobox_components.extend(
             [
                 html.Div(f"Volume: {volume}"),
-                html.Div(f"Timespan: {years[0]} - {years[1]}"),
+                html.Div(f"Timespan: {selected_year}"),
             ]
         )
 
@@ -181,13 +182,13 @@ def register(app):
         [
             Input(ids.COUNTRIES_LAYER, "clickData"),
             Input(ids.STORED_DATA, "data"),
-            Input(ids.YEAR_SLIDER, "value"),
+            Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
         ],
     )
     def build_infobox_mitigation(
         click_data,
         stored_data=None,
-        years=None,
+        selected_year=None,
     ):
         data = pd.DataFrame(stored_data)
         header = [html.H5("Mitigation")]
@@ -224,7 +225,7 @@ def register(app):
         infobox_components.extend(
             [
                 html.Div(f"Volume: {volume}"),
-                html.Div(f"Timespan: {years[0]} - {years[1]}"),
+                html.Div(f"Timespan: {selected_year}"),
             ]
         )
 
@@ -240,7 +241,7 @@ def register(app):
     # @app.callback(
     #     Output(ids.INFOBOX_CLIMATEFINANCE, "children"),
     #     [
-    #         Input(ids.YEAR_SLIDER, "value"),
+    #         Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
     #         Input(ids.STORED_DATA, "data"),
     #     ],
     # )

@@ -3,6 +3,7 @@ import logging
 import pandas as pd
 from components import ids
 from components.constants import CATEGORIES_DF, DUCKDB_PATH
+from components.slider_player import PlaybackSliderAIO
 from dash import Input, Output, dash_table, html
 from functions.data_operations import reshape_by_type
 from functions.query_duckdb import construct_query, query_duckdb
@@ -16,7 +17,7 @@ def register(app):
         Output(ids.STORED_DATA, "data"),
         [
             Input(ids.TYPE_DROPDOWN, "value"),
-            Input(ids.YEAR_SLIDER, "value"),
+            Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
             Input(ids.DONORTYPE_DROPDOWN, "value"),
             Input(ids.CATEGORIES_DROPDOWN, "value"),
             Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
@@ -24,7 +25,7 @@ def register(app):
     )
     def update_stored_data(
         selected_type,
-        selected_years,
+        selected_year,
         selected_donor_types,
         selected_categories,
         selected_subcategories,
@@ -33,14 +34,14 @@ def register(app):
 
         Args:
             selected_type (str): Either 'donors' or 'recipients'
-            selected_years (list): A list of two integers representing the selected year range.
+            selected_year (int): An integer representing the selected year.
 
         Returns:
             list(dict): The stored data as a list of dictionaries.
         """
 
         query = construct_query(
-            selected_years=selected_years,
+            selected_year=selected_year,
             selected_categories=selected_categories,
             selected_subcategories=selected_subcategories,
             selected_donor_types=selected_donor_types,
