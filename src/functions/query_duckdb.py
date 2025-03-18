@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def construct_query(
-    selected_years: tuple[int, int],
+    selected_year: int,
     selected_categories: Optional[Union[str, list[str]]] = None,
     selected_subcategories: Optional[Union[str, list[str]]] = None,
     selected_donor_types: Optional[Union[str, list[str]]] = None,
@@ -19,7 +19,7 @@ def construct_query(
     """Construct an SQL query based on the selected filters.
 
     Args:
-        selected_years (tuple[int, int]): The selected year range.
+        selected_year (int): The selected year.
         selected_categories (Optional[Union[str, list[str]]]): The selected categories.
         selected_subcategories (Optional[Union[str, list[str]]]): The selected subcategories.
         selected_donor_types (Optional[Union[str, list[str]]]): The selected donor types.
@@ -31,7 +31,7 @@ def construct_query(
     query = f"""
         SELECT *
         FROM my_table
-        WHERE Year BETWEEN {selected_years[0]} AND {selected_years[1]}
+        WHERE Year = {selected_year}
         """
 
     # normalize inputs to lists
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     from components.constants import DUCKDB_PATH
 
     query = construct_query(
-        selected_years=(2018, 2020),
+        selected_year=2018,
         selected_categories=["Adaptation"],
         selected_subcategories=["Adaptation"],
         selected_donor_types=["Donor Country"],

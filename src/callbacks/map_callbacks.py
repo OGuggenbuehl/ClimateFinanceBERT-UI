@@ -2,9 +2,11 @@ import copy
 
 import dash_leaflet as dl
 import pandas as pd
-from components import constants, ids
 from dash import Input, Output, State, dash
 from dash_extensions.javascript import arrow_function, assign
+
+from components import constants, ids
+from components.slider_player import PlaybackSliderAIO
 from functions.data_operations import create_mode_data, merge_data
 from functions.map_styler import style_map
 
@@ -54,8 +56,8 @@ def register(app):
             Input(ids.STORED_DATA, "data"),
             Input(ids.CATEGORIES_DROPDOWN, "value"),
             Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
-            Input(ids.YEAR_SLIDER, "value"),
             Input(ids.MAP_MODE, "value"),
+            Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
         ],
         prevent_initial_call=True,
     )
@@ -64,8 +66,8 @@ def register(app):
         stored_data,
         selected_categories,
         selected_subcategories,
-        selected_years,
         map_mode,
+        selected_year,
     ):
         # retrieve stored dataframe and parse geojson
         df_stored = pd.DataFrame(stored_data)
