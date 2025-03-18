@@ -3,38 +3,12 @@ import copy
 import dash_leaflet as dl
 import pandas as pd
 from dash import Input, Output, State, dash
-from dash_extensions.javascript import arrow_function, assign
+from dash_extensions.javascript import arrow_function
 
 from components import constants, ids
 from components.slider_player import PlaybackSliderAIO
 from functions.data_operations import create_mode_data, merge_data
 from functions.map_styler import style_map
-
-# TODO: move to constants
-classes = [0, 10, 20, 50, 100, 200, 500, 1000]
-colorscale = [
-    "#A9A9A9",
-    "#FED976",
-    "#FEB24C",
-    "#FD8D3C",
-    "#FC4E2A",
-    "#E31A1C",
-    "#BD0026",
-    "#800026",
-]
-style = dict(weight=2, opacity=1, color="white", dashArray="3", fillOpacity=0.7)
-
-# Geojson rendering logic, must be JavaScript as it is executed in clientside.
-style_handle = assign("""function(feature, context){
-    const {classes, colorscale, style, polyColoring} = context.hideout;  // get props from hideout
-    const value = feature.properties[polyColoring];  // get value the determines the color
-    for (let i = 0; i < classes.length; ++i) {
-        if (value > classes[i]) {
-            style.fillColor = colorscale[i];  // set the fill color according to the class
-        }
-    }
-    return style;
-}""")
 
 
 def register(app):

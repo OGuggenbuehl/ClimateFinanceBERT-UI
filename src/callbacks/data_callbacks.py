@@ -63,7 +63,7 @@ def register(app):
     @app.callback(
         Output(ids.CATEGORIES_SUB_DROPDOWN, "options"),
         Input(ids.CATEGORIES_DROPDOWN, "value"),
-        prevent_initial_call=True,
+        prevent_initial_call=False,
     )
     def set_meta_options(selected_climate_class):
         # subset the available meta_categories based on the selected climate class
