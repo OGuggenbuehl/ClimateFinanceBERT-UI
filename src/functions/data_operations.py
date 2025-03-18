@@ -251,6 +251,7 @@ def calculate_difference(
 
 if __name__ == "__main__":
     import requests
+
     from components.constants import DUCKDB_PATH
     from functions.query_duckdb import construct_query, query_duckdb
 
@@ -291,4 +292,4 @@ if __name__ == "__main__":
     merged = merge_data(geojson_data, df_prepared)
     print("\nmerged data as pulled from geojson:")
     for feature in merged["features"]:
-        print(f'{feature["id"]}: {feature["properties"]["value"]}')
+        print(f"{feature['id']}: {feature['properties']['value']}")

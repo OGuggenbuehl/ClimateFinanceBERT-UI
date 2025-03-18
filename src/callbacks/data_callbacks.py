@@ -1,9 +1,10 @@
 import logging
 
 import pandas as pd
+from dash import Input, Output, dash_table, html
+
 from components import ids
 from components.constants import CATEGORIES_DF, DUCKDB_PATH
-from dash import Input, Output, dash_table, html
 
 # from dash.exceptions import PreventUpdate
 from functions.data_operations import reshape_by_type
@@ -43,9 +44,6 @@ def register(app):
         Returns:
             list(dict): The stored data as a list of dictionaries.
         """
-        # if map_mode == "base":
-        #     raise PreventUpdate
-
         query = construct_query(
             selected_years=selected_years,
             selected_categories=selected_categories,
