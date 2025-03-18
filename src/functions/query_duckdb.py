@@ -4,6 +4,7 @@ from typing import Optional, Union
 
 import duckdb
 import pandas as pd
+
 from components.donor_type_dropdown import DONOR_TYPE_MAP
 
 logging.basicConfig(level=logging.INFO)
@@ -11,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def construct_query(
+    type_input: str,
     selected_years: tuple[int, int],
     selected_categories: Optional[Union[str, list[str]]] = None,
     selected_subcategories: Optional[Union[str, list[str]]] = None,
@@ -19,6 +21,7 @@ def construct_query(
     """Construct an SQL query based on the selected filters.
 
     Args:
+        type_input (str): The type of input, either 'donors' or 'recipients'.
         selected_years (tuple[int, int]): The selected year range.
         selected_categories (Optional[Union[str, list[str]]]): The selected categories.
         selected_subcategories (Optional[Union[str, list[str]]]): The selected subcategories.
@@ -27,12 +30,31 @@ def construct_query(
     Returns:
         str: The constructed SQL query.
     """
-    # base query
-    query = f"""
-        SELECT *
-        FROM my_table
-        WHERE Year BETWEEN {selected_years[0]} AND {selected_years[1]}
+    # base query with conditional SELECT clause
+    query = (
         """
+        SELECT
+            DEDonorcode AS CountryCode,
+            DonorName AS CountryName,
+            """
+        if type_input == "donors"
+        else """
+        SELECT
+            DERecipientcode AS CountryCode,
+            RecipientName AS CountryName,
+            """
+    )
+
+    query += """
+        Year,
+        meta_category,
+        climate_class,
+        SUM(USD_Disbursement) AS total_sum
+    FROM
+        my_table
+    WHERE
+        Year BETWEEN {start_year} AND {end_year}
+    """
 
     # normalize inputs to lists
     def ensure_list(value: Optional[Union[str, list[str]]]) -> list[str]:
@@ -56,7 +78,7 @@ def construct_query(
 
     # add donor type filter
     if selected_donor_types:
-        # validate  selected donor types
+        # validate selected donor types
         invalid_donor_types = [
             dt for dt in selected_donor_types if dt not in DONOR_TYPE_MAP.values()
         ]
@@ -68,7 +90,17 @@ def construct_query(
 
         query += f" AND DonorType {'IN' if len(selected_donor_types) > 1 else '='} {tuple(selected_donor_types) if len(selected_donor_types) > 1 else repr(selected_donor_types[0])}"
 
-    return query
+    query += """
+        GROUP BY
+            CountryCode,
+            CountryName,
+            Year,
+            meta_category,
+            climate_class;
+    """
+
+    # Format the query string with the selected years
+    return query.format(start_year=selected_years[0], end_year=selected_years[1])
 
 
 def query_duckdb(
@@ -101,6 +133,7 @@ if __name__ == "__main__":
     from components.constants import DUCKDB_PATH
 
     query = construct_query(
+        type_input="donors",
         selected_years=(2018, 2020),
         selected_categories=["Adaptation"],
         selected_subcategories=["Adaptation"],
