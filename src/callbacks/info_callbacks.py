@@ -1,8 +1,14 @@
+import logging
+import time
+
 import pandas as pd
 from dash import Input, Output, html
 
 from components import ids
 from components.slider_player import PlaybackSliderAIO
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 def register(app):
@@ -14,6 +20,7 @@ def register(app):
             Input(ids.COUNTRIES_LAYER, "hoverData"),
             Input(ids.COUNTRIES_LAYER, "clickData"),
         ],
+        prevent_initial_call=True,
     )
     def build_infobox_country(
         stored_data,
@@ -31,6 +38,7 @@ def register(app):
         Returns:
             html: The infobox for the selected country polygon.
         """
+        start = time.time()
         if not click_data and not hover_data:
             header = [html.H5("Country Information ℹ️")]
             if map_mode == "base":
@@ -49,7 +57,7 @@ def register(app):
         elif hover_data and not click_data:
             country_name = hover_data["properties"][
                 "name"
-            ]  # Fixed to access 'properties'
+            ]  # fixed to access 'properties'
             country_id = hover_data["id"]
 
         header = [html.H5(country_name)]
@@ -58,12 +66,16 @@ def register(app):
             df_subset = stored_df[stored_df["CountryCode"] == country_id]
             value = df_subset["gdp"].iloc[0]
 
+            end = time.time()
+            logger.info(f"Execution time for infobox country: {end - start}")
             return header + [
                 html.Br(),
                 html.P(f"ID: {country_id}"),
                 html.P(f"GDP: {value.round(2)}"),
             ]
         except (IndexError, KeyError):
+            end = time.time()
+            logger.info(f"Execution time for infobox country: {end - start}")
             return header + [
                 html.Br(),
                 html.P(f"ID: {country_id}"),
@@ -76,12 +88,14 @@ def register(app):
             Input(ids.STORED_DATA, "data"),
             Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
         ],
+        prevent_initial_call=True,
     )
     def build_infobox_adaptation(
         click_data,
         stored_data=None,
         selected_year=None,
     ):
+        start = time.time()
         data = pd.DataFrame(stored_data)
         header = [html.H5("Adaptation ⚙️")]
 
@@ -103,7 +117,6 @@ def register(app):
             except KeyError:
                 return header + [html.P("No data available for this timespan.")]
 
-        # Calculate the total volume of effective funding for the selected category
         volume = df_filtered["USD_Disbursement"].sum().round(2)
 
         # Create a list to store the components of the infobox
@@ -121,11 +134,11 @@ def register(app):
             ]
         )
 
-        # If there is no data available for the selected timespan, add a message to the infobox
         if "No data available for this timespan." in infobox_components:
             infobox_components.append(html.P("No data available for this timespan."))
 
-        # Return the header and the infobox components
+        end = time.time()
+        logger.info(f"Execution time for infobox adaptation: {end - start}")
         return header + infobox_components
 
     @app.callback(
@@ -135,12 +148,14 @@ def register(app):
             Input(ids.STORED_DATA, "data"),
             Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
         ],
+        prevent_initial_call=True,
     )
     def build_infobox_environment(
         click_data,
         stored_data=None,
         selected_year=None,
     ):
+        start = time.time()
         data = pd.DataFrame(stored_data)
         header = [html.H5("Environment 🌳")]
 
@@ -162,7 +177,6 @@ def register(app):
             except KeyError:
                 return header + [html.P("No data available for this timespan.")]
 
-        # Calculate the total volume of effective funding for the selected category
         volume = df_filtered["USD_Disbursement"].sum().round(2)
 
         # Create a list to store the components of the infobox
@@ -180,11 +194,11 @@ def register(app):
             ]
         )
 
-        # If there is no data available for the selected timespan, add a message to the infobox
         if "No data available for this timespan." in infobox_components:
             infobox_components.append(html.P("No data available for this timespan."))
 
-        # Return the header and the infobox components
+        end = time.time()
+        logger.info(f"Execution time for infobox environment: {end - start}")
         return header + infobox_components
 
     @app.callback(
@@ -194,12 +208,14 @@ def register(app):
             Input(ids.STORED_DATA, "data"),
             Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
         ],
+        prevent_initial_call=True,
     )
     def build_infobox_mitigation(
         click_data,
         stored_data=None,
         selected_year=None,
     ):
+        start = time.time()
         data = pd.DataFrame(stored_data)
         header = [html.H5("Mitigation 🛡️")]
 
@@ -221,7 +237,6 @@ def register(app):
             except KeyError:
                 return header + [html.P("No data available for this timespan.")]
 
-        # Calculate the total volume of effective funding for the selected category
         volume = df_filtered["USD_Disbursement"].sum().round(2)
 
         # Create a list to store the components of the infobox
@@ -239,11 +254,11 @@ def register(app):
             ]
         )
 
-        # If there is no data available for the selected timespan, add a message to the infobox
         if "No data available for this timespan." in infobox_components:
             infobox_components.append(html.P("No data available for this timespan."))
 
-        # Return the header and the infobox components
+        end = time.time()
+        logger.info(f"Execution time for infobox mitigation: {end - start}")
         return header + infobox_components
 
     ## CLIMATE FINANCE INFO ##
