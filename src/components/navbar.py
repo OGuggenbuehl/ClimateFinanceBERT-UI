@@ -7,7 +7,6 @@ def render(app: Dash):
         children=[
             dbc.NavItem(dbc.NavLink("Home", href="/")),
             dbc.NavItem(dbc.NavLink("About", href="/about")),
-            dbc.NavItem(dbc.NavLink("Contact", href="/contact")),
         ],
         brand=app.title,
         brand_href="#",

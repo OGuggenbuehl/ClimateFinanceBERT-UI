@@ -1,6 +1,7 @@
-from components import ids
 from dash import Input, Output, html
-from pages import about_page, contact_page, map_page
+
+from components import ids
+from pages import about_page, map_page
 
 
 def register(app):
@@ -10,8 +11,6 @@ def register(app):
             return map_page.render(app)
         elif pathname == "/about":
             return about_page.render(app)
-        elif pathname == "/contact":
-            return contact_page.render(app)
         else:
             return html.Div(
                 [
