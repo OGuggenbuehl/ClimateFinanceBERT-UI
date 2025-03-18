@@ -1,4 +1,6 @@
 import dash_leaflet as dl
+from dash import Dash, html
+
 from components import (
     action_button,
     constants,
@@ -9,7 +11,6 @@ from components import (
     infobox_mitigation,
     map_mode,
 )
-from dash import Dash, html
 
 
 def render(app: Dash) -> html.Div:
@@ -22,13 +23,13 @@ def render(app: Dash) -> html.Div:
                     ),
                     map_mode.render(top="0px", bottom=None, right="37.5%", left=None),
                     action_button.render(
-                        name="Open Filters",
+                        name="Open Filters 🔍",
                         id=ids.OPEN_FILTERS,
                         top="0px",
                         right="100px",
                     ),
                     action_button.render(
-                        name="Reset Map",
+                        name="Reset Map ↪️",
                         id=ids.RESET_MAP,
                         top="50px",
                         right="100px",

@@ -1,7 +1,8 @@
 import pandas as pd
+from dash import Input, Output, html
+
 from components import ids
 from components.slider_player import PlaybackSliderAIO
-from dash import Input, Output, html
 
 
 def register(app):
@@ -31,7 +32,7 @@ def register(app):
             html: The infobox for the selected country polygon.
         """
         if not click_data and not hover_data:
-            header = [html.H5("Country Information")]
+            header = [html.H5("Country Information ℹ️")]
             if map_mode == "base":
                 return header + [
                     html.Div("Hover over a country for information."),
@@ -82,7 +83,7 @@ def register(app):
         selected_year=None,
     ):
         data = pd.DataFrame(stored_data)
-        header = [html.H5("Adaptation")]
+        header = [html.H5("Adaptation ⚙️")]
 
         # If a country is clicked, filter the data for that country
         if click_data is not None:
@@ -141,7 +142,7 @@ def register(app):
         selected_year=None,
     ):
         data = pd.DataFrame(stored_data)
-        header = [html.H5("Environment")]
+        header = [html.H5("Environment 🌳")]
 
         # If a country is clicked, filter the data for that country
         if click_data is not None:
@@ -200,7 +201,7 @@ def register(app):
         selected_year=None,
     ):
         data = pd.DataFrame(stored_data)
-        header = [html.H5("Mitigation")]
+        header = [html.H5("Mitigation 🛡️")]
 
         # If a country is clicked, filter the data for that country
         if click_data is not None:

@@ -5,7 +5,10 @@ from pages import about_page, map_page
 
 
 def register(app):
-    @app.callback(Output(ids.PAGE_CONTENT, "children"), Input(ids.URL, "pathname"))
+    @app.callback(
+        Output(ids.PAGE_CONTENT, "children"),
+        Input(ids.URL, "pathname"),
+    )
     def display_page(pathname):
         if pathname == "/":
             return map_page.render(app)

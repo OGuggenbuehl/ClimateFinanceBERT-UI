@@ -1,12 +1,13 @@
-import components.ids as ids
 import dash_bootstrap_components as dbc
 from dash import html
+
+import components.ids as ids
 
 
 def render(top: str, bottom: str, right: str, left: str):
     return html.Div(
         [
-            html.P("Choose a map mode"),
+            html.H5("Choose a map mode 🎛️"),
             dbc.RadioItems(
                 # TODO: add linebreak for options due to length and overlap
                 options=[
