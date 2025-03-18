@@ -1,6 +1,11 @@
+import logging
+import time
 from typing import Literal, Optional
 
 import pandas as pd
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 def reshape_by_type(
@@ -51,8 +56,8 @@ def create_mode_data(
     Returns:
         pd.DataFrame: The mode DataFrame based on the selected mode. Ready to be merged with the GeoJSON data.
     """
-    # DEBUG: map modes do not seem to influence data construction, only polygon coloring
-    # TODO: investigate why
+    start_time = time.time()
+
     mode_functions = {
         "base": lambda: df,
         "total": lambda: aggregate_to_country_level(
@@ -80,7 +85,12 @@ def create_mode_data(
             f"Invalid map_mode: {map_mode}. Please select a valid map mode."
         )
 
-    return mode_functions[map_mode]()
+    result = mode_functions[map_mode]()
+    end_time = time.time()
+    logger.info(
+        f"Execution time for creating data with mode {map_mode}: {end_time - start_time:.2f} seconds"
+    )
+    return result
 
 
 def aggregate_to_country_level(
@@ -95,6 +105,7 @@ def aggregate_to_country_level(
 def merge_data(geojson: dict, df: pd.DataFrame) -> dict:
     """Merge the GeoJSON data with the DataFrame data to add the ClimFin-Data to each polygon."""
     # TODO: simplify by simply renaming colname in diff df?
+    start = time.time()
     merge_dict = (
         pd.Series(df.USD_Disbursement.values, index=df["CountryCode"]).to_dict()
         if "USD_Disbursement" in df.columns
@@ -117,6 +128,8 @@ def merge_data(geojson: dict, df: pd.DataFrame) -> dict:
     # subset geojson to only include the remaining features
     geojson["features"] = filtered_features
 
+    end = time.time()
+    logger.info(f"Execution time for merging data: {end - start:.2f} seconds")
     return geojson
 
 
@@ -261,9 +274,8 @@ if __name__ == "__main__":
     geojson_data = response.json()
 
     # query data
-    selected_year = 2018
     query = construct_query(
-        selected_year=selected_year,
+        selected_year=2020,
         selected_categories=["Adaptation"],
         selected_subcategories=["Adaptation"],
         selected_donor_types=[
@@ -274,7 +286,7 @@ if __name__ == "__main__":
         duckdb_db=DUCKDB_PATH,
         query=query,
     )
-    # aggregate to country level
+    # aggregate to country level and rename donor / recipient columns
     df_reshaped = reshape_by_type(df_queried, selected_type="donors")
 
     # prepare data for chosen mode
