@@ -1,4 +1,5 @@
 import logging
+import time
 
 import pandas as pd
 from dash import Input, Output, dash_table, html
@@ -6,7 +7,7 @@ from dash import Input, Output, dash_table, html
 from components import ids
 from components.constants import CATEGORIES_DF, DUCKDB_PATH
 from components.slider_player import PlaybackSliderAIO
-from functions.data_operations import reshape_by_type
+from functions.data_operations import create_mode_data, reshape_by_type
 from functions.query_duckdb import construct_query, query_duckdb
 
 logging.basicConfig(level=logging.INFO)
@@ -17,7 +18,6 @@ def register(app):
     @app.callback(
         Output(ids.STORED_DATA, "data"),
         [
-            Input(ids.MAP_MODE, "value"),
             Input(ids.TYPE_DROPDOWN, "value"),
             Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
             Input(ids.DONORTYPE_DROPDOWN, "value"),
@@ -27,7 +27,6 @@ def register(app):
         prevent_initial_call=True,
     )
     def update_stored_data(
-        map_mode,
         selected_type,
         selected_year,
         selected_donor_types,
@@ -43,6 +42,7 @@ def register(app):
         Returns:
             list(dict): The stored data as a list of dictionaries.
         """
+        start = time.time()
         query = construct_query(
             selected_year=selected_year,
             selected_categories=selected_categories,
@@ -55,10 +55,39 @@ def register(app):
             query=query,
         )
         df_reshaped = reshape_by_type(df_queried, selected_type)
-        # TODO: aggregate before storing?
 
-        # return the filtered data as a list of dicts for storage
-        return df_reshaped.to_dict("records")
+        end = time.time()
+        logger.info(
+            f"Execution time for updating stored data: {end - start:.2f} seconds."
+        )
+        return df_reshaped.to_dict("records")  # list of dicts as storage format
+
+    @app.callback(
+        Output(ids.MODE_DATA, "data"),
+        [
+            Input(ids.MAP_MODE, "value"),
+            Input(ids.STORED_DATA, "data"),
+            Input(ids.CATEGORIES_DROPDOWN, "value"),
+            Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
+        ],
+        prevent_initial_call=False,
+    )
+    def update_mode_data(
+        map_mode,
+        stored_data,
+        selected_categories,
+        selected_subcategories,
+    ):
+        if map_mode != "base":
+            df = pd.DataFrame(stored_data)
+            df_mode = create_mode_data(
+                df,
+                map_mode,
+                selected_categories,
+                selected_subcategories,
+            )
+            return df_mode.to_dict("records")
+        return []  # return empty list if map mode is set to 'base'
 
     @app.callback(
         Output(ids.CATEGORIES_SUB_DROPDOWN, "options"),

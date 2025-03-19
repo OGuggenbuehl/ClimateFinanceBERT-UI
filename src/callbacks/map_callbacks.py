@@ -6,8 +6,7 @@ from dash import Input, Output, State, dash
 from dash_extensions.javascript import arrow_function
 
 from components import constants, ids
-from components.slider_player import PlaybackSliderAIO
-from functions.data_operations import create_mode_data, merge_data
+from functions.data_operations import merge_data
 from functions.map_styler import style_map
 
 
@@ -26,33 +25,14 @@ def register(app):
 
     @app.callback(
         Output(ids.STORED_GEOJSON, "data"),
-        [
-            Input(ids.STORED_DATA, "data"),
-            Input(ids.CATEGORIES_DROPDOWN, "value"),
-            Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
-            Input(ids.MAP_MODE, "value"),
-            Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
-        ],
+        Input(ids.MODE_DATA, "data"),
         prevent_initial_call=True,
     )
-    # TODO: when to update and does aggregation really need to be done after storing?
     def update_stored_geojson(
-        stored_data,
-        selected_categories,
-        selected_subcategories,
-        map_mode,
-        selected_year,
+        mode_data,
     ):
         # retrieve stored dataframe and parse geojson
-        df_stored = pd.DataFrame(stored_data)
-
-        # prepare data for merging
-        df_mode = create_mode_data(
-            df_stored,
-            map_mode,
-            selected_categories,
-            selected_subcategories,
-        )
+        df_mode = pd.DataFrame(mode_data)
 
         # Create a deep copy of the base geojson to ensure it is not altered
         geojson_copy = copy.deepcopy(constants.GEOJSON_BASE)
@@ -61,8 +41,10 @@ def register(app):
 
     @app.callback(
         Output(ids.MAP, "children"),
-        Input(ids.STORED_GEOJSON, "data"),
-        Input(ids.MAP_MODE, "value"),
+        [
+            Input(ids.STORED_GEOJSON, "data"),
+            Input(ids.MAP_MODE, "value"),
+        ],
     )
     def update_map(
         stored_geojson,
