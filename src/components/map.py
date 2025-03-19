@@ -14,6 +14,8 @@ from components import (
 
 
 def render(app: Dash) -> html.Div:
+    url = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+    attribution = '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> '
     return html.Div(
         children=[
             html.Div(
@@ -50,7 +52,12 @@ def render(app: Dash) -> html.Div:
             dl.Map(
                 id=ids.MAP,
                 children=[
-                    dl.TileLayer(),
+                    dl.TileLayer(
+                        url=url,
+                        # maxZoom=5,
+                        # minZoom=2,
+                        attribution=attribution,
+                    ),
                     # render dummy map to be replaced by the callback
                     dl.GeoJSON(
                         url=constants.GEOJSON_URL,

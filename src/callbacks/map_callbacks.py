@@ -55,9 +55,16 @@ def register(app):
         stored_geojson,
         map_mode_value,
     ):
+        url = (
+            "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+        )
+        attribution = '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> '
         if map_mode_value == "base":
             return [
-                dl.TileLayer(),
+                dl.TileLayer(
+                    url=url,
+                    attribution=attribution,
+                ),
                 # render dummy map to be replaced by the callback
                 dl.GeoJSON(
                     url=constants.GEOJSON_URL,
@@ -71,7 +78,10 @@ def register(app):
         else:
             classes, colorscale, style, style_handle = style_map(map_mode_value)
             return [
-                dl.TileLayer(),
+                dl.TileLayer(
+                    url=url,
+                    attribution=attribution,
+                ),
                 dl.GeoJSON(
                     id=ids.COUNTRIES_LAYER,
                     data=stored_geojson,
