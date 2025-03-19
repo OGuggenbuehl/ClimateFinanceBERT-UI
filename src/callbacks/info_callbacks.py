@@ -68,7 +68,9 @@ def register(app):
             value = df_aggregated["USD_Disbursement"].iloc[0]
 
             end = time.time()
-            logger.info(f"Execution time for infobox country: {end - start}")
+            logger.info(
+                f"Execution time for infobox country: {end - start:.2f} seconds"
+            )
             infobox_components = header + [
                 html.Br(),
                 html.P(f"ID: {country_id}"),
@@ -99,7 +101,9 @@ def register(app):
             return infobox_components
         except (IndexError, KeyError):
             end = time.time()
-            logger.info(f"Execution time for infobox country: {end - start}")
+            logger.info(
+                f"Execution time for infobox country: {end - start:.2f} seconds"
+            )
             return header + [
                 html.Br(),
                 html.P(f"ID: {country_id}"),
@@ -162,7 +166,7 @@ def register(app):
             infobox_components.append(html.P("No data available for this timespan."))
 
         end = time.time()
-        logger.info(f"Execution time for infobox adaptation: {end - start}")
+        logger.info(f"Execution time for infobox adaptation: {end - start:.2f} seconds")
         return header + infobox_components
 
     @app.callback(
@@ -222,7 +226,9 @@ def register(app):
             infobox_components.append(html.P("No data available for this timespan."))
 
         end = time.time()
-        logger.info(f"Execution time for infobox environment: {end - start}")
+        logger.info(
+            f"Execution time for infobox environment: {end - start:.2f} seconds"
+        )
         return header + infobox_components
 
     @app.callback(
@@ -282,7 +288,7 @@ def register(app):
             infobox_components.append(html.P("No data available for this timespan."))
 
         end = time.time()
-        logger.info(f"Execution time for infobox mitigation: {end - start}")
+        logger.info(f"Execution time for infobox mitigation: {end - start:.2f} seconds")
         return header + infobox_components
 
     ## CLIMATE FINANCE INFO ##

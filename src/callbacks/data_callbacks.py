@@ -3,7 +3,7 @@ import time
 
 import dash_bootstrap_components as dbc
 import pandas as pd
-from dash import Input, Output, dash_table, html
+from dash import Input, Output, dash_table, exceptions, html
 
 from components import ids
 from components.constants import CATEGORIES_DF, DUCKDB_PATH
@@ -162,17 +162,20 @@ def register(app):
         Output(ids.FLOW_DATA_TABLE, "children"),
         [
             Input(ids.COUNTRIES_LAYER, "clickData"),
-            # Input(ids.YEAR_SLIDER, "value"),
             Input(ids.STORED_DATA, "data"),
             Input(ids.FLOW_DATA_BTN, "n_clicks"),
+            Input(ids.FLOW_DATA_MODAL, "is_open"),
         ],
     )
     def build_flow_data_table(
         click_data,
-        # year,
         stored_data,
         n_clicks,
+        is_open,
     ):
+        if n_clicks is None or not is_open:
+            raise exceptions.PreventUpdate
+        start = time.time()
         # build the info header based on the clicked country
         country_name = click_data["properties"]["name"]
         header = [html.H4(f"Flow Data for {country_name}:")]
@@ -205,6 +208,10 @@ def register(app):
                 dbc.ModalFooter(),
             ]
         else:
+            end = time.time()
+            logger.info(
+                f"Execution time for building flow data table: {end - start:.2f} seconds."
+            )
             return [
                 dbc.ModalHeader(dbc.ModalTitle(header)),
                 dbc.ModalBody(
