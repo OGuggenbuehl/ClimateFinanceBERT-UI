@@ -60,9 +60,9 @@ def create_mode_data(
 
     mode_functions = {
         "base": lambda: df,
-        "total": lambda: aggregate_to_country_level(
+        "total": lambda: aggregate(
             df=df,
-            group_by="CountryCode",
+            group_by=["Year", "CountryCode", "meta_category", "climate_class"],
             target="USD_Disbursement",
         ),
         "rio_oecd": lambda: build_oecd_table(
@@ -93,7 +93,7 @@ def create_mode_data(
     return result
 
 
-def aggregate_to_country_level(
+def aggregate(
     df: pd.DataFrame,
     group_by: str | list[str] = "CountryCode",
     target: str = "USD_Disbursement",
@@ -102,17 +102,19 @@ def aggregate_to_country_level(
     return df.groupby(group_by).agg({target: "sum"}).reset_index()
 
 
-def merge_data(geojson: dict, df: pd.DataFrame) -> dict:
+def merge_data(df: pd.DataFrame, geojson: dict, map_mode: str) -> dict:
     """Merge the GeoJSON data with the DataFrame data to add the ClimFin-Data to each polygon."""
-    # TODO: simplify by simply renaming colname in diff df?
     start = time.time()
-    merge_dict = (
-        pd.Series(df.USD_Disbursement.values, index=df["CountryCode"]).to_dict()
-        if "USD_Disbursement" in df.columns
-        else pd.Series(
+    if map_mode == "base":
+        return geojson
+    elif map_mode in ["rio_oecd", "rio_climfinbert"]:
+        merge_dict = pd.Series(
+            df.USD_Disbursement.values, index=df["CountryCode"]
+        ).to_dict()
+    elif map_mode == "rio_diff":
+        merge_dict = pd.Series(
             df.USD_Disbursement_diff.values, index=df["CountryCode"]
         ).to_dict()
-    )
 
     # filter out features whose ID is not in the merge_dict
     # NOTE: this prevents buggy polygon coloring behavior
@@ -168,9 +170,9 @@ def build_oecd_table(
     df = df[filter_condition]
 
     # Aggregate data to country level by summing USD_Disbursement
-    df = aggregate_to_country_level(
+    df = aggregate(
         df,
-        group_by="CountryCode",
+        group_by=["Year", "CountryCode", "meta_category", "climate_class"],
         target="USD_Disbursement",
     )
 
@@ -202,9 +204,9 @@ def build_ClimFinBERT_table(
         df = df[df["climate_class"].isin(selected_subcategories)]
 
     # Group and aggregate data based on the filters
-    df = aggregate_to_country_level(
+    df = aggregate(
         df,
-        group_by="CountryCode",
+        group_by=["Year", "CountryCode", "meta_category", "climate_class"],
         target="USD_Disbursement",
     )
 
@@ -297,7 +299,6 @@ if __name__ == "__main__":
         selected_categories=["Adaptation"],
         selected_subcategories=["Adaptation"],
     )
-    # df_prepared = aggregate_to_country_level(df_reshaped)
     print("prepared data:")
     print(df_prepared)
 

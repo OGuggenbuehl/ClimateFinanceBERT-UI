@@ -6,6 +6,7 @@ from dash import Input, Output, html
 
 from components import ids
 from components.slider_player import PlaybackSliderAIO
+from functions.data_operations import aggregate
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -15,7 +16,7 @@ def register(app):
     @app.callback(
         Output(ids.INFOBOX_COUNTRY, "children"),
         [
-            Input(ids.STORED_DATA, "data"),
+            Input(ids.MODE_DATA, "data"),
             Input(ids.MAP_MODE, "value"),
             Input(ids.COUNTRIES_LAYER, "hoverData"),
             Input(ids.COUNTRIES_LAYER, "clickData"),
@@ -23,7 +24,7 @@ def register(app):
         prevent_initial_call=True,
     )
     def build_infobox_country(
-        stored_data,
+        mode_data,
         map_mode,
         hover_data=None,
         click_data=None,
@@ -60,16 +61,17 @@ def register(app):
 
         header = [html.H5(country_name)]
         try:
-            stored_df = pd.DataFrame(stored_data)
-            df_subset = stored_df[stored_df["CountryCode"] == country_id]
-            value = df_subset["gdp"].iloc[0]
+            df_mode = pd.DataFrame(mode_data)
+            df_subset = df_mode[df_mode["CountryCode"] == country_id]
+            df_aggregated = aggregate(df_subset)
+            value = df_aggregated["USD_Disbursement"].iloc[0]
 
             end = time.time()
             logger.info(f"Execution time for infobox country: {end - start}")
             return header + [
                 html.Br(),
                 html.P(f"ID: {country_id}"),
-                html.P(f"GDP: {value.round(2)}"),
+                html.P(f"Total Disbursements: ${value.round(2)}"),
             ]
         except (IndexError, KeyError):
             end = time.time()

@@ -108,15 +108,15 @@ def register(app):
             Input(ids.CATEGORIES_DROPDOWN, "value"),
             Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
             Input(ids.COUNTRIES_LAYER, "clickData"),
-            Input(ids.STORED_DATA, "data"),
+            Input(ids.MODE_DATA, "data"),
         ],
         prevent_initial_call=True,
     )
     def build_datatable(
-        selected_categories,
-        selected_subcategories,
+        selected_categories=None,
+        selected_subcategories=None,
         click_data=None,
-        stored_data=None,
+        mode_data=None,
     ):
         """Build the datatable based on the input elements and the selected map element."""
         if not click_data:
@@ -128,21 +128,11 @@ def register(app):
 
             # subset the data based on the selected country
             country_code = click_data["id"]
-            df_stored = pd.DataFrame(stored_data)
+            df_mode = pd.DataFrame(mode_data)
 
-            # filter the data based on the selected categories
-            # TODO: is this needed or can we just use the queried data?
+            # filter the data based on the selected country
             try:
-                if selected_subcategories:
-                    df_filtered = df_stored[
-                        (df_stored["CountryCode"] == country_code)
-                        & (df_stored["climate_class"].isin(selected_subcategories))
-                    ]
-                else:
-                    df_filtered = df_stored[
-                        (df_stored["CountryCode"] == country_code)
-                        & (df_stored["meta_category"].isin(selected_categories))
-                    ]
+                df_filtered = df_mode[df_mode["CountryCode"] == country_code]
             # this is needed to circumvent an error where filtering on a country
             # that has no data available for the selected categories and years
             # leads to a KeyError
@@ -150,7 +140,11 @@ def register(app):
                 return header + [html.H4("No data available for this country.")]
 
             if len(df_filtered) == 0:
-                return header + [html.H4("No data available for this country.")]
+                return header + [
+                    html.H4(
+                        "No data available for this country for the selected filters."
+                    )
+                ]
             else:
                 # render DataTable with the filtered data
                 return header + [

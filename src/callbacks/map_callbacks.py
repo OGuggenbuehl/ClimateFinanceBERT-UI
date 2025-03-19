@@ -25,11 +25,15 @@ def register(app):
 
     @app.callback(
         Output(ids.STORED_GEOJSON, "data"),
-        Input(ids.MODE_DATA, "data"),
+        [
+            Input(ids.MODE_DATA, "data"),
+            Input(ids.MAP_MODE, "value"),
+        ],
         prevent_initial_call=True,
     )
     def update_stored_geojson(
         mode_data,
+        map_mode,
     ):
         # retrieve stored dataframe and parse geojson
         df_mode = pd.DataFrame(mode_data)
@@ -37,7 +41,7 @@ def register(app):
         # Create a deep copy of the base geojson to ensure it is not altered
         geojson_copy = copy.deepcopy(constants.GEOJSON_BASE)
 
-        return merge_data(geojson_copy, df_mode)
+        return merge_data(df_mode, geojson_copy, map_mode)
 
     @app.callback(
         Output(ids.MAP, "children"),
