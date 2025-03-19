@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import Input, Output, html
 
-from components import ids
+from components import flow_data_table, ids
 from components.slider_player import PlaybackSliderAIO
 from functions.data_operations import aggregate
 
@@ -86,21 +86,9 @@ def register(app):
                                     n_clicks=0,
                                 ),
                                 dbc.Modal(
-                                    [
-                                        dbc.ModalHeader(dbc.ModalTitle("Header")),
-                                        dbc.ModalBody(
-                                            "This is the content of the modal"
-                                        ),
-                                        dbc.ModalFooter(
-                                            dbc.Button(
-                                                "Close",
-                                                id="close",
-                                                className="ms-auto",
-                                                n_clicks=0,
-                                            )
-                                        ),
-                                    ],
-                                    id="modal",
+                                    flow_data_table.render(),
+                                    id=ids.FLOW_DATA_MODAL,
+                                    size="xl",
                                     is_open=False,
                                 ),
                             ]

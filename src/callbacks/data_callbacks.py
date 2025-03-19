@@ -1,6 +1,7 @@
 import logging
 import time
 
+import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import Input, Output, dash_table, html
 
@@ -156,6 +157,71 @@ def register(app):
                         },
                     )
                 ]
+
+    @app.callback(
+        Output(ids.FLOW_DATA_TABLE, "children"),
+        [
+            Input(ids.COUNTRIES_LAYER, "clickData"),
+            # Input(ids.YEAR_SLIDER, "value"),
+            Input(ids.STORED_DATA, "data"),
+            Input(ids.FLOW_DATA_BTN, "n_clicks"),
+        ],
+    )
+    def build_flow_data_table(
+        click_data,
+        # year,
+        stored_data,
+        n_clicks,
+    ):
+        # build the info header based on the clicked country
+        country_name = click_data["properties"]["name"]
+        header = [html.H4(f"Flow Data for {country_name}:")]
+
+        # subset the data based on the selected country
+        country_code = click_data["id"]
+        df = pd.DataFrame(stored_data)
+
+        # filter the data based on the selected country
+        try:
+            df_filtered = df[df["CountryCode"] == country_code]
+        # this is needed to circumvent an error where filtering on a country
+        # that has no data available for the selected categories and years
+        # leads to a KeyError
+        except KeyError:
+            return [
+                dbc.ModalHeader(dbc.ModalTitle(header)),
+                dbc.ModalBody(html.H4("No data available for this country.")),
+                dbc.ModalFooter(),
+            ]
+
+        if len(df_filtered) == 0:
+            return [
+                dbc.ModalHeader(dbc.ModalTitle(header)),
+                dbc.ModalBody(
+                    html.H4(
+                        "No data available for this country for the selected filters."
+                    )
+                ),
+                dbc.ModalFooter(),
+            ]
+        else:
+            return [
+                dbc.ModalHeader(dbc.ModalTitle(header)),
+                dbc.ModalBody(
+                    dash_table.DataTable(
+                        data=df_filtered.to_dict("records"),
+                        columns=[{"name": i, "id": i} for i in df_filtered.columns],
+                        page_size=15,
+                        sort_action="native",
+                        style_cell={
+                            "overflow": "hidden",
+                            "textOverflow": "ellipsis",
+                            "maxWidth": 0,
+                        },
+                    )
+                ),
+                dbc.ModalFooter(),
+            ]
 
     @app.callback(
         Output(ids.DATATABLE_CARD, "style"),

@@ -23,11 +23,14 @@ def register(app):
         return None
 
     @app.callback(
-        Output("modal", "is_open"),
-        [Input(ids.FLOW_DATA_BTN, "n_clicks"), Input("close", "n_clicks")],
-        [State("modal", "is_open")],
+        Output(ids.FLOW_DATA_MODAL, "is_open"),
+        [Input(ids.FLOW_DATA_BTN, "n_clicks")],
+        [State(ids.FLOW_DATA_MODAL, "is_open")],
     )
-    def toggle_modal(n1, n2, is_open):
-        if n1 or n2:
+    def toggle_modal(
+        btn_clicked,
+        is_open,
+    ):
+        if btn_clicked:
             return not is_open
         return is_open
