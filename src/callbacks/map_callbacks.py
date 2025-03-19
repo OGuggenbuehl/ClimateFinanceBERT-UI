@@ -49,6 +49,7 @@ def register(app):
             Input(ids.STORED_GEOJSON, "data"),
             Input(ids.MAP_MODE, "value"),
         ],
+        prevent_initial_call=True,
     )
     def update_map(
         stored_geojson,

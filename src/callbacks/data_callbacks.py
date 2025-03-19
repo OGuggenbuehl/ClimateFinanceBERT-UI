@@ -70,7 +70,7 @@ def register(app):
             Input(ids.CATEGORIES_DROPDOWN, "value"),
             Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
         ],
-        prevent_initial_call=False,
+        prevent_initial_call=True,
     )
     def update_mode_data(
         map_mode,
@@ -105,16 +105,12 @@ def register(app):
     @app.callback(
         Output(ids.DATATABLE, "children"),
         [
-            Input(ids.CATEGORIES_DROPDOWN, "value"),
-            Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
             Input(ids.COUNTRIES_LAYER, "clickData"),
             Input(ids.MODE_DATA, "data"),
         ],
         prevent_initial_call=True,
     )
     def build_datatable(
-        selected_categories=None,
-        selected_subcategories=None,
         click_data=None,
         mode_data=None,
     ):

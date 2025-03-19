@@ -1,6 +1,7 @@
 import logging
 import time
 
+import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import Input, Output, html
 
@@ -68,11 +69,46 @@ def register(app):
 
             end = time.time()
             logger.info(f"Execution time for infobox country: {end - start}")
-            return header + [
+            infobox_components = header + [
                 html.Br(),
                 html.P(f"ID: {country_id}"),
                 html.P(f"Total Disbursements: ${value.round(2)}"),
             ]
+
+            if map_mode != "base" and click_data:
+                infobox_components.extend(
+                    [
+                        html.Div(
+                            [
+                                dbc.Button(
+                                    "Inspect individual flows",
+                                    id=ids.FLOW_DATA_BTN,
+                                    n_clicks=0,
+                                ),
+                                dbc.Modal(
+                                    [
+                                        dbc.ModalHeader(dbc.ModalTitle("Header")),
+                                        dbc.ModalBody(
+                                            "This is the content of the modal"
+                                        ),
+                                        dbc.ModalFooter(
+                                            dbc.Button(
+                                                "Close",
+                                                id="close",
+                                                className="ms-auto",
+                                                n_clicks=0,
+                                            )
+                                        ),
+                                    ],
+                                    id="modal",
+                                    is_open=False,
+                                ),
+                            ]
+                        )
+                    ]
+                )
+
+            return infobox_components
         except (IndexError, KeyError):
             end = time.time()
             logger.info(f"Execution time for infobox country: {end - start}")
