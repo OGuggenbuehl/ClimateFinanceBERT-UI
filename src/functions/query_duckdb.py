@@ -4,6 +4,7 @@ from typing import Optional, Union
 
 import duckdb
 import pandas as pd
+
 from components.donor_type_dropdown import DONOR_TYPE_MAP
 
 logging.basicConfig(level=logging.INFO)

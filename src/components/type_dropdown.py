@@ -1,8 +1,9 @@
+from dash import dcc, html
+
 from components import ids
-from dash import Dash, dcc, html
 
 
-def render(app: Dash) -> html.Div:
+def render() -> html.Div:
     types = ["donors", "recipients"]
 
     return html.Div(

@@ -157,11 +157,12 @@ def build_oecd_table(
     # Initialize the filter condition to True (ensure the Series has the same index as df)
     filter_condition = pd.Series(True, index=df.index)
 
+    # TODO: this needs bugfixing as not all polygons are colored as expected (check 2018, recipients, private and play with categories)
     for category in selected_categories:
         if category in categories_mapping:
             category_column = categories_mapping[category]
             # Handle NaN values by using .fillna(False) so that NaN values don't break the condition
-            filter_condition &= df[category_column].fillna(0) > 0
+            filter_condition |= df[category_column].fillna(0) > 0
 
     # Apply the filter condition to the dataframe
     df = df[filter_condition]

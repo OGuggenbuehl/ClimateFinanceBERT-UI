@@ -1,10 +1,10 @@
-from dash import Dash, dcc, html
+from dash import dcc, html
 
 from components import ids
 from components.constants import CATEGORIES_DF
 
 
-def render(app: Dash) -> html.Div:
+def render() -> html.Div:
     return html.Div(
         children=[
             html.H6("Subcategories"),

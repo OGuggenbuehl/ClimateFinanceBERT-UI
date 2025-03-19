@@ -1,5 +1,6 @@
+from dash import dcc, html
+
 from components import ids
-from dash import Dash, dcc, html
 
 DONOR_TYPE_MAP = {
     "bilateral": "Donor Country",
@@ -8,7 +9,7 @@ DONOR_TYPE_MAP = {
 }
 
 
-def render(app: Dash) -> html.Div:
+def render() -> html.Div:
     return html.Div(
         children=[
             html.H6("Donor Type"),

@@ -1,4 +1,6 @@
 import dash_bootstrap_components as dbc
+from dash import Dash, html
+
 from components import (
     categories_dropdown,
     categories_sub_dropdown,
@@ -6,7 +8,6 @@ from components import (
     type_dropdown,
     year_slider,
 )
-from dash import Dash, html
 
 
 def render(app: Dash):
@@ -17,15 +18,15 @@ def render(app: Dash):
                     html.P("Mix and match your selection to filter the data"),
                     dbc.Nav(
                         [
-                            type_dropdown.render(app),
+                            type_dropdown.render(),
                             html.Br(),
-                            donor_type_dropdown.render(app),
+                            donor_type_dropdown.render(),
                             html.Br(),
-                            categories_dropdown.render(app),
+                            categories_dropdown.render(),
                             html.Br(),
-                            categories_sub_dropdown.render(app),
+                            categories_sub_dropdown.render(),
                             html.Br(),
-                            year_slider.render(app),
+                            year_slider.render(),
                         ],
                         vertical=True,
                         pills=True,
