@@ -1,7 +1,7 @@
 from dash import Input, Output, html
 
 from components import ids
-from pages import about_page, map_page
+from pages import about_page, download_page, map_page
 
 
 def register(app):
@@ -14,6 +14,8 @@ def register(app):
             return map_page.render(app)
         elif pathname == "/about":
             return about_page.render(app)
+        elif pathname == "/download":
+            return download_page.render(app)
         else:
             return html.Div(
                 [
