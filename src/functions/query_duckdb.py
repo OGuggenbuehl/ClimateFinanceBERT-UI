@@ -16,6 +16,7 @@ def construct_query(
     selected_categories: Optional[Union[str, list[str]]] = None,
     selected_subcategories: Optional[Union[str, list[str]]] = None,
     selected_donor_types: Optional[Union[str, list[str]]] = None,
+    selected_flow_types: Optional[Union[str, list[str]]] = None,
 ) -> str:
     """Construct an SQL query based on the selected filters.
 
@@ -24,6 +25,7 @@ def construct_query(
         selected_categories (Optional[Union[str, list[str]]]): The selected categories.
         selected_subcategories (Optional[Union[str, list[str]]]): The selected subcategories.
         selected_donor_types (Optional[Union[str, list[str]]]): The selected donor types.
+        selected_flow_types (Optional[Union[str, list[str]]]): The selected flow types.
 
     Returns:
         str: The constructed SQL query.
@@ -54,6 +56,11 @@ def construct_query(
     if selected_subcategories:
         subcategory_list = ", ".join(f"'{sub}'" for sub in selected_subcategories)
         query += f" AND climate_class IN ({subcategory_list})"
+
+    # add flow type filter
+    if selected_flow_types:
+        flow_type_list = ", ".join(f"'{flow}'" for flow in selected_flow_types)
+        query += f" AND FlowName IN ({flow_type_list})"
 
     # add donor type filter
     if selected_donor_types:

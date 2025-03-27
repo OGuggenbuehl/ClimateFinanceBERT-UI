@@ -8,7 +8,7 @@ def render() -> html.Div:
 
     return html.Div(
         children=[
-            html.H6("Type"),
+            html.H6("Donors or Recipients?"),
             dcc.Dropdown(
                 id=ids.TYPE_DROPDOWN,
                 options=[{"label": type.title(), "value": type} for type in types],

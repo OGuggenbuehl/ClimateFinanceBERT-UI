@@ -24,6 +24,7 @@ def register(app):
             Input(ids.DONORTYPE_DROPDOWN, "value"),
             Input(ids.CATEGORIES_DROPDOWN, "value"),
             Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
+            Input(ids.FLOW_TYPE_DROPDOWN, "value"),
         ],
         prevent_initial_call=True,
     )
@@ -33,6 +34,7 @@ def register(app):
         selected_donor_types,
         selected_categories,
         selected_subcategories,
+        selected_flow_types,
     ):
         """Reads, subsets and stores data based on the set UI inputs.
 
@@ -49,6 +51,7 @@ def register(app):
             selected_categories=selected_categories,
             selected_subcategories=selected_subcategories,
             selected_donor_types=selected_donor_types,
+            selected_flow_types=selected_flow_types,
         )
 
         df_queried = query_duckdb(

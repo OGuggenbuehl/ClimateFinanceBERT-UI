@@ -284,6 +284,7 @@ if __name__ == "__main__":
         selected_donor_types=[
             "Donor Country"
         ],  # 'bilateral' as mapped in frontend component
+        selected_flow_types=["ODA Loans", "ODA Grants"],
     )
     df_queried = query_duckdb(
         duckdb_db=DUCKDB_PATH,
@@ -303,7 +304,7 @@ if __name__ == "__main__":
     print(df_prepared)
 
     # merge to geojson
-    merged = merge_data(geojson_data, df_prepared)
+    merged = merge_data(df=df_prepared, geojson=geojson_data, map_mode="rio_oecd")
     print("\nmerged data as pulled from geojson:")
     for feature in merged["features"]:
         print(f"{feature['id']}: {feature['properties']['value']}")

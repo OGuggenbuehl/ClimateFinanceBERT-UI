@@ -107,6 +107,13 @@ SUBCATEGORIES = [
     "Energy-efficiency",
     "Marine-energy",
 ]
+FLOW_TYPES = [
+    "ODA Grants",
+    "ODA Loans",
+    "Other Official Flows (non Export Credit)",
+    "Private Development Finance",
+    "Equity Investment",
+]
 
 if __name__ == "__main__":
     print(f"There are {len(COUNTRY_IDS)} countries in the list:")
