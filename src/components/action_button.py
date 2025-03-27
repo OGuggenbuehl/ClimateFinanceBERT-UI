@@ -26,6 +26,5 @@ def render(
         style={
             **position_styles,
             "position": "absolute",
-            "zIndex": "1000",
         },
     )

@@ -14,6 +14,5 @@ def render(top: str, bottom: str, right: str, left: str):
             "bottom": bottom,
             "right": right,
             "left": left,
-            "zIndex": "1000",
         },
     )

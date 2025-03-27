@@ -19,20 +19,18 @@ def iso_to_alpha2(iso_alpha3):
     """Convert ISO Alpha-3 code to Alpha-2 code."""
     try:
         country = pycountry.countries.get(alpha_3=iso_alpha3)
-        return (
-            country.alpha_2 if country else iso_alpha3
-        )  # Return Alpha-2 if found, else fallback to Alpha-3
+        return country.alpha_2 if country else iso_alpha3
     except KeyError:
-        return iso_alpha3  # In case the code is invalid, return the original code
+        return iso_alpha3
 
 
 def get_country_flag(iso_code):
-    # Convert ISO Alpha-3 to Alpha-2
+    """Return the flag emoji for the given ISO code."""
     iso_alpha2 = iso_to_alpha2(iso_code)
     try:
-        return flag(iso_alpha2)  # Return the flag emoji for the Alpha-2 code
+        return flag(iso_alpha2)
     except KeyError:
-        return "🏳️"  # Return default flag if the ISO code is invalid or unsupported
+        return "🏳️"
 
 
 def register(app):
@@ -57,7 +55,6 @@ def register(app):
         selected_year=None,
     ):
         """Build the infobox for the selected country polygon with adaptation, environment, and mitigation data."""
-
         start = time.time()
         if not click_data and not hover_data:
             header = [html.H5("🌍 Country Information ℹ️", className="infobox-header")]
@@ -113,7 +110,7 @@ def register(app):
             # Build the formatted info box
             infobox_components = header + [
                 html.Br(),
-                html.P(f"🆔 ID: {country_id}"),
+                html.P(f"🆔 IsoCode: {country_id}"),
                 html.Hr(),
                 html.P(["⚙️ Adaptation: ", html.B(f"${adaptation_value} Mio USD")]),
                 html.P(["🌳 Environment: ", html.B(f"${environment_value} Mio USD")]),
