@@ -37,7 +37,7 @@ def get_country_flag(iso_code):
 
 def register(app):
     @app.callback(
-        Output(ids.INFOBOX_COUNTRY, "children"),
+        Output(ids.INFOBOX, "children"),
         [
             Input(ids.MODE_DATA, "data"),
             Input(ids.MAP_MODE, "value"),
@@ -48,7 +48,7 @@ def register(app):
         ],
         prevent_initial_call=True,
     )
-    def build_infobox_country(
+    def build_infobox(
         mode_data,
         map_mode,
         hover_data=None,

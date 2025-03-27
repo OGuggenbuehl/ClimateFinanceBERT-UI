@@ -6,7 +6,6 @@ from components import (
     categories_sub_dropdown,
     donor_type_dropdown,
     type_dropdown,
-    year_slider,
 )
 
 
@@ -25,8 +24,8 @@ def render(app: Dash):
                             categories_dropdown.render(),
                             html.Br(),
                             categories_sub_dropdown.render(),
-                            html.Br(),
-                            year_slider.render(),
+                            # html.Br(),
+                            # year_slider.render(),
                         ],
                         vertical=True,
                         pills=True,

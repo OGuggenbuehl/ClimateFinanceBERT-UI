@@ -31,12 +31,11 @@ def render(top: str, bottom: str, right: str, left: str):
             ),
         ],
         style={
-            "position": "absolute",
+            # "position": "absolute",
             "top": top,
             "bottom": bottom,
             "right": right,
             "left": left,
-            "zIndex": "1000",
         },
         className=ids.INFOBOX,
     )
