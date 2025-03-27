@@ -156,10 +156,12 @@ dependencies = [
     { name = "dash-extensions" },
     { name = "dash-leaflet" },
     { name = "duckdb" },
+    { name = "emoji-country-flag" },
     { name = "ipykernel" },
     { name = "pandas" },
     { name = "polars" },
     { name = "pyarrow" },
+    { name = "pycountry" },
     { name = "ruff" },
 ]
 
@@ -170,10 +172,12 @@ requires-dist = [
     { name = "dash-extensions", specifier = ">=1.0.18" },
     { name = "dash-leaflet", specifier = ">=1.0.15" },
     { name = "duckdb", specifier = ">=1.2.1" },
+    { name = "emoji-country-flag", specifier = ">=2.0.1" },
     { name = "ipykernel", specifier = ">=6.29.5" },
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "polars", specifier = ">=1.16.0" },
     { name = "pyarrow", specifier = ">=18.1.0" },
+    { name = "pycountry", specifier = ">=24.6.1" },
     { name = "ruff", specifier = "==0.11.0" },
 ]
 
@@ -353,6 +357,15 @@ name = "editorconfig"
 version = "0.12.4"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/3d/85/7b5c2fac7fdc37d959fab714b13b9acb75884490dcc0e8b1dc5e64105084/EditorConfig-0.12.4.tar.gz", hash = "sha256:24857fa1793917dd9ccf0c7810a07e05404ce9b823521c7dce22a4fb5d125f80", size = 13278 }
+
+[[package]]
+name = "emoji-country-flag"
+version = "2.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/9e/a0/9be36debd24ba5d26623b2ec3b9bdb05d49b62573d239f2ffb64157ab68c/emoji_country_flag-2.0.1.tar.gz", hash = "sha256:0faa32ca4f12da4e4c8324431947077b116caf998b0df0c01168ae8ece24e57a", size = 81150 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4d/71/e777f5b50df5dcf12740abe46d7896fa2d791516138a14a975ab8b71aa1c/emoji_country_flag-2.0.1-py3-none-any.whl", hash = "sha256:5465745b20f33d1ea46a53126f23f5aea34d66b20c2571c7bbb6a63925e4d95a", size = 25798 },
+]
 
 [[package]]
 name = "executing"
@@ -806,6 +819,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/1d/d6/5d704b0d25c3c79532f8c0639f253ec2803b897100f64bcb3f53ced236e5/pyarrow-18.1.0-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d6cf5c05f3cee251d80e98726b5c7cc9f21bab9e9783673bac58e6dfab57ecc8", size = 40090940 },
     { url = "https://files.pythonhosted.org/packages/37/29/366bc7e588220d74ec00e497ac6710c2833c9176f0372fe0286929b2d64c/pyarrow-18.1.0-cp313-cp313t-manylinux_2_28_aarch64.whl", hash = "sha256:11b676cd410cf162d3f6a70b43fb9e1e40affbc542a1e9ed3681895f2962d3d9", size = 38548177 },
     { url = "https://files.pythonhosted.org/packages/c8/11/fabf6ecabb1fe5b7d96889228ca2a9158c4c3bb732e3b8ee3f7f6d40b703/pyarrow-18.1.0-cp313-cp313t-manylinux_2_28_x86_64.whl", hash = "sha256:b76130d835261b38f14fc41fdfb39ad8d672afb84c447126b84d5472244cfaba", size = 40043567 },
+]
+
+[[package]]
+name = "pycountry"
+version = "24.6.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/76/57/c389fa68c50590881a75b7883eeb3dc15e9e73a0fdc001cdd45c13290c92/pycountry-24.6.1.tar.gz", hash = "sha256:b61b3faccea67f87d10c1f2b0fc0be714409e8fcdcc1315613174f6466c10221", size = 6043910 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b1/ec/1fb891d8a2660716aadb2143235481d15ed1cbfe3ad669194690b0604492/pycountry-24.6.1-py3-none-any.whl", hash = "sha256:f1a4fb391cd7214f8eefd39556d740adcc233c778a27f8942c8dca351d6ce06f", size = 6335189 },
 ]
 
 [[package]]
