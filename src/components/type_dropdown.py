@@ -4,7 +4,7 @@ from components import ids
 
 
 def render(id: str) -> html.Div:
-    types = ["donors", "recipients"]
+    # types = ["donors", "recipients"]
 
     return html.Div(
         children=[

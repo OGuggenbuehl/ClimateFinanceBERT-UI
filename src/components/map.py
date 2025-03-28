@@ -1,5 +1,5 @@
 import dash_leaflet as dl
-from dash import Dash, html
+from dash import html
 
 from components import (
     action_button,
@@ -12,7 +12,7 @@ from components import (
 )
 
 
-def render(app: Dash) -> html.Div:
+def render() -> html.Div:
     url = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
     attribution = '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> '
 
@@ -90,12 +90,16 @@ def render(app: Dash) -> html.Div:
                         url=url,
                         attribution=attribution,
                     ),
-                    ## Commented out blue default layer for now since map-modes are disabled
-                    # dl.GeoJSON(
-                    #     url=constants.GEOJSON_URL,
-                    #     id=ids.COUNTRIES_LAYER,
-                    #     style={"fillColor": "dodgerblue", "color": "dodgerblue"},
-                    # ),
+                    dl.GeoJSON(
+                        url=constants.GEOJSON_URL,
+                        id=ids.COUNTRIES_LAYER,
+                        style={
+                            "color": "dodgerblue",
+                            "opacity": 0,  # hide layer for now
+                            "fillColor": "dodgerblue",
+                            "fillOpacity": 0,  # hide layer for now
+                        },
+                    ),
                 ],
                 center=constants.INITIAL_CENTER,
                 zoom=constants.INITIAL_ZOOM,

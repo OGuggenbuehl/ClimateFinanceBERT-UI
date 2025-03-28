@@ -22,7 +22,7 @@ def render(app: Dash) -> html.Div:
                                 className="map-container",
                                 children=[
                                     dbc.Card(
-                                        map.render(app),
+                                        map.render(),
                                         body=True,
                                         className="map-card",
                                     )
