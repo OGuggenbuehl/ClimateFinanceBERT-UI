@@ -43,6 +43,11 @@ COLUMN_TYPES = {
     "DonorType": "VARCHAR",
 }
 
+YEAR_RANGE = {
+    "min": 2000,
+    "max": 2022,
+}
+
 # Initial map center and zoom level
 INITIAL_CENTER = [51.4934, 0.0098]
 INITIAL_ZOOM = 2

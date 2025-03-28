@@ -6,7 +6,6 @@ from dash.exceptions import PreventUpdate
 
 from components import ids
 from components.constants import DUCKDB_PATH
-from components.slider_player import PlaybackSliderAIO
 from functions.query_duckdb import construct_query, query_duckdb
 
 logger = logging.getLogger(__name__)
@@ -18,7 +17,7 @@ def register(app):
         Output(ids.DOWNLOAD_QUERIED_DATA, "data"),
         [
             Input(ids.QUERY_BTN, "n_clicks"),
-            Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER_DOWNLOAD), "value"),
+            Input(ids.YEAR_SLIDER_DOWNLOAD, "value"),
             Input(ids.CATEGORIES_DROPDOWN_DOWNLOAD, "value"),
             Input(ids.CATEGORIES_SUB_DROPDOWN_DOWNLOAD, "value"),
             Input(ids.DONORTYPE_DROPDOWN_DOWNLOAD, "value"),
@@ -28,7 +27,7 @@ def register(app):
     )
     def pull_data(
         n_clicks,
-        selected_year,
+        selected_years,
         selected_categories,
         selected_subcategories,
         selected_donor_types,
@@ -45,7 +44,8 @@ def register(app):
         logger.info("Query Button clicked: Pulling data")
 
         query = construct_query(
-            selected_year=selected_year,
+            year_type="timespan",
+            selected_year=selected_years,
             selected_categories=selected_categories,
             selected_subcategories=selected_subcategories,
             selected_donor_types=selected_donor_types,

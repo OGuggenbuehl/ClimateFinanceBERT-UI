@@ -48,6 +48,7 @@ def register(app):
         """
         start = time.time()
         query = construct_query(
+            year_type="single_year",
             selected_year=selected_year,
             selected_categories=selected_categories,
             selected_subcategories=selected_subcategories,

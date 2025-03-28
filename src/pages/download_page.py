@@ -8,8 +8,7 @@ from components import (
     donor_type_dropdown,
     flow_type_dropdown,
     ids,
-    type_dropdown,
-    year_slider,
+    timespan_slider,
 )
 
 
@@ -17,7 +16,7 @@ def render(app: Dash) -> html.Div:
     return html.Div(
         id="download-page",
         children=[
-            # Title
+            # title
             dbc.Row(
                 dbc.Col(
                     [
@@ -26,7 +25,7 @@ def render(app: Dash) -> html.Div:
                     width=12,
                 )
             ),
-            # Description Text
+            # description
             dbc.Row(
                 dbc.Col(
                     [
@@ -41,15 +40,23 @@ def render(app: Dash) -> html.Div:
                 )
             ),
             html.Br(),
-            # Filter Controls - Grid Layout
+            # filters row
             dbc.Row(
                 children=[
-                    # Left Filters (Type & Donor Type)
+                    # left column
                     dbc.Col(
                         [
-                            type_dropdown.render(id=ids.TYPE_DROPDOWN_DOWNLOAD),
                             donor_type_dropdown.render(
-                                id="donortype-dropdown-download"
+                                id=ids.DONORTYPE_DROPDOWN_DOWNLOAD,
+                                style={
+                                    "color": "black",
+                                },
+                            ),
+                            flow_type_dropdown.render(
+                                id=ids.FLOW_TYPE_DROPDOWN_DOWNLOAD,
+                                style={
+                                    "color": "black",
+                                },
                             ),
                         ],
                         width={
@@ -58,10 +65,10 @@ def render(app: Dash) -> html.Div:
                         },
                         className="mb-4",
                     ),
-                    # Middle Filter (Year Slider)
+                    # middle column
                     dbc.Col(
                         [
-                            year_slider.render(id=ids.YEAR_SLIDER_DOWNLOAD),
+                            timespan_slider.render(id=ids.YEAR_SLIDER_DOWNLOAD),
                         ],
                         width={
                             "size": 4,
@@ -69,17 +76,20 @@ def render(app: Dash) -> html.Div:
                         },
                         className="mb-4",
                     ),
-                    # Right Filters (Categories & Flow Type)
+                    # right column
                     dbc.Col(
                         [
                             categories_dropdown.render(
-                                id=ids.CATEGORIES_DROPDOWN_DOWNLOAD
+                                id=ids.CATEGORIES_DROPDOWN_DOWNLOAD,
+                                style={
+                                    "color": "black",
+                                },
                             ),
                             categories_sub_dropdown.render(
-                                id=ids.CATEGORIES_SUB_DROPDOWN_DOWNLOAD
-                            ),
-                            flow_type_dropdown.render(
-                                id=ids.FLOW_TYPE_DROPDOWN_DOWNLOAD
+                                id=ids.CATEGORIES_SUB_DROPDOWN_DOWNLOAD,
+                                style={
+                                    "color": "black",
+                                },
                             ),
                         ],
                         width={
@@ -89,11 +99,11 @@ def render(app: Dash) -> html.Div:
                         className="mb-4",
                     ),
                 ],
-                className="mb-4",  # Add margin at the bottom
+                className="mb-4",
             ),
-            # Query & Download Buttons in One Row
             dbc.Row(
                 dbc.Col(
+                    # buttons row
                     dbc.Row(
                         [
                             dbc.Col(
@@ -118,13 +128,13 @@ def render(app: Dash) -> html.Div:
                                 width=2,
                             ),
                         ],
-                        className="g-3",  # Grid gap between buttons
+                        className="g-3",
                     ),
                     width=12,
                 ),
-                className="mb-4",  # Add margin at the bottom
+                className="mb-4",
             ),
-            # Data Table Display
+            # datatable row
             dbc.Row(
                 dbc.Col(
                     html.Div(
@@ -142,7 +152,7 @@ def render(app: Dash) -> html.Div:
                         "offset": 2,
                     },
                 ),
-                className="mt-4",  # Margin on top of the datatable card
+                className="mt-4",
             ),
         ],
     )

@@ -7,7 +7,7 @@ DONOR_TYPE_MAP = {
 }
 
 
-def render(id: str) -> html.Div:
+def render(id: str, style: dict = None) -> html.Div:
     return html.Div(
         children=[
             html.H6("Donor Type"),
@@ -19,6 +19,7 @@ def render(id: str) -> html.Div:
                 ],
                 value=DONOR_TYPE_MAP["bilateral"],
                 multi=True,
+                style=style,
             ),
         ]
     )

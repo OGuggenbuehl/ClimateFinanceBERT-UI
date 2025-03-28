@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Optional, Union
+from typing import Literal, Optional, Union
 
 import duckdb
 import pandas as pd
@@ -12,7 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 def construct_query(
-    selected_year: int,
+    year_type: Literal["single_year", "timespan"],
+    selected_year: Union[int, tuple[int, int]],
     selected_categories: Optional[Union[str, list[str]]] = None,
     selected_subcategories: Optional[Union[str, list[str]]] = None,
     selected_donor_types: Optional[Union[str, list[str]]] = None,
@@ -21,6 +22,7 @@ def construct_query(
     """Construct an SQL query based on the selected filters.
 
     Args:
+        year_type (str): The type of year filter to apply. Either "single_year" or "timespan".
         selected_year (int): The selected year.
         selected_categories (Optional[Union[str, list[str]]]): The selected categories.
         selected_subcategories (Optional[Union[str, list[str]]]): The selected subcategories.
@@ -31,10 +33,18 @@ def construct_query(
         str: The constructed SQL query.
     """
     # base query
-    query = f"""
+    query = """
         SELECT *
-        FROM my_table
+        FROM my_table"""
+
+    # add year filter depending on the supplied year_type
+    if year_type == "single_year":
+        query += f"""
         WHERE Year = {selected_year}
+        """
+    elif year_type == "timespan":
+        query += f"""
+        WHERE Year >= {selected_year[0]} AND Year <= {selected_year[1]}
         """
 
     # normalize inputs to lists
@@ -109,7 +119,8 @@ if __name__ == "__main__":
     from components.constants import DUCKDB_PATH
 
     query = construct_query(
-        selected_year=2018,
+        year_type="timespan",
+        selected_year=(2018, 2020),
         selected_categories=["Adaptation"],
         selected_subcategories=["Adaptation"],
         selected_donor_types=["Donor Country"],
@@ -120,4 +131,4 @@ if __name__ == "__main__":
 
     result = query_duckdb(duckdb_db=DUCKDB_PATH, query=query)
     print(f"Resulting dataframe has dimensions: {result.shape}")
-    print(result.head())
+    print(result.tail())

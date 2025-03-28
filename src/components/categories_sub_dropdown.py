@@ -3,7 +3,7 @@ from dash import dcc, html
 from components.constants import CATEGORIES_DF
 
 
-def render(id: str) -> html.Div:
+def render(id: str, style: dict = None) -> html.Div:
     return html.Div(
         children=[
             html.H6("Subcategories"),
@@ -12,6 +12,7 @@ def render(id: str) -> html.Div:
                 options=CATEGORIES_DF["meta_category"].unique(),
                 value=["Solar-energy"],  # CATEGORIES_DF["meta_category"].unique(),
                 multi=True,
+                style=style,
             ),
         ]
     )

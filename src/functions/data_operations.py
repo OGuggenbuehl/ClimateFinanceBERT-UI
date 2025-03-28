@@ -278,6 +278,7 @@ if __name__ == "__main__":
 
     # query data
     query = construct_query(
+        year_type="single_year",
         selected_year=2020,
         selected_categories=["Adaptation"],
         selected_subcategories=["Adaptation"],
