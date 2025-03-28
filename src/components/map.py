@@ -1,14 +1,7 @@
 import dash_leaflet as dl
 from dash import Dash, html
 
-from components import (
-    action_button,
-    constants,
-    ids,
-    infobox,
-    map_mode,
-    year_slider,
-)
+from components import action_button, constants, ids, infobox, map_mode, year_slider
 
 
 def render(app: Dash) -> html.Div:
@@ -31,7 +24,7 @@ def render(app: Dash) -> html.Div:
                             "zIndex": 10,  # Ensure infobox is above the map
                         },
                     ),
-                    # Map-mode selector in the center
+                    # map-mode selector in the center
                     html.Div(
                         children=[
                             map_mode.render(
@@ -88,11 +81,12 @@ def render(app: Dash) -> html.Div:
                         url=url,
                         attribution=attribution,
                     ),
-                    dl.GeoJSON(
-                        url=constants.GEOJSON_URL,
-                        id=ids.COUNTRIES_LAYER,
-                        style={"fillColor": "dodgerblue", "color": "dodgerblue"},
-                    ),
+                    ## Commented out blue default layer for now since map-modes are disabled
+                    # dl.GeoJSON(
+                    #     url=constants.GEOJSON_URL,
+                    #     id=ids.COUNTRIES_LAYER,
+                    #     style={"fillColor": "dodgerblue", "color": "dodgerblue"},
+                    # ),
                 ],
                 center=constants.INITIAL_CENTER,
                 zoom=constants.INITIAL_ZOOM,

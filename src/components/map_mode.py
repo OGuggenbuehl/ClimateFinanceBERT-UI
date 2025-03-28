@@ -25,7 +25,7 @@ def render(top: str, bottom: str, right: str, left: str):
                     },
                     # {"label": "Difference", "value": "rio_diff", "disabled": False},
                 ],
-                value="base",
+                value="rio_climfinbert",
                 id=ids.MAP_MODE,
                 inline=True,
             ),
@@ -36,6 +36,7 @@ def render(top: str, bottom: str, right: str, left: str):
             "bottom": bottom,
             "right": right,
             "left": left,
+            "display": "none",  # hide map-modes for now without breaking functionality
         },
         className=ids.INFOBOX,
     )
