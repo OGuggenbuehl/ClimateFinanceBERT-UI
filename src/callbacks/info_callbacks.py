@@ -4,10 +4,10 @@ import time
 import dash_bootstrap_components as dbc
 import pandas as pd
 import pycountry
-from dash import Input, Output, html
+from dash import Input, Output, State, html
 from flag import flag
 
-from components import datatable, ids
+from components import ids
 from components.slider_player import PlaybackSliderAIO
 from functions.data_operations import aggregate
 
@@ -37,22 +37,24 @@ def register(app):
     @app.callback(
         Output(ids.INFOBOX, "children"),
         [
-            Input(ids.MODE_DATA, "data"),
             Input(ids.MAP_MODE, "value"),
             Input(ids.COUNTRIES_LAYER, "hoverData"),
             Input(ids.COUNTRIES_LAYER, "clickData"),
-            Input(ids.STORED_DATA, "data"),
             Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
+        ],
+        [
+            State(ids.STORED_DATA, "data"),
+            State(ids.MODE_DATA, "data"),
         ],
         prevent_initial_call=True,
     )
     def build_infobox(
-        mode_data,
         map_mode,
-        hover_data=None,
-        click_data=None,
-        stored_data=None,
-        selected_year=None,
+        hover_data,
+        click_data,
+        selected_year,
+        stored_data,
+        mode_data,
     ):
         """Build the infobox for the selected country polygon with adaptation, environment, and mitigation data."""
         start = time.time()
@@ -133,12 +135,6 @@ def register(app):
                                     id=ids.FLOW_DATA_BTN,
                                     n_clicks=0,
                                     className="inspect-btn",
-                                ),
-                                dbc.Modal(
-                                    datatable.render(id=ids.FLOW_DATA_TABLE),
-                                    id=ids.FLOW_DATA_MODAL,
-                                    size="xl",
-                                    is_open=False,
                                 ),
                             ]
                         )

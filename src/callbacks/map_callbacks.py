@@ -12,8 +12,10 @@ from functions.map_styler import style_map
 
 def register(app):
     @app.callback(
-        Output(ids.MAP, "center"),
-        Output(ids.MAP, "zoom"),
+        [
+            Output(ids.MAP, "center"),
+            Output(ids.MAP, "zoom"),
+        ],
         Input(ids.RESET_MAP, "n_clicks"),
         State(ids.INITIAL_STATE, "data"),
     )
@@ -86,7 +88,6 @@ def register(app):
                     id=ids.COUNTRIES_LAYER,
                     data=stored_geojson,
                     style=style_handle,  # how to style each polygon
-                    # TODO: comment out due to buggy hover behavior
                     hoverStyle=arrow_function(
                         dict(weight=4, color="#666", dashArray="")
                     ),  # style applied on hover

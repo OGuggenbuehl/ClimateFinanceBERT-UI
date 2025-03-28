@@ -38,7 +38,7 @@ def render(app: Dash) -> html.Div:
                                 className="datatable-container",
                                 children=[
                                     dbc.Card(
-                                        datatable.render(id=ids.FLOW_DATA_TABLE),
+                                        datatable.render(id=ids.DATATABLE),
                                         body=True,
                                         id="datatable-card",
                                     )

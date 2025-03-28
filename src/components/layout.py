@@ -3,6 +3,7 @@ from dash import Dash, dcc, html
 
 from components import (
     constants,
+    datatable,
     ids,
     navbar,
 )
@@ -31,6 +32,12 @@ def create_layout(app: Dash) -> html.Div:
             dbc.Container(
                 id=ids.PAGE_CONTENT,
                 fluid=True,
+            ),
+            dbc.Modal(
+                datatable.render(id=ids.FLOW_DATA_TABLE),
+                id=ids.FLOW_DATA_MODAL,
+                size="xl",
+                is_open=False,
             ),
         ],
     )

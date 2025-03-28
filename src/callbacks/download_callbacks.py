@@ -89,21 +89,25 @@ def register(app):
     @app.callback(
         Output(ids.DOWNLOAD_TRIGGER, "data"),
         [Input(ids.DOWNLOAD_BTN, "n_clicks")],
-        [State(ids.DOWNLOAD_QUERIED_DATA, "data")],
+        [
+            State(ids.DOWNLOAD_QUERIED_DATA, "data"),
+            State(ids.YEAR_SLIDER_DOWNLOAD, "value"),
+        ],
         prevent_initial_call=True,
     )
     def download_csv(
         n_clicks,
         queried_data,
+        selected_years,
     ):
         if not n_clicks or not queried_data:
             raise PreventUpdate
 
         logger.info("downloading queried data as CSV")
-
+        filename = f"ClimFinBERT_data_{selected_years[0]}-{selected_years[1]}.csv"
         return dcc.send_data_frame(
             pd.DataFrame(queried_data).to_csv,
-            "queried_data.csv",
+            filename,
             index=False,
         )
 

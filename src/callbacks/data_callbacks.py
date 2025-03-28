@@ -3,7 +3,7 @@ import time
 
 import dash_bootstrap_components as dbc
 import pandas as pd
-from dash import Input, Output, dash_table, html
+from dash import Input, Output, State, dash_table, html
 from dash.exceptions import PreventUpdate
 
 from components import ids
@@ -73,8 +73,10 @@ def register(app):
         [
             Input(ids.MAP_MODE, "value"),
             Input(ids.STORED_DATA, "data"),
-            Input(ids.CATEGORIES_DROPDOWN, "value"),
-            Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
+        ],
+        [
+            State(ids.CATEGORIES_DROPDOWN, "value"),
+            State(ids.CATEGORIES_SUB_DROPDOWN, "value"),
         ],
         prevent_initial_call=True,
     )
@@ -112,15 +114,17 @@ def register(app):
         Output(ids.DATATABLE, "children"),
         [
             Input(ids.COUNTRIES_LAYER, "clickData"),
-            Input(ids.MODE_DATA, "data"),
         ],
-        prevent_initial_call=True,
+        [
+            State(ids.MODE_DATA, "data"),
+        ],
     )
     def build_datatable(
-        click_data=None,
-        mode_data=None,
+        click_data,
+        mode_data,
     ):
         """Build the datatable based on the input elements and the selected map element."""
+
         if not click_data:
             return html.H4("Click a country to render a datatable")
         else:
@@ -166,36 +170,41 @@ def register(app):
     @app.callback(
         Output(ids.FLOW_DATA_TABLE, "children"),
         [
-            Input(ids.COUNTRIES_LAYER, "clickData"),
-            Input(ids.STORED_DATA, "data"),
-            Input(ids.FLOW_DATA_BTN, "n_clicks"),
             Input(ids.FLOW_DATA_MODAL, "is_open"),
         ],
+        [
+            State(ids.COUNTRIES_LAYER, "clickData"),
+            State(ids.STORED_DATA, "data"),
+        ],
+        prevent_initial_call=True,
     )
     def build_flow_data_table(
+        is_open,
         click_data,
         stored_data,
-        n_clicks,
-        is_open,
     ):
-        if n_clicks is None or not is_open:
+        if not is_open:
             raise PreventUpdate
 
         start = time.time()
-        # build the info header based on the clicked country
-        country_name = click_data["properties"]["name"]
+
+        # Get country name and ID safely
+        try:
+            country_name = click_data["properties"]["name"]
+            country_code = click_data["id"]
+        except (TypeError, KeyError):
+            return [
+                dbc.ModalHeader(dbc.ModalTitle("Error")),
+                dbc.ModalBody(html.H4("Invalid country selection.")),
+                dbc.ModalFooter(),
+            ]
+
         header = [html.H4(f"Flow Data for {country_name}:")]
 
-        # subset the data based on the selected country
-        country_code = click_data["id"]
         df = pd.DataFrame(stored_data)
 
-        # filter the data based on the selected country
         try:
             df_filtered = df[df["CountryCode"] == country_code]
-        # this is needed to circumvent an error where filtering on a country
-        # that has no data available for the selected categories and years
-        # leads to a KeyError
         except KeyError:
             return [
                 dbc.ModalHeader(dbc.ModalTitle(header)),
@@ -203,38 +212,35 @@ def register(app):
                 dbc.ModalFooter(),
             ]
 
-        if len(df_filtered) == 0:
+        if df_filtered.empty:
             return [
                 dbc.ModalHeader(dbc.ModalTitle(header)),
-                dbc.ModalBody(
-                    html.H4(
-                        "No data available for this country for the selected filters."
-                    )
-                ),
+                dbc.ModalBody(html.H4("No data available for the selected filters.")),
                 dbc.ModalFooter(),
             ]
-        else:
-            end = time.time()
-            logger.info(
-                f"Execution time for building flow data table: {end - start:.2f} seconds."
-            )
-            return [
-                dbc.ModalHeader(dbc.ModalTitle(header)),
-                dbc.ModalBody(
-                    dash_table.DataTable(
-                        data=df_filtered.to_dict("records"),
-                        columns=[{"name": i, "id": i} for i in df_filtered.columns],
-                        page_size=15,
-                        sort_action="native",
-                        style_cell={
-                            "overflow": "hidden",
-                            "textOverflow": "ellipsis",
-                            "maxWidth": 0,
-                        },
-                    )
-                ),
-                dbc.ModalFooter(),
-            ]
+
+        end = time.time()
+        logger.info(
+            f"Execution time for building flow data table: {end - start:.2f} seconds."
+        )
+
+        return [
+            dbc.ModalHeader(dbc.ModalTitle(header)),
+            dbc.ModalBody(
+                dash_table.DataTable(
+                    data=df_filtered.to_dict("records"),
+                    columns=[{"name": i, "id": i} for i in df_filtered.columns],
+                    page_size=15,
+                    sort_action="native",
+                    style_cell={
+                        "overflow": "hidden",
+                        "textOverflow": "ellipsis",
+                        "maxWidth": 0,
+                    },
+                )
+            ),
+            dbc.ModalFooter(),
+        ]
 
     @app.callback(
         Output(ids.DATATABLE_CARD, "style"),
