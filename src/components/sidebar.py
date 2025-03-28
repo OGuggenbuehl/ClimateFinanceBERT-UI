@@ -2,11 +2,13 @@ import dash_bootstrap_components as dbc
 from dash import Dash, html
 
 from components import (
-    categories_dropdown,
-    categories_sub_dropdown,
-    donor_type_dropdown,
-    flow_type_dropdown,
     ids,
+)
+from components.widgets import (
+    categories,
+    donor_type,
+    flow_type,
+    sub_categories,
 )
 
 
@@ -19,13 +21,13 @@ def render(app: Dash):
                     dbc.Nav(
                         [
                             html.Hr(),
-                            donor_type_dropdown.render(ids.DONORTYPE_DROPDOWN),
+                            donor_type.render(ids.DONORTYPE_DROPDOWN),
                             html.Hr(),
-                            flow_type_dropdown.render(ids.FLOW_TYPE_DROPDOWN),
+                            flow_type.render(ids.FLOW_TYPE_DROPDOWN),
                             html.Hr(),
-                            categories_dropdown.render(ids.CATEGORIES_DROPDOWN),
+                            categories.render(ids.CATEGORIES_DROPDOWN),
                             html.Hr(),
-                            categories_sub_dropdown.render(ids.CATEGORIES_SUB_DROPDOWN),
+                            sub_categories.render(ids.CATEGORIES_SUB_DROPDOWN),
                         ],
                         vertical=True,
                         pills=True,

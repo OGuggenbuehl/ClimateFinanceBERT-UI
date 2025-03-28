@@ -6,8 +6,8 @@ from dash import Input, Output, State, dash
 from dash_extensions.javascript import arrow_function
 
 from components import constants, ids
-from functions.data_operations import merge_data
-from functions.map_styler import style_map
+from utils.data_operations import merge_data
+from utils.map_styler import style_map
 
 
 def register(app):

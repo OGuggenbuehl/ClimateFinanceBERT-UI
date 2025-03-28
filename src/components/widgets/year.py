@@ -4,6 +4,26 @@ import dash_bootstrap_components as dbc
 from dash import MATCH, Input, Output, State, callback, dcc, html
 from dash.exceptions import PreventUpdate
 
+from components.constants import YEAR_RANGE
+
+
+def render(id: str) -> html.Div:
+    return html.Div(
+        children=[
+            html.H6("Select Year"),
+            PlaybackSliderAIO(
+                aio_id=id,
+                slider_props={
+                    "min": YEAR_RANGE["min"],
+                    "max": YEAR_RANGE["max"],
+                    "step": 1,
+                    "value": 2020,
+                },
+                button_props={"className": "float-left"},
+            ),
+        ]
+    )
+
 
 class PlaybackSliderAIO(html.Div):
     class ids:

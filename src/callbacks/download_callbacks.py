@@ -6,7 +6,7 @@ from dash.exceptions import PreventUpdate
 
 from components import ids
 from components.constants import DUCKDB_PATH
-from functions.query_duckdb import construct_query, query_duckdb
+from utils.query_duckdb import construct_query, query_duckdb
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

@@ -8,8 +8,8 @@ from dash import Input, Output, State, html
 from flag import flag
 
 from components import ids
-from components.slider_player import PlaybackSliderAIO
-from functions.data_operations import aggregate
+from components.widgets.year import PlaybackSliderAIO
+from utils.data_operations import aggregate
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

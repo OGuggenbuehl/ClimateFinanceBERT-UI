@@ -2,13 +2,16 @@ import dash_bootstrap_components as dbc
 from dash import Dash, html
 
 from components import (
-    categories_dropdown,
-    categories_sub_dropdown,
     datatable,
-    donor_type_dropdown,
-    flow_type_dropdown,
     ids,
-    timespan_slider,
+)
+from components.widgets import (
+    action_button,
+    categories,
+    donor_type,
+    flow_type,
+    sub_categories,
+    timespan,
 )
 
 
@@ -46,13 +49,13 @@ def render(app: Dash) -> html.Div:
                     # left column
                     dbc.Col(
                         [
-                            donor_type_dropdown.render(
+                            donor_type.render(
                                 id=ids.DONORTYPE_DROPDOWN_DOWNLOAD,
                                 style={
                                     "color": "black",
                                 },
                             ),
-                            flow_type_dropdown.render(
+                            flow_type.render(
                                 id=ids.FLOW_TYPE_DROPDOWN_DOWNLOAD,
                                 style={
                                     "color": "black",
@@ -68,7 +71,7 @@ def render(app: Dash) -> html.Div:
                     # middle column
                     dbc.Col(
                         [
-                            timespan_slider.render(id=ids.YEAR_SLIDER_DOWNLOAD),
+                            timespan.render(id=ids.YEAR_SLIDER_DOWNLOAD),
                         ],
                         width={
                             "size": 4,
@@ -79,13 +82,13 @@ def render(app: Dash) -> html.Div:
                     # right column
                     dbc.Col(
                         [
-                            categories_dropdown.render(
+                            categories.render(
                                 id=ids.CATEGORIES_DROPDOWN_DOWNLOAD,
                                 style={
                                     "color": "black",
                                 },
                             ),
-                            categories_sub_dropdown.render(
+                            sub_categories.render(
                                 id=ids.CATEGORIES_SUB_DROPDOWN_DOWNLOAD,
                                 style={
                                     "color": "black",
@@ -107,11 +110,9 @@ def render(app: Dash) -> html.Div:
                     dbc.Row(
                         [
                             dbc.Col(
-                                dbc.Button(
+                                action_button.render(
                                     "Query",
                                     id=ids.QUERY_BTN,
-                                    color="primary",
-                                    className="w-100",
                                 ),
                                 width={
                                     "size": 2,
@@ -119,11 +120,10 @@ def render(app: Dash) -> html.Div:
                                 },
                             ),
                             dbc.Col(
-                                dbc.Button(
+                                action_button.render(
                                     "Download",
                                     id=ids.DOWNLOAD_BTN,
                                     color="success",
-                                    className="w-100",
                                 ),
                                 width=2,
                             ),
@@ -134,6 +134,7 @@ def render(app: Dash) -> html.Div:
                 ),
                 className="mb-4",
             ),
+            # html.Br(),
             # datatable row
             dbc.Row(
                 dbc.Col(

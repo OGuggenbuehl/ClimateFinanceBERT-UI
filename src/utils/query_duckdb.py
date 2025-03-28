@@ -5,7 +5,7 @@ from typing import Literal, Optional, Union
 import duckdb
 import pandas as pd
 
-from components.donor_type_dropdown import DONOR_TYPE_MAP
+from components.widgets.donor_type import DONOR_TYPE_MAP
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

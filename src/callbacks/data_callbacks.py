@@ -8,9 +8,9 @@ from dash.exceptions import PreventUpdate
 
 from components import ids
 from components.constants import CATEGORIES_DF, DUCKDB_PATH
-from components.slider_player import PlaybackSliderAIO
-from functions.data_operations import create_mode_data, reshape_by_type
-from functions.query_duckdb import construct_query, query_duckdb
+from components.widgets.year import PlaybackSliderAIO
+from utils.data_operations import create_mode_data, reshape_by_type
+from utils.query_duckdb import construct_query, query_duckdb
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

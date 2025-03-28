@@ -269,7 +269,7 @@ if __name__ == "__main__":
     import requests
 
     from components.constants import DUCKDB_PATH
-    from functions.query_duckdb import construct_query, query_duckdb
+    from utils.query_duckdb import construct_query, query_duckdb
 
     # retrieve geojson
     geojson_url = "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
