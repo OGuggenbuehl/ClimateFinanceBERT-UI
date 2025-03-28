@@ -1,7 +1,15 @@
 import dash_leaflet as dl
 from dash import Dash, html
 
-from components import action_button, constants, ids, infobox, map_mode, year_slider
+from components import (
+    action_button,
+    constants,
+    ids,
+    infobox,
+    map_mode,
+    type_dropdown,
+    year_slider,
+)
 
 
 def render(app: Dash) -> html.Div:
@@ -29,13 +37,14 @@ def render(app: Dash) -> html.Div:
                         children=[
                             map_mode.render(
                                 top="0px", bottom=None, right=None, left=None
-                            )
+                            ),
+                            type_dropdown.render(ids.TYPE_DROPDOWN),
                         ],
                         style={
                             "gridColumn": "2",  # Place map-mode selector in the second (middle) column
                             "zIndex": 10,  # Ensure map-mode is above the map
                             "textAlign": "center",  # Center the map-mode
-                            "maxWidth": "400px",  # Limit the width of the map-mode selector
+                            "maxWidth": "600px",  # Limit the width of the map-mode selector
                             "margin": "0 auto",  # Horizontally center the map-mode selector
                         },
                     ),

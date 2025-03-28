@@ -7,7 +7,6 @@ from components import (
     donor_type_dropdown,
     flow_type_dropdown,
     ids,
-    type_dropdown,
 )
 
 
@@ -19,8 +18,6 @@ def render(app: Dash):
                     html.P("Mix and match your selection to filter the data"),
                     dbc.Nav(
                         [
-                            html.Hr(),
-                            type_dropdown.render(ids.TYPE_DROPDOWN),
                             html.Hr(),
                             donor_type_dropdown.render(ids.DONORTYPE_DROPDOWN),
                             html.Hr(),
