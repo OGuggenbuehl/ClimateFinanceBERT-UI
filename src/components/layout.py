@@ -20,6 +20,7 @@ def create_layout(app: Dash) -> html.Div:
             dcc.Store(
                 id=ids.DOWNLOAD_QUERIED_DATA
             ),  # storage for data to be downloaded
+            dcc.Download(id=ids.DOWNLOAD_TRIGGER),
             dcc.Store(  # storage for the initial map state
                 id=ids.INITIAL_STATE,
                 data={

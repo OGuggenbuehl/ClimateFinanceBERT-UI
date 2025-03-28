@@ -1,7 +1,7 @@
 import logging
 
 import pandas as pd
-from dash import Input, Output, callback_context, dash_table, html
+from dash import Input, Output, State, callback_context, dash_table, dcc, html
 from dash.exceptions import PreventUpdate
 
 from components import ids
@@ -34,14 +34,13 @@ def register(app):
         selected_donor_types,
         selected_flow_types,
     ):
-        ctx = callback_context  # Get the callback context
-
-        # Check which input triggered the callback
+        # check if the button was clicked
+        ctx = callback_context
         if (
             not ctx.triggered
             or ctx.triggered[0]["prop_id"].split(".")[0] != ids.QUERY_BTN
         ):
-            raise PreventUpdate  # Only execute if the button was clicked
+            raise PreventUpdate
 
         logger.info("Query Button clicked: Pulling data")
 
@@ -73,7 +72,6 @@ def register(app):
         if len(df_table) == 0:
             return html.H3("No data available for the selected filters.")
         else:
-            # render DataTable with the queried data
             return [
                 dash_table.DataTable(
                     data=df_table.to_dict("records"),
@@ -87,3 +85,24 @@ def register(app):
                     },
                 )
             ]
+
+    @app.callback(
+        Output(ids.DOWNLOAD_TRIGGER, "data"),
+        [Input(ids.DOWNLOAD_BTN, "n_clicks")],
+        [State(ids.DOWNLOAD_QUERIED_DATA, "data")],
+        prevent_initial_call=True,
+    )
+    def download_csv(
+        n_clicks,
+        queried_data,
+    ):
+        if not n_clicks or not queried_data:
+            raise PreventUpdate
+
+        logger.info("downloading queried data as CSV")
+
+        return dcc.send_data_frame(
+            pd.DataFrame(queried_data).to_csv,
+            "queried_data.csv",
+            index=False,
+        )

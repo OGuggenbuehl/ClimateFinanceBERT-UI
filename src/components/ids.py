@@ -30,6 +30,7 @@ FLOW_TYPE_DROPDOWN = "flow-type-dropdown"
 QUERY_BTN = "query-btn"
 DOWNLOAD_BTN = "download-btn"
 DOWNLOAD_DATATABLE = "download-datatable"
+DOWNLOAD_TRIGGER = "download-trigger"
 ## storage
 DOWNLOAD_QUERIED_DATA = "download-queried-data"
 ## inputs
