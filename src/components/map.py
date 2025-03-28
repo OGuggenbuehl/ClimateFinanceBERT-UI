@@ -104,7 +104,7 @@ def render(app: Dash) -> html.Div:
                 scrollWheelZoom=False,
             ),
             html.Div(
-                children=[year_slider.render()],
+                children=[year_slider.render(id=ids.YEAR_SLIDER)],
                 className=ids.INFOBOX,
                 style={
                     "position": "absolute",

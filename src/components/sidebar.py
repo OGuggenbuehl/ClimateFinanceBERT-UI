@@ -6,6 +6,7 @@ from components import (
     categories_sub_dropdown,
     donor_type_dropdown,
     flow_type_dropdown,
+    ids,
     type_dropdown,
 )
 
@@ -19,15 +20,15 @@ def render(app: Dash):
                     dbc.Nav(
                         [
                             html.Hr(),
-                            type_dropdown.render(),
+                            type_dropdown.render(ids.TYPE_DROPDOWN),
                             html.Hr(),
-                            donor_type_dropdown.render(),
+                            donor_type_dropdown.render(ids.DONORTYPE_DROPDOWN),
                             html.Hr(),
-                            flow_type_dropdown.render(),
+                            flow_type_dropdown.render(ids.FLOW_TYPE_DROPDOWN),
                             html.Hr(),
-                            categories_dropdown.render(),
+                            categories_dropdown.render(ids.CATEGORIES_DROPDOWN),
                             html.Hr(),
-                            categories_sub_dropdown.render(),
+                            categories_sub_dropdown.render(ids.CATEGORIES_SUB_DROPDOWN),
                         ],
                         vertical=True,
                         pills=True,

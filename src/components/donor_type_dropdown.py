@@ -1,7 +1,5 @@
 from dash import dcc, html
 
-from components import ids
-
 DONOR_TYPE_MAP = {
     "bilateral": "Donor Country",
     "multilateral": "Multilateral Donor",
@@ -9,12 +7,12 @@ DONOR_TYPE_MAP = {
 }
 
 
-def render() -> html.Div:
+def render(id: str) -> html.Div:
     return html.Div(
         children=[
             html.H6("Donor Type"),
             dcc.Dropdown(
-                id=ids.DONORTYPE_DROPDOWN,
+                id=id,
                 options=[
                     {"label": type.title(), "value": DONOR_TYPE_MAP[type]}
                     for type in DONOR_TYPE_MAP

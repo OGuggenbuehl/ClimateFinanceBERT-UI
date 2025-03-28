@@ -1,15 +1,14 @@
 from dash import dcc, html
 
-from components import ids
 from components.constants import CATEGORIES_DF
 
 
-def render() -> html.Div:
+def render(id: str) -> html.Div:
     return html.Div(
         children=[
             html.H6("Categories"),
             dcc.Dropdown(
-                id=ids.CATEGORIES_DROPDOWN,
+                id=id,
                 options=CATEGORIES_DF["climate_class"].unique(),
                 value=["Mitigation"],  # CATEGORIES_DF["climate_class"].unique(),
                 multi=True,
