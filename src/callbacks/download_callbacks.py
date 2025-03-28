@@ -106,3 +106,12 @@ def register(app):
             "queried_data.csv",
             index=False,
         )
+
+    @app.callback(
+        Output(ids.DATATABLE_CARD_DOWNLOAD, "style"),
+        Input(ids.QUERY_BTN, "n_clicks"),
+    )
+    def toggle_table_visibility(queried):
+        if not queried:
+            return {"display": "none"}  # Hide the table
+        return {"display": "block"}  # Show the table

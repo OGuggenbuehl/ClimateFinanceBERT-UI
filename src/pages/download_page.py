@@ -17,34 +17,34 @@ def render(app: Dash) -> html.Div:
     return html.Div(
         id="download-page",
         children=[
+            # Title
             dbc.Row(
                 dbc.Col(
                     [
-                        html.H1("Download"),
+                        html.H1("Download Data", className="text-center my-4"),
                     ],
-                    width={
-                        "size": 6,
-                        "offset": 3,
-                    },
+                    width=12,
                 )
             ),
+            # Description Text
             dbc.Row(
                 dbc.Col(
                     [
                         html.P(
-                            "Download the data in CSV format. "
-                            "You can filter the data by selecting the type of flow, "
-                            "the donor type, the categories, and the subcategories."
+                            "Download the data in CSV format. You can filter the data "
+                            "by selecting the type of flow, the donor type, the categories, "
+                            "and the subcategories. Once you're ready, click 'Query' to pull the data and 'Download' to get it in CSV format.",
+                            className="lead text-center",
                         ),
                     ],
-                    width={
-                        "size": 6,
-                        "offset": 3,
-                    },
+                    width=12,
                 )
             ),
+            html.Br(),
+            # Filter Controls - Grid Layout
             dbc.Row(
                 children=[
+                    # Left Filters (Type & Donor Type)
                     dbc.Col(
                         [
                             type_dropdown.render(id=ids.TYPE_DROPDOWN_DOWNLOAD),
@@ -54,18 +54,22 @@ def render(app: Dash) -> html.Div:
                         ],
                         width={
                             "size": 2,
-                            "offset": 1,
+                            "offset": 2,
                         },
+                        className="mb-4",
                     ),
+                    # Middle Filter (Year Slider)
                     dbc.Col(
                         [
                             year_slider.render(id=ids.YEAR_SLIDER_DOWNLOAD),
                         ],
                         width={
-                            "size": 2,
+                            "size": 4,
                             "offset": 0,
                         },
+                        className="mb-4",
                     ),
+                    # Right Filters (Categories & Flow Type)
                     dbc.Col(
                         [
                             categories_dropdown.render(
@@ -74,69 +78,71 @@ def render(app: Dash) -> html.Div:
                             categories_sub_dropdown.render(
                                 id=ids.CATEGORIES_SUB_DROPDOWN_DOWNLOAD
                             ),
-                        ],
-                        width={
-                            "size": 2,
-                            "offset": 0,
-                        },
-                    ),
-                    dbc.Col(
-                        [
                             flow_type_dropdown.render(
                                 id=ids.FLOW_TYPE_DROPDOWN_DOWNLOAD
                             ),
-                            dbc.Row(
-                                [
-                                    dbc.Col(
-                                        dbc.Button(
-                                            "Query",
-                                            id=ids.QUERY_BTN,
-                                            color="primary",
-                                            className="mt-3",
-                                        ),
-                                        width={
-                                            "size": 6,
-                                            "offset": 0,
-                                        },
-                                    ),
-                                    dbc.Col(
-                                        dbc.Button(
-                                            "Download",
-                                            id=ids.DOWNLOAD_BTN,
-                                            color="primary",
-                                            className="mt-3",
-                                        ),
-                                        width={
-                                            "size": 6,
-                                            "offset": 0,
-                                        },
-                                    ),
-                                ]
-                            ),
                         ],
                         width={
                             "size": 2,
                             "offset": 0,
                         },
+                        className="mb-4",
                     ),
                 ],
+                className="mb-4",  # Add margin at the bottom
             ),
+            # Query & Download Buttons in One Row
+            dbc.Row(
+                dbc.Col(
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                dbc.Button(
+                                    "Query",
+                                    id=ids.QUERY_BTN,
+                                    color="primary",
+                                    className="w-100",
+                                ),
+                                width={
+                                    "size": 2,
+                                    "offset": 4,
+                                },
+                            ),
+                            dbc.Col(
+                                dbc.Button(
+                                    "Download",
+                                    id=ids.DOWNLOAD_BTN,
+                                    color="success",
+                                    className="w-100",
+                                ),
+                                width=2,
+                            ),
+                        ],
+                        className="g-3",  # Grid gap between buttons
+                    ),
+                    width=12,
+                ),
+                className="mb-4",  # Add margin at the bottom
+            ),
+            # Data Table Display
             dbc.Row(
                 dbc.Col(
                     html.Div(
                         children=[
                             dbc.Card(
                                 datatable.render(id=ids.DOWNLOAD_DATATABLE),
-                                body=True,
-                                id="download-datatable-card",
+                                body=False,
+                                id=ids.DATATABLE_CARD_DOWNLOAD,
+                                className="shadow-sm",
                             )
                         ],
                     ),
                     width={
-                        "size": 10,
-                        "offset": 1,
+                        "size": 8,
+                        "offset": 2,
                     },
-                )
+                ),
+                className="mt-4",  # Margin on top of the datatable card
             ),
         ],
     )

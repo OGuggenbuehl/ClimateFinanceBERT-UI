@@ -31,6 +31,7 @@ QUERY_BTN = "query-btn"
 DOWNLOAD_BTN = "download-btn"
 DOWNLOAD_DATATABLE = "download-datatable"
 DOWNLOAD_TRIGGER = "download-trigger"
+DATATABLE_CARD_DOWNLOAD = "datatable-card-download"
 ## storage
 DOWNLOAD_QUERIED_DATA = "download-queried-data"
 ## inputs
