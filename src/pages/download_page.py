@@ -4,9 +4,10 @@ from dash import Dash, html
 from components import (
     categories_dropdown,
     categories_sub_dropdown,
+    datatable,
     donor_type_dropdown,
     flow_type_dropdown,
-    # map_mode,
+    ids,
     type_dropdown,
     year_slider,
 )
@@ -46,7 +47,7 @@ def render(app: Dash) -> html.Div:
                 children=[
                     dbc.Col(
                         [
-                            type_dropdown.render(id="type-dropdown-download"),
+                            type_dropdown.render(id=ids.TYPE_DROPDOWN_DOWNLOAD),
                             donor_type_dropdown.render(
                                 id="donortype-dropdown-download"
                             ),
@@ -58,7 +59,7 @@ def render(app: Dash) -> html.Div:
                     ),
                     dbc.Col(
                         [
-                            year_slider.render(id="year-slider-download"),
+                            year_slider.render(id=ids.YEAR_SLIDER_DOWNLOAD),
                         ],
                         width={
                             "size": 2,
@@ -68,10 +69,10 @@ def render(app: Dash) -> html.Div:
                     dbc.Col(
                         [
                             categories_dropdown.render(
-                                id="categories-dropdown-download"
+                                id=ids.CATEGORIES_DROPDOWN_DOWNLOAD
                             ),
                             categories_sub_dropdown.render(
-                                id="categories-sub-dropdown-download"
+                                id=ids.CATEGORIES_SUB_DROPDOWN_DOWNLOAD
                             ),
                         ],
                         width={
@@ -81,8 +82,37 @@ def render(app: Dash) -> html.Div:
                     ),
                     dbc.Col(
                         [
-                            # map_mode.render(top="0", bottom="0", right="0", left="0"),
-                            flow_type_dropdown.render(id="flow-type-dropdown-download"),
+                            flow_type_dropdown.render(
+                                id=ids.FLOW_TYPE_DROPDOWN_DOWNLOAD
+                            ),
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                        dbc.Button(
+                                            "Query",
+                                            id=ids.QUERY_BTN,
+                                            color="primary",
+                                            className="mt-3",
+                                        ),
+                                        width={
+                                            "size": 6,
+                                            "offset": 0,
+                                        },
+                                    ),
+                                    dbc.Col(
+                                        dbc.Button(
+                                            "Download",
+                                            id=ids.DOWNLOAD_BTN,
+                                            color="primary",
+                                            className="mt-3",
+                                        ),
+                                        width={
+                                            "size": 6,
+                                            "offset": 0,
+                                        },
+                                    ),
+                                ]
+                            ),
                         ],
                         width={
                             "size": 2,
@@ -90,6 +120,23 @@ def render(app: Dash) -> html.Div:
                         },
                     ),
                 ],
+            ),
+            dbc.Row(
+                dbc.Col(
+                    html.Div(
+                        children=[
+                            dbc.Card(
+                                datatable.render(id=ids.DOWNLOAD_DATATABLE),
+                                body=True,
+                                id="download-datatable-card",
+                            )
+                        ],
+                    ),
+                    width={
+                        "size": 10,
+                        "offset": 1,
+                    },
+                )
             ),
         ],
     )

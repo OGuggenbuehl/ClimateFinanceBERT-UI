@@ -1,10 +1,12 @@
 import dash_bootstrap_components as dbc
+from dash import Dash, html
+
 from components import (
     datatable,
+    ids,
     map,
     sidebar,
 )
-from dash import Dash, html
 
 
 def render(app: Dash) -> html.Div:
@@ -36,7 +38,7 @@ def render(app: Dash) -> html.Div:
                                 className="datatable-container",
                                 children=[
                                     dbc.Card(
-                                        datatable.render(),
+                                        datatable.render(id=ids.FLOW_DATA_TABLE),
                                         body=True,
                                         id="datatable-card",
                                     )

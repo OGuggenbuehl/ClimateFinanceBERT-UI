@@ -7,7 +7,7 @@ import pycountry
 from dash import Input, Output, html
 from flag import flag
 
-from components import flow_data_table, ids
+from components import datatable, ids
 from components.slider_player import PlaybackSliderAIO
 from functions.data_operations import aggregate
 
@@ -135,7 +135,7 @@ def register(app):
                                     className="inspect-btn",
                                 ),
                                 dbc.Modal(
-                                    flow_data_table.render(),
+                                    datatable.render(id=ids.FLOW_DATA_TABLE),
                                     id=ids.FLOW_DATA_MODAL,
                                     size="xl",
                                     is_open=False,

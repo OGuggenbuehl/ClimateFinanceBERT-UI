@@ -3,7 +3,8 @@ import time
 
 import dash_bootstrap_components as dbc
 import pandas as pd
-from dash import Input, Output, dash_table, exceptions, html
+from dash import Input, Output, dash_table, html
+from dash.exceptions import PreventUpdate
 
 from components import ids
 from components.constants import CATEGORIES_DF, DUCKDB_PATH
@@ -177,7 +178,8 @@ def register(app):
         is_open,
     ):
         if n_clicks is None or not is_open:
-            raise exceptions.PreventUpdate
+            raise PreventUpdate
+
         start = time.time()
         # build the info header based on the clicked country
         country_name = click_data["properties"]["name"]
