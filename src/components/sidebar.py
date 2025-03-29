@@ -1,11 +1,15 @@
 import dash_bootstrap_components as dbc
-from components import (
-    categories_dropdown,
-    categories_sub_dropdown,
-    type_dropdown,
-    year_slider,
-)
 from dash import Dash, html
+
+from components import (
+    ids,
+)
+from components.widgets import (
+    categories,
+    donor_type,
+    flow_type,
+    sub_categories,
+)
 
 
 def render(app: Dash):
@@ -16,20 +20,21 @@ def render(app: Dash):
                     html.P("Mix and match your selection to filter the data"),
                     dbc.Nav(
                         [
-                            type_dropdown.render(app),
-                            html.Br(),
-                            categories_dropdown.render(app),
-                            html.Br(),
-                            categories_sub_dropdown.render(app),
-                            html.Br(),
-                            year_slider.render(app),
+                            html.Hr(),
+                            donor_type.render(ids.DONORTYPE_DROPDOWN),
+                            html.Hr(),
+                            flow_type.render(ids.FLOW_TYPE_DROPDOWN),
+                            html.Hr(),
+                            categories.render(ids.CATEGORIES_DROPDOWN),
+                            html.Hr(),
+                            sub_categories.render(ids.CATEGORIES_SUB_DROPDOWN),
                         ],
                         vertical=True,
                         pills=True,
                     ),
                 ],
                 id="offcanvas",
-                title="Filters",
+                title=html.B("Filters"),
                 is_open=False,
             ),
         ]

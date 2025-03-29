@@ -1,5 +1,6 @@
-from components import ids
 from dash import Input, Output, State
+
+from components import ids
 
 
 def register(app):
@@ -20,3 +21,19 @@ def register(app):
     )
     def reset_clickData(n_clicks):
         return None
+
+    @app.callback(
+        Output(ids.FLOW_DATA_MODAL, "is_open"),
+        [
+            Input(ids.FLOW_DATA_BTN, "n_clicks"),
+        ],
+        [State(ids.FLOW_DATA_MODAL, "is_open")],
+        prevent_initial_call=True,
+    )
+    def toggle_modal(
+        btn_clicked,
+        is_open,
+    ):
+        if btn_clicked:
+            return not is_open
+        return is_open

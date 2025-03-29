@@ -14,6 +14,6 @@ window.dashExtensions = Object.assign({}, window.dashExtensions, {
                 }
             }
             return style;
-        }
+        },
     }
 });

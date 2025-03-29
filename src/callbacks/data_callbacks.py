@@ -1,9 +1,19 @@
+import logging
+import time
+
+import dash_bootstrap_components as dbc
 import pandas as pd
+from dash import Input, Output, State, dash_table, html
+from dash.exceptions import PreventUpdate
+
 from components import ids
-from components.constants import CATEGORIES_DF, COLS, SOURCE
-from dash import Input, Output, dash_table, html
-from functions import data_operations
-from functions.data_operations import subset_data_by_filters
+from components.constants import CATEGORIES_DF, DUCKDB_PATH
+from components.widgets.year import PlaybackSliderAIO
+from utils.data_operations import create_mode_data, reshape_by_type
+from utils.query_duckdb import construct_aggregated_query, construct_query, query_duckdb
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def register(app):
@@ -11,49 +21,86 @@ def register(app):
         Output(ids.STORED_DATA, "data"),
         [
             Input(ids.TYPE_DROPDOWN, "value"),
-            Input(ids.YEAR_SLIDER, "value"),
-            # TODO: find out how to implement categories filters into map coloring
-            # Input(ids.CATEGORIES_DROPDOWN, "value"),
-            # Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
+            Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
+            Input(ids.DONORTYPE_DROPDOWN, "value"),
+            Input(ids.CATEGORIES_DROPDOWN, "value"),
+            Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
+            Input(ids.FLOW_TYPE_DROPDOWN, "value"),
         ],
+        prevent_initial_call=True,
     )
     def update_stored_data(
         selected_type,
-        selected_years,
-        # TODO: activate categories filters if needed
-        # selected_categories,
-        # selected_subcategories,
+        selected_year,
+        selected_donor_types,
+        selected_categories,
+        selected_subcategories,
+        selected_flow_types,
     ):
         """Reads, subsets and stores data based on the set UI inputs.
 
         Args:
             selected_type (str): Either 'donors' or 'recipients'
-            selected_years (list): A list of two integers representing the selected year range.
+            selected_year (int): An integer representing the selected year.
 
         Returns:
             list(dict): The stored data as a list of dictionaries.
         """
-        # TODO: decouple the initial data read from the callback? (performance)
-        # read data from disk
-        df_full = data_operations.read_data(
-            selected_type,
-            source=SOURCE,
-            columns=COLS,
+        start = time.time()
+        query = construct_query(
+            year_type="single_year",
+            selected_year=selected_year,
+            selected_categories=selected_categories,
+            selected_subcategories=selected_subcategories,
+            selected_donor_types=selected_donor_types,
+            selected_flow_types=selected_flow_types,
         )
-        # subset data based on UI inputs
-        df_filtered = subset_data_by_filters(
-            df_full,
-            # TODO: activate categories filters if needed for info boxes
-            # selected_categories=None,
-            # selected_subcategories=None,
-            year_range=selected_years,
+
+        df_queried = query_duckdb(
+            duckdb_db=DUCKDB_PATH,
+            query=query,
         )
-        # return the filtered data as a list of dictionaries
-        return df_filtered.to_dict("records")
+        df_reshaped = reshape_by_type(df_queried, selected_type)
+
+        end = time.time()
+        logger.info(
+            f"Execution time for updating stored data: {end - start:.2f} seconds."
+        )
+        return df_reshaped.to_dict("records")  # list of dicts as storage format
+
+    @app.callback(
+        Output(ids.MODE_DATA, "data"),
+        [
+            Input(ids.MAP_MODE, "value"),
+            Input(ids.STORED_DATA, "data"),
+        ],
+        [
+            State(ids.CATEGORIES_DROPDOWN, "value"),
+            State(ids.CATEGORIES_SUB_DROPDOWN, "value"),
+        ],
+        prevent_initial_call=True,
+    )
+    def update_mode_data(
+        map_mode,
+        stored_data,
+        selected_categories,
+        selected_subcategories,
+    ):
+        if map_mode != "base":
+            df = pd.DataFrame(stored_data)
+            df_mode = create_mode_data(
+                df,
+                map_mode,
+                selected_categories,
+                selected_subcategories,
+            )
+            return df_mode.to_dict("records")
+        return []  # return empty list if map mode is set to 'base'
 
     @app.callback(
         Output(ids.CATEGORIES_SUB_DROPDOWN, "options"),
         Input(ids.CATEGORIES_DROPDOWN, "value"),
+        prevent_initial_call=False,
     )
     def set_meta_options(selected_climate_class):
         # subset the available meta_categories based on the selected climate class
@@ -66,23 +113,18 @@ def register(app):
     @app.callback(
         Output(ids.DATATABLE, "children"),
         [
-            Input(ids.CATEGORIES_DROPDOWN, "value"),
-            Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
             Input(ids.COUNTRIES_LAYER, "clickData"),
-            Input(ids.STORED_DATA, "data"),
+        ],
+        [
+            State(ids.MODE_DATA, "data"),
         ],
     )
     def build_datatable(
-        selected_categories,
-        selected_subcategories,
-        click_data=None,
-        stored_data=None,
+        click_data,
+        mode_data,
     ):
-        """
-        Build the datatable based on the input elements and
-        the selected map element.
-        """
-        # TODO: Bugfix when no data is available
+        """Build the datatable based on the input elements and the selected map element."""
+
         if not click_data:
             return html.H4("Click a country to render a datatable")
         else:
@@ -92,20 +134,11 @@ def register(app):
 
             # subset the data based on the selected country
             country_code = click_data["id"]
-            df_stored = pd.DataFrame(stored_data)
+            df_mode = pd.DataFrame(mode_data)
 
-            # Filter the data based on the selected categories
+            # filter the data based on the selected country
             try:
-                if selected_subcategories:
-                    df_filtered = df_stored[
-                        (df_stored["CountryCode"] == country_code)
-                        & (df_stored["climate_class"].isin(selected_subcategories))
-                    ]
-                else:
-                    df_filtered = df_stored[
-                        (df_stored["CountryCode"] == country_code)
-                        & (df_stored["meta_category"].isin(selected_categories))
-                    ]
+                df_filtered = df_mode[df_mode["CountryCode"] == country_code]
             # this is needed to circumvent an error where filtering on a country
             # that has no data available for the selected categories and years
             # leads to a KeyError
@@ -113,9 +146,13 @@ def register(app):
                 return header + [html.H4("No data available for this country.")]
 
             if len(df_filtered) == 0:
-                return header + [html.H4("No data available for this country.")]
+                return header + [
+                    html.H4(
+                        "No data available for this country for the selected filters."
+                    )
+                ]
             else:
-                # Render a DataTable with the filtered data
+                # render DataTable with the filtered data
                 return header + [
                     dash_table.DataTable(
                         data=df_filtered.to_dict("records"),
@@ -129,3 +166,114 @@ def register(app):
                         },
                     )
                 ]
+
+    @app.callback(
+        Output(ids.FLOW_DATA_TABLE, "children"),
+        [
+            Input(ids.FLOW_DATA_MODAL, "is_open"),
+        ],
+        [
+            State(ids.COUNTRIES_LAYER, "clickData"),
+            State(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
+            State(ids.CATEGORIES_DROPDOWN, "value"),
+            State(ids.CATEGORIES_SUB_DROPDOWN, "value"),
+            State(ids.DONORTYPE_DROPDOWN, "value"),
+            State(ids.FLOW_TYPE_DROPDOWN, "value"),
+            State(ids.TYPE_DROPDOWN, "value"),
+        ],
+        prevent_initial_call=True,
+    )
+    def build_flow_data_table(
+        is_open,
+        click_data,
+        selected_year,
+        selected_categories,
+        selected_subcategories,
+        selected_donor_types,
+        selected_flow_types,
+        selected_type,
+    ):
+        if not is_open:
+            raise PreventUpdate
+
+        start = time.time()
+
+        # get country name and ID safely
+        try:
+            country_name = click_data["properties"]["name"]
+            country_code = click_data["id"]
+        except (TypeError, KeyError):
+            return [
+                dbc.ModalHeader(dbc.ModalTitle("Error")),
+                dbc.ModalBody(html.H4("Invalid country selection.")),
+                dbc.ModalFooter(),
+            ]
+
+        # build the info header based on the clicked country
+        header = [html.H4(f"Flow Data for {country_name}:")]
+
+        query = construct_aggregated_query(
+            selected_year=selected_year,
+            selected_categories=selected_categories,
+            selected_subcategories=selected_subcategories,
+            selected_donor_types=selected_donor_types,
+            selected_flow_types=selected_flow_types,
+        )
+
+        df_queried = query_duckdb(
+            duckdb_db=DUCKDB_PATH,
+            query=query,
+        )
+
+        # filter data based on selected country safely
+        try:
+            df_filtered = (
+                df_queried[df_queried["DEDonorcode"] == country_code]
+                if selected_type == "donors"
+                else df_queried[df_queried["DERecipientcode"] == country_code]
+            )
+        except KeyError:
+            return [
+                dbc.ModalHeader(dbc.ModalTitle(header)),
+                dbc.ModalBody(html.H4("No data available for this country.")),
+                dbc.ModalFooter(),
+            ]
+
+        if df_filtered.empty:
+            return [
+                dbc.ModalHeader(dbc.ModalTitle(header)),
+                dbc.ModalBody(html.H4("No data available for the selected filters.")),
+                dbc.ModalFooter(),
+            ]
+
+        end = time.time()
+        logger.info(
+            f"Execution time for building flow data table: {end - start:.2f} seconds."
+        )
+
+        return [
+            dbc.ModalHeader(dbc.ModalTitle(header)),
+            dbc.ModalBody(
+                dash_table.DataTable(
+                    data=df_filtered.to_dict("records"),
+                    columns=[{"name": i, "id": i} for i in df_filtered.columns],
+                    page_size=15,
+                    sort_action="native",
+                    style_cell={
+                        "overflow": "hidden",
+                        "textOverflow": "ellipsis",
+                        "maxWidth": 0,
+                    },
+                )
+            ),
+            dbc.ModalFooter(),
+        ]
+
+    @app.callback(
+        Output(ids.DATATABLE_CARD, "style"),
+        Input(ids.MAP_MODE, "value"),
+    )
+    def toggle_table_visibility(map_mode):
+        if map_mode == "base":
+            return {"display": "none"}  # Hide the table
+        return {"display": "block"}  # Show the table

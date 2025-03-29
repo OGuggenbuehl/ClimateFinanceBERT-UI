@@ -1,10 +1,11 @@
-from components import ids
 from dash import html
 
+from components import ids
 
-def render():
+
+def render(id: str):
     # Return an empty Div that will be filled by the callback
     return html.Div(
-        id=ids.DATATABLE,
+        id=id,
         className=ids.DATATABLE,
     )

@@ -107,3 +107,11 @@ docker-logs:
 .PHONY: docker-overview
 docker-overview:
 	docker compose -f "docker/docker-compose.yml" ps
+
+#################################################################################
+# DUCKDB
+#################################################################################
+
+.PHONY: duckdb-pipeline
+duckdb-pipeline:
+	$(PYTHON_INTERPRETER) src/functions/duckdb_pipeline.py

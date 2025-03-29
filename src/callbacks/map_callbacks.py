@@ -2,41 +2,20 @@ import copy
 
 import dash_leaflet as dl
 import pandas as pd
-from components import constants, ids
 from dash import Input, Output, State, dash
-from dash_extensions.javascript import arrow_function, assign
-from functions.data_operations import merge_data, prepare_data_for_merge
+from dash_extensions.javascript import arrow_function
 
-classes = [0, 10, 20, 50, 100, 200, 500, 1000]
-colorscale = [
-    "#A9A9A9",
-    "#FED976",
-    "#FEB24C",
-    "#FD8D3C",
-    "#FC4E2A",
-    "#E31A1C",
-    "#BD0026",
-    "#800026",
-]
-style = dict(weight=2, opacity=1, color="white", dashArray="3", fillOpacity=0.7)
-
-# Geojson rendering logic, must be JavaScript as it is executed in clientside.
-style_handle = assign("""function(feature, context){
-    const {classes, colorscale, style, polyColoring} = context.hideout;  // get props from hideout
-    const value = feature.properties[polyColoring];  // get value the determines the color
-    for (let i = 0; i < classes.length; ++i) {
-        if (value > classes[i]) {
-            style.fillColor = colorscale[i];  // set the fill color according to the class
-        }
-    }
-    return style;
-}""")
+from components import constants, ids
+from utils.data_operations import merge_data
+from utils.map_styler import style_map
 
 
 def register(app):
     @app.callback(
-        Output(ids.MAP, "center"),
-        Output(ids.MAP, "zoom"),
+        [
+            Output(ids.MAP, "center"),
+            Output(ids.MAP, "zoom"),
+        ],
         Input(ids.RESET_MAP, "n_clicks"),
         State(ids.INITIAL_STATE, "data"),
     )
@@ -49,73 +28,66 @@ def register(app):
     @app.callback(
         Output(ids.STORED_GEOJSON, "data"),
         [
-            Input(ids.STORED_DATA, "data"),
-            Input(ids.CATEGORIES_DROPDOWN, "value"),
-            Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
-            Input(ids.YEAR_SLIDER, "value"),
+            Input(ids.MODE_DATA, "data"),
+            Input(ids.MAP_MODE, "value"),
         ],
+        prevent_initial_call=True,
     )
     def update_stored_geojson(
-        stored_data,
-        selected_categories,
-        selected_subcategories,
-        selected_years,
+        mode_data,
+        map_mode,
     ):
         # retrieve stored dataframe and parse geojson
-        df_stored = pd.DataFrame(stored_data)
-
-        # import pdb
-
-        # pdb.set_trace()
-        # import logging
-        # import os
-
-        # logger = logging.getLogger(__name__)
-        # logger.info(f"cwd: {os.getcwd()}")
-
-        # prepare data for merging
-        df_prepared = prepare_data_for_merge(
-            df_stored,
-            selected_categories=selected_categories,
-            selected_subcategories=selected_subcategories,
-            year_range=selected_years,
-        )
+        df_mode = pd.DataFrame(mode_data)
 
         # Create a deep copy of the base geojson to ensure it is not altered
         geojson_copy = copy.deepcopy(constants.GEOJSON_BASE)
 
-        return merge_data(geojson_copy, df_prepared)
+        return merge_data(df_mode, geojson_copy, map_mode)
 
     @app.callback(
         Output(ids.MAP, "children"),
-        Input(ids.STORED_GEOJSON, "data"),
-        Input(ids.MAP_MODE, "value"),
+        [
+            Input(ids.STORED_GEOJSON, "data"),
+            Input(ids.MAP_MODE, "value"),
+        ],
+        prevent_initial_call=True,
     )
     def update_map(
         stored_geojson,
         map_mode_value,
     ):
+        url = (
+            "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+        )
+        attribution = '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> '
         if map_mode_value == "base":
             return [
-                dl.TileLayer(),
+                dl.TileLayer(
+                    url=url,
+                    attribution=attribution,
+                ),
                 # render dummy map to be replaced by the callback
                 dl.GeoJSON(
                     url=constants.GEOJSON_URL,
                     id=ids.COUNTRIES_LAYER,
-                    style={"fillColor": "dodgerblue", "color": "dodgerblue"},
+                    style=style_map(map_mode_value),
                     hoverStyle=arrow_function(
                         dict(weight=4, color="#666", dashArray="")
                     ),
                 ),
             ]
-        elif map_mode_value == "total":
+        else:
+            classes, colorscale, style, style_handle = style_map(map_mode_value)
             return [
-                dl.TileLayer(),
+                dl.TileLayer(
+                    url=url,
+                    attribution=attribution,
+                ),
                 dl.GeoJSON(
                     id=ids.COUNTRIES_LAYER,
                     data=stored_geojson,
                     style=style_handle,  # how to style each polygon
-                    # TODO: comment out due to buggy hover behavior
                     hoverStyle=arrow_function(
                         dict(weight=4, color="#666", dashArray="")
                     ),  # style applied on hover

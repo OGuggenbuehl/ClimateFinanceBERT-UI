@@ -1,266 +1,154 @@
+import logging
+import time
+
+import dash_bootstrap_components as dbc
 import pandas as pd
+import pycountry
+from dash import Input, Output, State, html
+from flag import flag
+
 from components import ids
-from dash import Input, Output, html
+from components.widgets.year import PlaybackSliderAIO
+from utils.data_operations import aggregate
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
+
+def iso_to_alpha2(iso_alpha3):
+    """Convert ISO Alpha-3 code to Alpha-2 code."""
+    try:
+        country = pycountry.countries.get(alpha_3=iso_alpha3)
+        return country.alpha_2 if country else iso_alpha3
+    except KeyError:
+        return iso_alpha3
+
+
+def get_country_flag(iso_code):
+    """Return the flag emoji for the given ISO code."""
+    iso_alpha2 = iso_to_alpha2(iso_code)
+    try:
+        return flag(iso_alpha2)
+    except KeyError:
+        return "🏳️"
 
 
 def register(app):
     @app.callback(
-        Output(ids.INFOBOX_COUNTRY, "children"),
+        Output(ids.INFOBOX, "children"),
         [
-            Input(ids.STORED_DATA, "data"),
             Input(ids.MAP_MODE, "value"),
             Input(ids.COUNTRIES_LAYER, "hoverData"),
             Input(ids.COUNTRIES_LAYER, "clickData"),
+            Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
         ],
+        [
+            State(ids.STORED_DATA, "data"),
+            State(ids.MODE_DATA, "data"),
+        ],
+        prevent_initial_call=True,
     )
-    def build_infobox_country(
+    def build_infobox(
+        map_mode,
+        hover_data,
+        click_data,
+        selected_year,
         stored_data,
-        map_mode_value,
-        hover_data=None,
-        click_data=None,
+        mode_data,
     ):
-        # TODO: Add docstring
+        """Build the infobox for the selected country polygon with adaptation, environment, and mitigation data."""
+        start = time.time()
         if not click_data and not hover_data:
-            header = [html.H5("Country Information")]
-            if map_mode_value == "base":
-                return header + [
-                    html.Div("Hover over a country for information."),
-                ]
-            elif map_mode_value == "total":
-                return header + [
-                    html.Div("Hover over a country for information."),
-                    html.Div("Click on a country to zoom in."),
-                ]
+            header = [html.H5("🌍 Country Information ℹ️", className="infobox-header")]
+            return header + [html.Div("Hover over a country for information.")]
 
+        # Determine which country was selected
         if click_data:
             country_name = click_data["properties"]["name"]
             country_id = click_data["id"]
-        elif hover_data and not click_data:
-            country_name = hover_data["properties"][
-                "name"
-            ]  # Fixed to access 'properties'
+        else:  # Hover data is available but no click data
+            country_name = hover_data["properties"]["name"]
             country_id = hover_data["id"]
 
-        header = [html.H5(country_name)]
+        # Get country flag emoji
+        country_flag = get_country_flag(country_id)
+        header = [html.H5(f"{country_flag} {country_name}", className="infobox-header")]
+
         try:
-            stored_df = pd.DataFrame(stored_data)
-            df_subset = stored_df[stored_df["CountryCode"] == country_id]
-            value = df_subset["gdp"].iloc[0]
+            df_mode = pd.DataFrame(mode_data)
+            df_subset = df_mode[df_mode["CountryCode"] == country_id]
+            df_aggregated = aggregate(df_subset)
+            total_value = round(df_aggregated["USD_Disbursement"].iloc[0], 2)
 
-            return header + [
+            # Extract adaptation, environment, and mitigation values (already in million USD)
+            df_data = pd.DataFrame(stored_data)
+            adaptation_value = round(
+                df_data[
+                    (df_data["meta_category"] == "Adaptation")
+                    & (df_data["CountryCode"] == country_id)
+                ]["USD_Disbursement"].sum(),
+                2,
+            )
+            environment_value = round(
+                df_data[
+                    (df_data["meta_category"] == "Environment")
+                    & (df_data["CountryCode"] == country_id)
+                ]["USD_Disbursement"].sum(),
+                2,
+            )
+            mitigation_value = round(
+                df_data[
+                    (df_data["meta_category"] == "Mitigation")
+                    & (df_data["CountryCode"] == country_id)
+                ]["USD_Disbursement"].sum(),
+                2,
+            )
+
+            end = time.time()
+            logger.info(
+                f"Execution time for infobox country: {end - start:.2f} seconds"
+            )
+
+            # Build the formatted info box
+            infobox_components = header + [
                 html.Br(),
-                html.P(f"ID: {country_id}"),
-                html.P(f"GDP: {value.round(2)}"),
+                html.P(f"🆔 IsoCode: {country_id}"),
+                html.Hr(),
+                html.P(["⚙️ Adaptation: ", html.B(f"${adaptation_value} Mio USD")]),
+                html.P(["🌳 Environment: ", html.B(f"${environment_value} Mio USD")]),
+                html.P(["🛡️ Mitigation: ", html.B(f"${mitigation_value} Mio USD")]),
+                html.Hr(),
+                html.P(
+                    ["💰 Total Disbursements: ", html.B(f"${total_value} Mio USD")],
+                    className="infobox-total",
+                ),
+                html.P(f"📅 Year: {selected_year}"),
             ]
+
+            if map_mode != "base" and click_data:
+                infobox_components.extend(
+                    [
+                        html.Div(
+                            [
+                                dbc.Button(
+                                    "🔍 Inspect individual flows",
+                                    id=ids.FLOW_DATA_BTN,
+                                    n_clicks=0,
+                                    className="inspect-btn",
+                                ),
+                            ]
+                        )
+                    ]
+                )
+
+            return infobox_components
         except (IndexError, KeyError):
+            end = time.time()
+            logger.info(
+                f"Execution time for infobox country: {end - start:.2f} seconds"
+            )
             return header + [
                 html.Br(),
-                html.P(f"ID: {country_id}"),
+                html.P(f"🆔 ID: {country_id}"),
+                html.P("❌ No data available."),
             ]
-
-    @app.callback(
-        Output(ids.INFOBOX_ADAPTATION, "children"),
-        [
-            Input(ids.COUNTRIES_LAYER, "clickData"),
-            Input(ids.STORED_DATA, "data"),
-            Input(ids.YEAR_SLIDER, "value"),
-        ],
-    )
-    def build_infobox_adaptation(
-        click_data,
-        stored_data=None,
-        years=None,
-    ):
-        data = pd.DataFrame(stored_data)
-        header = [html.H5("Adaptation")]
-
-        # If a country is clicked, filter the data for that country
-        if click_data is not None:
-            country_code = click_data["id"]
-            country_name = click_data["properties"]["name"]
-            try:
-                df_filtered = data[
-                    (data["meta_category"].isin(["Adaptation"]))
-                    & (data["CountryCode"] == country_code)
-                ]
-            except KeyError:
-                return header + [html.P("No data available for this timespan.")]
-        # If no country is clicked, filter only for the category
-        else:
-            try:
-                df_filtered = data[(data["meta_category"].isin(["Adaptation"]))]
-            except KeyError:
-                return header + [html.P("No data available for this timespan.")]
-
-        # Calculate the total volume of effective funding for the selected category
-        volume = df_filtered["USD_Disbursement"].sum().round(2)
-
-        # Create a list to store the components of the infobox
-        infobox_components = []
-
-        # If a country is clicked, add the country name to the infobox
-        if click_data is not None:
-            infobox_components.append(html.Div(f"Country: {country_name}"))
-
-        # Add the volume and timespan to the infobox
-        infobox_components.extend(
-            [
-                html.Div(f"Volume: {volume}"),
-                html.Div(f"Timespan: {years[0]} - {years[1]}"),
-            ]
-        )
-
-        # If there is no data available for the selected timespan, add a message to the infobox
-        if "No data available for this timespan." in infobox_components:
-            infobox_components.append(html.P("No data available for this timespan."))
-
-        # Return the header and the infobox components
-        return header + infobox_components
-
-    @app.callback(
-        Output(ids.INFOBOX_ENVIRONMENT, "children"),
-        [
-            Input(ids.COUNTRIES_LAYER, "clickData"),
-            Input(ids.STORED_DATA, "data"),
-            Input(ids.YEAR_SLIDER, "value"),
-        ],
-    )
-    def build_infobox_environment(
-        click_data,
-        stored_data=None,
-        years=None,
-    ):
-        data = pd.DataFrame(stored_data)
-        header = [html.H5("Environment")]
-
-        # If a country is clicked, filter the data for that country
-        if click_data is not None:
-            country_code = click_data["id"]
-            country_name = click_data["properties"]["name"]
-            try:
-                df_filtered = data[
-                    (data["meta_category"].isin(["Environment"]))
-                    & (data["CountryCode"] == country_code)
-                ]
-            except KeyError:
-                return header + [html.P("No data available for this timespan.")]
-        # If no country is clicked, filter only for the category
-        else:
-            try:
-                df_filtered = data[(data["meta_category"].isin(["Environment"]))]
-            except KeyError:
-                return header + [html.P("No data available for this timespan.")]
-
-        # Calculate the total volume of effective funding for the selected category
-        volume = df_filtered["USD_Disbursement"].sum().round(2)
-
-        # Create a list to store the components of the infobox
-        infobox_components = []
-
-        # If a country is clicked, add the country name to the infobox
-        if click_data is not None:
-            infobox_components.append(html.Div(f"Country: {country_name}"))
-
-        # Add the volume and timespan to the infobox
-        infobox_components.extend(
-            [
-                html.Div(f"Volume: {volume}"),
-                html.Div(f"Timespan: {years[0]} - {years[1]}"),
-            ]
-        )
-
-        # If there is no data available for the selected timespan, add a message to the infobox
-        if "No data available for this timespan." in infobox_components:
-            infobox_components.append(html.P("No data available for this timespan."))
-
-        # Return the header and the infobox components
-        return header + infobox_components
-
-    @app.callback(
-        Output(ids.INFOBOX_MITIGATION, "children"),
-        [
-            Input(ids.COUNTRIES_LAYER, "clickData"),
-            Input(ids.STORED_DATA, "data"),
-            Input(ids.YEAR_SLIDER, "value"),
-        ],
-    )
-    def build_infobox_mitigation(
-        click_data,
-        stored_data=None,
-        years=None,
-    ):
-        data = pd.DataFrame(stored_data)
-        header = [html.H5("Mitigation")]
-
-        # If a country is clicked, filter the data for that country
-        if click_data is not None:
-            country_code = click_data["id"]
-            country_name = click_data["properties"]["name"]
-            try:
-                df_filtered = data[
-                    (data["meta_category"].isin(["Mitigation"]))
-                    & (data["CountryCode"] == country_code)
-                ]
-            except KeyError:
-                return header + [html.P("No data available for this timespan.")]
-        # If no country is clicked, filter only for the category
-        else:
-            try:
-                df_filtered = data[(data["meta_category"].isin(["Mitigation"]))]
-            except KeyError:
-                return header + [html.P("No data available for this timespan.")]
-
-        # Calculate the total volume of effective funding for the selected category
-        volume = df_filtered["USD_Disbursement"].sum().round(2)
-
-        # Create a list to store the components of the infobox
-        infobox_components = []
-
-        # If a country is clicked, add the country name to the infobox
-        if click_data is not None:
-            infobox_components.append(html.Div(f"Country: {country_name}"))
-
-        # Add the volume and timespan to the infobox
-        infobox_components.extend(
-            [
-                html.Div(f"Volume: {volume}"),
-                html.Div(f"Timespan: {years[0]} - {years[1]}"),
-            ]
-        )
-
-        # If there is no data available for the selected timespan, add a message to the infobox
-        if "No data available for this timespan." in infobox_components:
-            infobox_components.append(html.P("No data available for this timespan."))
-
-        # Return the header and the infobox components
-        return header + infobox_components
-
-    ## CLIMATE FINANCE INFO ##
-
-    # @app.callback(
-    #     Output(ids.INFOBOX_CLIMATEFINANCE, "children"),
-    #     [
-    #         Input(ids.YEAR_SLIDER, "value"),
-    #         Input(ids.STORED_DATA, "data"),
-    #     ],
-    # )
-    # def build_infobox_climatefinance(
-    #     click_data,
-    #     stored_data=None,
-    # ):
-    #     # data = pd.DataFrame(stored_data)
-    #     header = [html.H5("ClimateFinance")]
-
-    #     if click_data is not None:
-    #         country_code = click_data["id"]
-    #         df_filtered = data[
-    #             (data["meta_category"].isin(["Mitigation"]))
-    #             & (data["CountryCode"] == country_code)
-    #         ]
-    #     else:
-    #         df_filtered = data[(data["meta_category"].isin(["Mitigation"]))]
-
-    #     volume = df_filtered.USD_Disbursement.sum().round(2)
-
-    #     # return header + [html.P(f"Volume: {volume}")]
-    #     return header + [html.P("No data for ClimateFinance.")]
