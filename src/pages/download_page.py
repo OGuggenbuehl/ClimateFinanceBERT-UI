@@ -1,10 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import Dash, html
 
-from components import (
-    datatable,
-    ids,
-)
+from components import datatable, ids
 from components.widgets import (
     action_button,
     categories,
@@ -113,6 +110,7 @@ def render(app: Dash) -> html.Div:
                                 action_button.render(
                                     "Query",
                                     id=ids.QUERY_BTN,
+                                    class_name="w-100",
                                 ),
                                 width={
                                     "size": 2,
@@ -124,6 +122,7 @@ def render(app: Dash) -> html.Div:
                                     "Download",
                                     id=ids.DOWNLOAD_BTN,
                                     color="success",
+                                    class_name="w-100",
                                 ),
                                 width=2,
                             ),

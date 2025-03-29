@@ -2,14 +2,11 @@ import dash_leaflet as dl
 from dash import html
 
 from components import (
-    action_button,
     constants,
     ids,
     infobox,
-    map_mode,
-    type_dropdown,
-    year_slider,
 )
+from components.widgets import action_button, map_mode, type, year
 
 
 def render() -> html.Div:
@@ -38,7 +35,7 @@ def render() -> html.Div:
                             map_mode.render(
                                 top="0px", bottom=None, right=None, left=None
                             ),
-                            type_dropdown.render(ids.TYPE_DROPDOWN),
+                            type.render(ids.TYPE_DROPDOWN),
                         ],
                         style={
                             "gridColumn": "2",  # Place map-mode selector in the second (middle) column
@@ -52,16 +49,18 @@ def render() -> html.Div:
                     html.Div(
                         children=[
                             action_button.render(
-                                name="Open Filters 🔍",
+                                "Open Filters 🔍",
                                 id=ids.OPEN_FILTERS,
                                 top="0px",
                                 right="100px",
+                                position="absolute",
                             ),
                             action_button.render(
-                                name="Reset Map ↪️",
+                                "Reset Map ↪️",
                                 id=ids.RESET_MAP,
                                 top="50px",
                                 right="100px",
+                                position="absolute",
                             ),
                         ],
                         style={
@@ -111,7 +110,7 @@ def render() -> html.Div:
                 scrollWheelZoom=False,
             ),
             html.Div(
-                children=[year_slider.render(id=ids.YEAR_SLIDER)],
+                children=[year.render(id=ids.YEAR_SLIDER)],
                 className=ids.INFOBOX,
                 style={
                     "position": "absolute",
