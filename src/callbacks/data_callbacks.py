@@ -10,7 +10,7 @@ from components import ids
 from components.constants import CATEGORIES_DF, DUCKDB_PATH
 from components.widgets.year import PlaybackSliderAIO
 from utils.data_operations import create_mode_data, reshape_by_type
-from utils.query_duckdb import construct_query, query_duckdb
+from utils.query_duckdb import construct_aggregated_query, construct_query, query_duckdb
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -174,21 +174,31 @@ def register(app):
         ],
         [
             State(ids.COUNTRIES_LAYER, "clickData"),
-            State(ids.STORED_DATA, "data"),
+            State(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
+            State(ids.CATEGORIES_DROPDOWN, "value"),
+            State(ids.CATEGORIES_SUB_DROPDOWN, "value"),
+            State(ids.DONORTYPE_DROPDOWN, "value"),
+            State(ids.FLOW_TYPE_DROPDOWN, "value"),
+            State(ids.TYPE_DROPDOWN, "value"),
         ],
         prevent_initial_call=True,
     )
     def build_flow_data_table(
         is_open,
         click_data,
-        stored_data,
+        selected_year,
+        selected_categories,
+        selected_subcategories,
+        selected_donor_types,
+        selected_flow_types,
+        selected_type,
     ):
         if not is_open:
             raise PreventUpdate
 
         start = time.time()
 
-        # Get country name and ID safely
+        # get country name and ID safely
         try:
             country_name = click_data["properties"]["name"]
             country_code = click_data["id"]
@@ -199,12 +209,29 @@ def register(app):
                 dbc.ModalFooter(),
             ]
 
+        # build the info header based on the clicked country
         header = [html.H4(f"Flow Data for {country_name}:")]
 
-        df = pd.DataFrame(stored_data)
+        query = construct_aggregated_query(
+            selected_year=selected_year,
+            selected_categories=selected_categories,
+            selected_subcategories=selected_subcategories,
+            selected_donor_types=selected_donor_types,
+            selected_flow_types=selected_flow_types,
+        )
 
+        df_queried = query_duckdb(
+            duckdb_db=DUCKDB_PATH,
+            query=query,
+        )
+
+        # filter data based on selected country safely
         try:
-            df_filtered = df[df["CountryCode"] == country_code]
+            df_filtered = (
+                df_queried[df_queried["DEDonorcode"] == country_code]
+                if selected_type == "donors"
+                else df_queried[df_queried["DERecipientcode"] == country_code]
+            )
         except KeyError:
             return [
                 dbc.ModalHeader(dbc.ModalTitle(header)),
