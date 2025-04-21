@@ -1,12 +1,13 @@
 import dash_bootstrap_components as dbc
-import ids
 from dash import html
 
+from components import ids
 
-def render(app):
+
+def render():
     return dbc.Modal(
         [
-            dbc.ModalHeader(dbc.ModalTitle(f"Welcome to {app.title}! 👋")),
+            dbc.ModalHeader(dbc.ModalTitle("Welcome to ClimateFinanceBERT UI! 👋")),
             dbc.ModalBody(
                 [
                     html.H5(
@@ -43,13 +44,7 @@ def render(app):
                     ),
                 ]
             ),
-            dbc.ModalFooter(
-                dbc.Button(
-                    "Get Started",
-                    id=ids.WELCOME_MODAL_CLOSE,
-                    className="ms-auto",
-                )
-            ),
+            dbc.ModalFooter(),
         ],
         id=ids.WELCOME_MODAL,
         is_open=True,

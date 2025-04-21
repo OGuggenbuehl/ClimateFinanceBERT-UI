@@ -37,15 +37,3 @@ def register(app):
         if btn_clicked:
             return not is_open
         return is_open
-
-    @app.callback(
-        Output(ids.WELCOME_MODAL, "is_open"),
-        [Input(ids.WELCOME_MODAL_CLOSE, "n_clicks")],
-        [State(ids.WELCOME_MODAL, "is_open")],
-        prevent_initial_call=True,
-    )
-    def close_welcome_modal(n_clicks, is_open):
-        """Close the welcome modal when the close button is clicked."""
-        if n_clicks:
-            return False
-        return is_open
