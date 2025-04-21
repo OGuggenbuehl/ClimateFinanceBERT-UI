@@ -5,23 +5,60 @@ from dash import Dash, html
 def render(app: Dash) -> html.Div:
     return html.Div(
         id="about-page",
+        className="container mt-4",
         children=[
-            dbc.Col(
+            dbc.Row(
                 [
-                    html.H1("About"),
-                    html.P("This is a simple web app to visualize data on a map."),
-                    html.P(
-                        "This app is built using Dash and Dash Bootstrap Components."
-                    ),
-                    html.P("The data is stored in a GeoJSON file."),
-                    html.P("The map is rendered using Mapbox."),
-                    html.P("The data is visualized using Plotly."),
-                    html.P("The source code for this app can be found on GitHub."),
-                ],
-                width={
-                    "size": 6,
-                    "offset": 3,
-                },
-            ),
+                    dbc.Col(
+                        [
+                            html.H1("About", className="mb-4 text-center"),
+                            html.P(
+                                "This dashboard provides an interactive overview of bilateral climate finance flows across countries, categories, and over time. As part of a research project by ETH Zurich and the University of St.Gallen a machine-learning model was trained to identify climate relevance and different categories in development assistance funding in a consistent and replicable way. The goal of the project is to improve transparency and accuracy in international climate finance reporting.",
+                                className="mb-4",
+                            ),
+                            html.H3("Data Source"),
+                            html.P(
+                                "The underlying data are drawn from the OECD Creditor Reporting System (CRS), which contains textual descriptions and project-level information on Official Development Assistance (ODA) reported by contributing countries.",
+                                className="mb-4",
+                            ),
+                            html.H3("Methodology"),
+                            html.P(
+                                "Climate finance flows are estimated using ClimateFinanceBERT, a transformer-based machine learning model developed to classify climate-relevant development assistance projects. The model was trained on a manually annotated dataset and achieves over 95% accuracy in identifying and categorizing projects as contributing to either mitigation, adaptation, or the environment and respective subcategories. The classification approach focuses on projects with a principal climate objective, in line with Rio marker guidelines, to produce conservative but consistent estimates.",
+                                className="mb-4",
+                            ),
+                            html.H3("Publication"),
+                            html.P(
+                                [
+                                    "The methodology and findings are detailed in the following peer-reviewed article:",
+                                    html.Br(),
+                                    "Toetzke, M., Stünzi, A., & Egli, F. (2022). Consistent and replicable estimation of bilateral climate finance. Nature Climate Change, 12, 897–900.",
+                                    html.Br(),
+                                    html.A(
+                                        "https://doi.org/10.1038/s41558-022-01482-7",
+                                        href="https://doi.org/10.1038/s41558-022-01482-7",
+                                        target="_blank",
+                                    ),
+                                ],
+                                className="mb-4",
+                            ),
+                            html.H3("Code and Data"),
+                            html.P(
+                                [
+                                    "The full codebase and training data for the ClimateFinanceBERT model are openly available on GitHub:",
+                                    html.Br(),
+                                    html.A(
+                                        "https://github.com/MalteToetzke/consistent-and-replicable-estimation-of-bilateral-climate-finance",
+                                        href="https://github.com/MalteToetzke/consistent-and-replicable-estimation-of-bilateral-climate-finance",
+                                        target="_blank",
+                                    ),
+                                ],
+                                className="mb-4",
+                            ),
+                        ],
+                        width={"size": 10, "offset": 1},
+                        lg={"size": 8, "offset": 2},
+                    )
+                ]
+            )
         ],
     )
