@@ -21,6 +21,9 @@ def main():
             BOOTSTRAP,
             "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css",
         ],
+        external_scripts=[
+            "https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.0/chroma.min.js"
+        ],
         suppress_callback_exceptions=True,
     )
     page_callbacks.register(app)

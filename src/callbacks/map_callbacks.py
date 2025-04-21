@@ -37,12 +37,8 @@ def register(app):
         mode_data,
         map_mode,
     ):
-        # retrieve stored dataframe and parse geojson
         df_mode = pd.DataFrame(mode_data)
-
-        # Create a deep copy of the base geojson to ensure it is not altered
         geojson_copy = copy.deepcopy(constants.GEOJSON_BASE)
-
         return merge_data(df_mode, geojson_copy, map_mode)
 
     @app.callback(
@@ -61,41 +57,37 @@ def register(app):
             "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
         )
         attribution = '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> '
+
+        style_info = style_map(map_mode_value)
+
         if map_mode_value == "base":
             return [
-                dl.TileLayer(
-                    url=url,
-                    attribution=attribution,
-                ),
-                # render dummy map to be replaced by the callback
+                dl.TileLayer(url=url, attribution=attribution),
                 dl.GeoJSON(
                     url=constants.GEOJSON_URL,
                     id=ids.COUNTRIES_LAYER,
-                    style=style_map(map_mode_value),
+                    style=style_info["style"],
                     hoverStyle=arrow_function(
                         dict(weight=4, color="#666", dashArray="")
                     ),
                 ),
             ]
         else:
-            classes, colorscale, style, style_handle = style_map(map_mode_value)
             return [
-                dl.TileLayer(
-                    url=url,
-                    attribution=attribution,
-                ),
+                dl.TileLayer(url=url, attribution=attribution),
                 dl.GeoJSON(
                     id=ids.COUNTRIES_LAYER,
                     data=stored_geojson,
-                    style=style_handle,  # how to style each polygon
+                    style=style_info["style_handle"],
                     hoverStyle=arrow_function(
                         dict(weight=4, color="#666", dashArray="")
-                    ),  # style applied on hover
+                    ),
                     hideout=dict(
-                        colorscale=colorscale,
-                        classes=classes,
-                        style=style,
                         polyColoring="value",
+                        style=style_info["style"],
+                        colorscale=style_info["colorscale"],
+                        min=style_info["min"],
+                        max=style_info["max"],
                     ),
                     zoomToBoundsOnClick=True,
                     interactive=True,
