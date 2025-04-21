@@ -6,6 +6,7 @@ from components import (
     datatable,
     ids,
     navbar,
+    welcome_modal,
 )
 
 
@@ -39,5 +40,7 @@ def create_layout(app: Dash) -> html.Div:
                 size="xl",
                 is_open=False,
             ),
+            # Welcome modal
+            welcome_modal.render(app, id=ids.WELCOME_MODAL),
         ],
     )

@@ -25,6 +25,9 @@ FLOW_DATA_BTN = "flow-data-btn"
 FLOW_DATA_TABLE = "flow-data-table"
 FLOW_DATA_MODAL = "flow-data-modal"
 FLOW_TYPE_DROPDOWN = "flow-type-dropdown"
+## welcome modal
+WELCOME_MODAL = "welcome-modal"
+WELCOME_MODAL_CLOSE = "welcome-modal-close"
 
 # Download page
 QUERY_BTN = "query-btn"
