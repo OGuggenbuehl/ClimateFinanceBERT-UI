@@ -104,17 +104,18 @@ def render() -> html.Div:
                     html.Div(
                         id=ids.COLOR_LEGEND_CONTAINER,
                         style={
-                            "flex": "1",
+                            "width": "200px",  # fixed
                             "zIndex": "1000",
                             "padding": "6px 8px",
                         },
                     ),
                     html.Div(
-                        children=[year.render(id=ids.YEAR_SLIDER)],
+                        year.render(id=ids.YEAR_SLIDER),
+                        id="year-slider-container",
                         style={
-                            "flex": "2",
+                            "flex": "1",  # take remaining space
                             "maxWidth": "600px",
-                            "margin": "0 20px",
+                            "margin": "0 auto",  # Center in the available space
                             "padding": "10px",
                             "border": "1px solid #ccc",
                             "borderRadius": "8px",
@@ -123,9 +124,9 @@ def render() -> html.Div:
                     ),
                     html.Div(
                         color_mode.render(),
-                        id=ids.COLOR_MODE_CONTAINER,
+                        id="color-mode-container",
                         style={
-                            "flex": "1",
+                            "width": "200px",  # fixed
                             "zIndex": "1000",
                             "padding": "6px 8px",
                             "background": "rgba(255, 255, 255, 0.8)",

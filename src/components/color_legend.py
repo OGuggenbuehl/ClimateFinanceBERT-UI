@@ -18,9 +18,9 @@ def render(map_mode, color_mode, style_info):
     if map_mode == "total":
         title = "Total Climate Finance ($)"
     elif map_mode == "rio_oecd":
-        title = "Rio Marker-based (%)"
+        title = "Rio Marker-based"
     elif map_mode == "rio_climfinbert":
-        title = "ClimateFinBERT (%)"
+        title = "Legend"  # TODO: rework titles for all map modi
     elif map_mode == "rio_diff":
         title = "Difference (pp)"
     else:
