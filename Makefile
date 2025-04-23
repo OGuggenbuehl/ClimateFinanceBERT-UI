@@ -24,11 +24,21 @@ test:
 .PHONY: lint
 lint:
 	git add --intent-to-add .
-	. $(VENV)/activate; $(VENV)/
+	$(VENV)/ruff check .
 	
 .PHONY: format
 format:
-	ruff format .
+	$(VENV)/ruff format .
+
+.PHONY: clean
+clean:
+	@echo "Cleaning up temporary files and build artifacts"
+	rm -rf .pytest_cache
+	rm -rf .coverage
+	rm -rf htmlcov
+	rm -rf .ruff_cache
+	find . -type d -name __pycache__ -exec rm -rf {} +
+	find . -type f -name "*.pyc" -delete
 
 
 #################################################################################
