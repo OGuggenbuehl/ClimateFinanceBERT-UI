@@ -50,7 +50,10 @@ def render(map_mode, color_mode, style_info):
 
         return html.Div(
             [
-                html.H6(title, style={"margin": "0 0 5px 0"}),
+                html.Div(
+                    "Color Legend:",
+                    style={"font-weight": "bold", "margin": "0 0 5px 0"},
+                ),
                 html.Div(
                     [
                         html.Div(
