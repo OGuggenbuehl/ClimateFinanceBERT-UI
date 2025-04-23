@@ -10,44 +10,160 @@ def render():
             dbc.ModalHeader(dbc.ModalTitle("Welcome to ClimateFinanceBERT UI! 👋")),
             dbc.ModalBody(
                 [
-                    html.H5(
-                        "Interactive Climate Finance Explorer",
-                        className="text-center mb-3",
-                    ),
-                    html.P(
-                        "This dashboard allows you to explore climate finance flows between countries "
-                        "using data classified by ClimateFinanceBERT, a natural language processing model "
-                        "specialized in climate finance."
-                    ),
-                    html.Hr(),
-                    html.H6("Getting Started:"),
-                    html.Ul(
+                    html.Div(
                         [
-                            html.Li(
-                                "Use the map to visualize finance flows between countries"
+                            html.H4(
+                                "Interactive Climate Finance Explorer",
+                                className="text-center mb-3 text-muted",
                             ),
-                            html.Li(
-                                "Filter data by donor type, flow type, categories, and subcategories"
+                            html.P(
+                                "This dashboard allows you to explore climate finance flows between countries "
+                                "using data classified by ClimateFinanceBERT, a natural language processing model "
+                                "specialized in climate finance.",
+                                className="lead text-center px-4 text-muted",
                             ),
-                            html.Li("Click on countries to see detailed information"),
-                            html.Li(
-                                "Use the time slider to explore data over different years"
+                        ],
+                        className="bg-light p-3 rounded mb-4",
+                    ),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                [
+                                    html.H4(
+                                        ["Getting Started:"],
+                                        className="mb-3",
+                                    ),
+                                    html.Ul(
+                                        [
+                                            html.Li(
+                                                [
+                                                    "🗺️ Use the map to visualize finance flows between countries"
+                                                ],
+                                                className="mb-2",
+                                            ),
+                                            html.Li(
+                                                [
+                                                    "🔍 Filter data by donor type, flow type, categories, and subcategories"
+                                                ],
+                                                className="mb-2",
+                                            ),
+                                            html.Li(
+                                                [
+                                                    "👆 Click on countries to see detailed information"
+                                                ],
+                                                className="mb-2",
+                                            ),
+                                            html.Li(
+                                                [
+                                                    "🎚️ Use the time slider to explore data over different years"
+                                                ],
+                                                className="mb-2",
+                                            ),
+                                            html.Li(
+                                                [
+                                                    "📥 Download data for further analysis from the Download tab"
+                                                ],
+                                                className="mb-2",
+                                            ),
+                                        ],
+                                        className="list-unstyled",
+                                    ),
+                                ],
+                                width=6,
                             ),
-                            html.Li(
-                                "Download data for further analysis from the Download tab"
+                            dbc.Col(
+                                [
+                                    html.H4(
+                                        ["Default Filters:"],
+                                        className="mb-3",
+                                    ),
+                                    dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    html.Ul(
+                                                        [
+                                                            html.Li(
+                                                                [
+                                                                    "🏛️ Donor Type: ",
+                                                                    html.Span(
+                                                                        "Bilateral",
+                                                                        className="fw-bold",
+                                                                    ),
+                                                                ],
+                                                                className="mb-2",
+                                                            ),
+                                                            html.Li(
+                                                                [
+                                                                    "↔️ Flow Type: ",
+                                                                    html.Span(
+                                                                        "ODA Grants",
+                                                                        className="fw-bold",
+                                                                    ),
+                                                                ],
+                                                                className="mb-2",
+                                                            ),
+                                                            html.Li(
+                                                                [
+                                                                    "🏷️ Categories: ",
+                                                                    html.Span(
+                                                                        "Mitigation",
+                                                                        className="fw-bold",
+                                                                    ),
+                                                                ],
+                                                                className="mb-2",
+                                                            ),
+                                                            html.Li(
+                                                                [
+                                                                    "☀️ Sub-categories: ",
+                                                                    html.Span(
+                                                                        "Solar Energy",
+                                                                        className="fw-bold",
+                                                                    ),
+                                                                ],
+                                                                className="mb-2",
+                                                            ),
+                                                        ],
+                                                        className="list-unstyled",
+                                                    ),
+                                                ]
+                                            )
+                                        ],
+                                        className="shadow-sm",
+                                    ),
+                                ],
+                                width=6,
                             ),
-                        ]
+                        ],
+                        className="px-3",
+                    ),
+                    dbc.Alert(
+                        [
+                            "⚠️ ",
+                            html.Strong("Performance Note: "),
+                            html.P(
+                                "The application's performance may suffer if too many categories are selected simultaneously. "
+                                "For optimal experience, consider limiting your selection. "
+                                "When downloading data, the filters are set separately in the download tab.",
+                                className="mb-0 ms-4",
+                            ),
+                        ],
+                        color="warning",
+                        className="mt-4 mb-3",
                     ),
                     html.P(
-                        "For more information about the project, visit the About section.",
-                        className="text-muted mt-3",
+                        [
+                            "ℹ️ For more information about the project, visit the About section.",
+                        ],
+                        className="text-muted mt-2 fst-italic text-center",
                     ),
                 ]
             ),
-            dbc.ModalFooter(),
         ],
         id=ids.WELCOME_MODAL,
         is_open=True,
         size="lg",
         centered=True,
+        backdrop=True,
+        className="welcome-modal",
     )

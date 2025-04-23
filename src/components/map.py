@@ -104,7 +104,7 @@ def render() -> html.Div:
                     html.Div(
                         id=ids.COLOR_LEGEND_CONTAINER,
                         style={
-                            "width": "200px",  # fixed
+                            "width": "flex",
                             "zIndex": "1000",
                             "padding": "6px 8px",
                         },
