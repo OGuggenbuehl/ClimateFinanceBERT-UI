@@ -31,10 +31,9 @@ def render(app: Dash) -> html.Div:
                                 [
                                     "The methodology and findings are detailed in the following peer-reviewed article:",
                                     html.Br(),
-                                    "Toetzke, M., Stünzi, A., & Egli, F. (2022). Consistent and replicable estimation of bilateral climate finance. Nature Climate Change, 12, 897–900.",
-                                    html.Br(),
+                                    "Toetzke, M., Stünzi, A., & Egli, F. (2022). Consistent and replicable estimation of bilateral climate finance. ",
                                     html.A(
-                                        "https://doi.org/10.1038/s41558-022-01482-7",
+                                        "Nature Climate Change, 12, 897–900.",
                                         href="https://doi.org/10.1038/s41558-022-01482-7",
                                         target="_blank",
                                     ),
@@ -44,10 +43,9 @@ def render(app: Dash) -> html.Div:
                             html.H3("Code and Data"),
                             html.P(
                                 [
-                                    "The full codebase and training data for the ClimateFinanceBERT model are openly available on GitHub:",
-                                    html.Br(),
+                                    "The full codebase and training data for the ClimateFinanceBERT model are ",
                                     html.A(
-                                        "https://github.com/MalteToetzke/consistent-and-replicable-estimation-of-bilateral-climate-finance",
+                                        "openly available on GitHub",
                                         href="https://github.com/MalteToetzke/consistent-and-replicable-estimation-of-bilateral-climate-finance",
                                         target="_blank",
                                     ),

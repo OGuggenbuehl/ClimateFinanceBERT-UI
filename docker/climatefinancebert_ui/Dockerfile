@@ -20,6 +20,7 @@ FROM base as builder
 # Get uv binary
 COPY --from=ghcr.io/astral-sh/uv:0.4.30 /uv /uvx /bin/
 
+# TODO: remove since already in base
 # Install python development dependencies
 RUN apt-get update && \
     apt-get -y upgrade && \
@@ -42,8 +43,6 @@ ENV PATH="/home/app/.venv/bin:$PATH"
 # Copy app source code
 COPY /src /home/app
 COPY /data /home/app/data 
-## TODO: remove data copying once we have a DB
-
 
 # Change ownership of the app directory and switch to non-root user 
 RUN chown -R appuser:appuser /home/app

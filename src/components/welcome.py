@@ -18,7 +18,7 @@ def render():
                             ),
                             html.P(
                                 "This dashboard allows you to explore climate finance flows between countries "
-                                "using data classified by ClimateFinanceBERT, a natural language processing model "
+                                "using data classified by ClimateFinanceBERT, a large language model "
                                 "specialized in climate finance.",
                                 className="lead text-center px-4 text-muted",
                             ),
