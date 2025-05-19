@@ -10,7 +10,13 @@ from components.constants import YEAR_RANGE
 def render(id: str) -> html.Div:
     return html.Div(
         children=[
-            html.H6("Select Year"),
+            html.H6(
+                "Select Year",
+                style={
+                    "font-weight": "bold",
+                    "margin-bottom": "8px",
+                },
+            ),
             PlaybackSliderAIO(
                 aio_id=id,
                 slider_props={
