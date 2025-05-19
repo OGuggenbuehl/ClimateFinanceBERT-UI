@@ -7,7 +7,7 @@ from components import ids
 def render():
     return dbc.Modal(
         [
-            dbc.ModalHeader(dbc.ModalTitle("Welcome to ClimateFinanceBERT UI! 👋")),
+            dbc.ModalHeader(dbc.ModalTitle("Welcome to ClimateFinance Explorer! 👋")),
             dbc.ModalBody(
                 [
                     html.Div(

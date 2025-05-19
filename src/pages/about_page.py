@@ -15,11 +15,15 @@ def render(app: Dash) -> html.Div:
                                 "About ClimateFinanceBERT",
                                 className="mb-4 text-center fw-bold",
                             ),
+                            html.H4(
+                                "The Natural Language Model underlying ClimateFinance Explorer",
+                                className="mb-4 text-center",
+                            ),
                             html.Div(
                                 className="bg-light p-4 rounded-3 shadow-sm mb-5",
                                 children=[
                                     html.P(
-                                        "This dashboard provides an interactive overview of bilateral climate finance flows across countries, categories, and over time. As part of a research project by ETH Zurich and the University of St.Gallen a machine-learning model was trained to identify climate relevance and different categories in development assistance funding in a consistent and replicable way. The goal of the project is to improve transparency and accuracy in international climate finance reporting.",
+                                        "This application provides an interactive overview of bilateral climate finance flows across countries, categories, and over time. As part of a research project by ETH Zurich and the University of St.Gallen a machine-learning model was trained to identify climate relevance and different categories in development assistance funding in a consistent and replicable way. The goal of the project is to improve transparency and accuracy in international climate finance reporting.",
                                         className="lead mb-0 text-dark",  # Added text-dark class to ensure visibility
                                     ),
                                 ],

@@ -32,7 +32,7 @@ def main():
     info_callbacks.register(app)
     map_callbacks.register(app)
     download_callbacks.register(app)
-    app.title = "ClimateFinanceBERT UI"
+    app.title = "ClimateFinance Explorer"
     app.layout = create_layout(app)
     app.run_server(
         debug=True,

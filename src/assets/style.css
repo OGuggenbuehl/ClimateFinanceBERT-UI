@@ -1,8 +1,17 @@
+@font-face {
+    font-family: 'RobotoSans';
+    src: url('./fonts/RobotoFlex.woff2') format('woff2 supports variations'),
+         url('./fonts/RobotoFlex.woff2') format('woff2-variations'),
+         url('./fonts/RobotoFlex.ttf') format('truetype');
+    font-weight: 100 1000;
+    font-style: normal;
+    font-display: swap;
+}
+
 .infobox {
     padding: 6px 8px;
     font: 14px/16px Arial, Helvetica, sans-serif;
-    background: white;
-    background: rgba(255,255,255,0.8);
+    background: #FAFAFA;
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
 }
@@ -14,12 +23,13 @@
     margin-top: 20px; 
 }
 .app-container {
-    background-color: #343a40; /* Bootstrap dark color */
-    color: #ffffff; /* Text color for better visibility */
+    background-color: #0E2050; /* TTT dark color */
+    color: #F0F0F0; /* Text color for better visibility */
     min-height: 100vh; /* Ensures the container fills the entire viewport height */
 }
 body {
-    font-family: "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", "Arial", sans-serif;
+    font-family: "RobotoSans", "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", "Arial", sans-serif;
+    /* font-family: "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", "Arial", sans-serif; */
 }
 
 /* Map Control Styles */
@@ -27,11 +37,31 @@ body {
     margin-right: 8px;
   }
   
-  .map-control-radio .form-check-input {
-    cursor: pointer;
-  }
-  
-  .map-control-radio .form-check-label {
-    cursor: pointer;
-    font-weight: normal;
-  }
+.map-control-radio .form-check-input {
+cursor: pointer;
+}
+
+.map-control-radio .form-check-label {
+cursor: pointer;
+font-weight: normal;
+}
+
+/* Navbar styling */
+.navbar {
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    height: auto;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.navbar-brand img {
+    object-fit: contain;
+    max-height: 600px;
+}
+
