@@ -52,6 +52,18 @@ def render(app: Dash) -> html.Div:
                                 ],
                                 className="mb-4",
                             ),
+                            html.H3("Affiliation"),
+                            html.P(
+                                [
+                                    "The development of this dashboard was supported by the ",
+                                    html.A(
+                                        "Transformation Finance Lab (TFL)",
+                                        href="https://tumthinktank.de/de/projekt/transformation-finance-lab/",
+                                        target="_blank",
+                                    ),
+                                    "The Transformation Finance Lab brings together tomorrow's leaders in the finance industry to create a community of practice, shape policy and build tools that mobilize finance for the sustainability transformation, leveraging TUM’s expertise in data analysis and visualization. The TFL is part of the TUM Think Tank, a university-based platform that fosters collaboration between academia, civil society, business, and the public sector to shape a responsible, human-centered digital future.",
+                                ],
+                            ),
                         ],
                         width={"size": 10, "offset": 1},
                         lg={"size": 8, "offset": 2},
