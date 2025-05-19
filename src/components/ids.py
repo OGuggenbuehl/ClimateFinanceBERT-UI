@@ -22,6 +22,7 @@ CATEGORIES_DROPDOWN = "categories_dropdown"
 CATEGORIES_SUB_DROPDOWN = "categories_sub_dropdown"
 MAP_MODE = "map-mode"
 COLOR_MODE = "color-mode"
+CURRENT_FILTERS = "current-filters"
 ## flow data
 FLOW_DATA_BTN = "flow-data-btn"
 FLOW_DATA_TABLE = "flow-data-table"

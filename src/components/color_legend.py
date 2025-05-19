@@ -5,15 +5,6 @@ def render(map_mode, color_mode, style_info):
     if map_mode == "base":
         return None
 
-    legend_container_style = {
-        "padding": "6px 8px",
-        "background": "rgba(255, 255, 255, 0.8)",
-        "box-shadow": "0 0 15px rgba(0, 0, 0, 0.2)",
-        "border-radius": "5px",
-        "min-width": "150px",
-        "max-width": "250px",
-    }
-
     # Create title based on map mode
     if map_mode == "total":
         title = "Total Climate Finance ($)"
@@ -48,11 +39,12 @@ def render(map_mode, color_mode, style_info):
             ]
         )
 
+        # Return a single parent div containing all elements
         return html.Div(
             [
                 html.Div(
                     "Color Legend:",
-                    style={"font-weight": "bold", "margin": "0 0 5px 0"},
+                    style={"font-weight": "bold", "margin-bottom": "8px"},
                 ),
                 html.Div(
                     [
@@ -71,8 +63,7 @@ def render(map_mode, color_mode, style_info):
                         ),
                     ]
                 ),
-            ],
-            style=legend_container_style,
+            ]
         )
 
     else:  # quartile mode
@@ -81,7 +72,7 @@ def render(map_mode, color_mode, style_info):
         colors = style_info["quartile_colors"]
 
         if not breaks or len(breaks) < 2:
-            return None
+            return html.Div()  # Return empty div instead of None
 
         items = []
         for i in range(len(breaks) - 1):
@@ -121,7 +112,16 @@ def render(map_mode, color_mode, style_info):
                 )
             )
 
+        # Return a single parent div containing all elements
         return html.Div(
-            [html.H6(title, style={"margin": "0 0 5px 0"}), html.Div(items)],
-            style=legend_container_style,
+            [
+                html.H6(
+                    "Color Legend:",
+                    style={
+                        "font-weight": "bold",
+                        "margin-bottom": "8px",
+                    },
+                ),
+                html.Div(items),
+            ]
         )

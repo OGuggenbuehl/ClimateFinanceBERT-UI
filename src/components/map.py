@@ -1,11 +1,7 @@
 import dash_leaflet as dl
 from dash import html
 
-from components import (
-    constants,
-    ids,
-    infobox,
-)
+from components import constants, current_filters, ids, infobox
 from components.widgets import action_button, color_mode, map_mode, type, year
 
 
@@ -102,11 +98,40 @@ def render() -> html.Div:
             html.Div(
                 children=[
                     html.Div(
-                        id=ids.COLOR_LEGEND_CONTAINER,
+                        [
+                            html.Div(
+                                id=ids.COLOR_LEGEND_CONTAINER,
+                                style={
+                                    "width": "200px",
+                                    "zIndex": "1000",
+                                    "padding": "10px",  # Add padding back
+                                    "background": "rgba(255, 255, 255, 0.8)",
+                                    "boxShadow": "0 0 15px rgba(0, 0, 0, 0.2)",
+                                    "borderRadius": "5px",
+                                    "marginBottom": "8px",
+                                    "overflow": "hidden",
+                                },
+                            ),
+                            html.Div(
+                                color_mode.render(),
+                                id="color-mode-container",
+                                style={
+                                    "width": "200px",
+                                    "zIndex": "1000",
+                                    "padding": "10px",
+                                    "background": "rgba(255, 255, 255, 0.8)",
+                                    "boxShadow": "0 0 15px rgba(0, 0, 0, 0.2)",
+                                    "borderRadius": "5px",
+                                    "display": "flex",
+                                    "flexDirection": "column",
+                                    "alignItems": "center",
+                                },
+                            ),
+                        ],
                         style={
-                            "width": "flex",
-                            "zIndex": "1000",
-                            "padding": "6px 8px",
+                            "display": "flex",
+                            "flexDirection": "column",
+                            "justifyContent": "flex-end",
                         },
                     ),
                     html.Div(
@@ -117,21 +142,21 @@ def render() -> html.Div:
                             "maxWidth": "600px",
                             "margin": "0 auto",  # Center in the available space
                             "padding": "10px",
-                            "border": "1px solid #ccc",
                             "borderRadius": "8px",
-                            "backgroundColor": "rgba(255, 255, 255, 0.7)",
+                            "backgroundColor": "rgba(255, 255, 255, 0.8)",
+                            "boxShadow": "0 0 15px rgba(0, 0, 0, 0.2)",
                         },
                     ),
                     html.Div(
-                        color_mode.render(),
-                        id="color-mode-container",
+                        current_filters.render(),
+                        id="current-filters-container",
                         style={
-                            "width": "200px",  # fixed
+                            "width": "200px",
                             "zIndex": "1000",
-                            "padding": "6px 8px",
                             "background": "rgba(255, 255, 255, 0.8)",
                             "boxShadow": "0 0 15px rgba(0, 0, 0, 0.2)",
                             "borderRadius": "5px",
+                            "overflow": "hidden",
                         },
                     ),
                 ],
@@ -142,7 +167,7 @@ def render() -> html.Div:
                     "right": 0,
                     "display": "flex",
                     "justifyContent": "space-between",
-                    "alignItems": "center",
+                    "alignItems": "flex-end",  # Align items to bottom
                     "padding": "0 40px",
                     "zIndex": 10,
                 },
