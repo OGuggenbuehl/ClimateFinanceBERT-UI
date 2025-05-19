@@ -2,11 +2,24 @@
 # GLOBALS                                                                       #
 #################################################################################
 
-PROJECT_ROOT := $(shell pwd)
-ENVNAME := $(shell pwd)/.venv
-VENV := $(ENVNAME)/bin
-PYTHON_INTERPRETER = $(VENV)/python
+# Common settings
+PROJECT_ROOT := $(CURDIR)
 
+ifeq ($(OS),Windows_NT)
+	# Windows
+	PATHSEP := \\
+	SCRIPTS_DIR := Scripts
+	SET_PYTHONPATH := set "PYTHONPATH=$(PROJECT_ROOT)" &&
+else
+	# Unix
+	PATHSEP := /
+	SCRIPTS_DIR := bin
+	SET_PYTHONPATH := PYTHONPATH=$(PROJECT_ROOT)
+endif
+
+ENVNAME := $(PROJECT_ROOT)$(PATHSEP).venv
+VENV := $(ENVNAME)$(PATHSEP)$(SCRIPTS_DIR)
+PYTHON_INTERPRETER := $(VENV)$(PATHSEP)python
 
 #################################################################################
 # COMMANDS                                                                      #
@@ -14,43 +27,44 @@ PYTHON_INTERPRETER = $(VENV)/python
 
 .PHONY: run
 run:
-	PYTHONPATH=$(PROJECT_ROOT) $(PYTHON_INTERPRETER) src/app.py
+	$(SET_PYTHONPATH) $(PYTHON_INTERPRETER) src$(PATHSEP)app.py
 
 .PHONY: test
 test:
 	$(PYTHON_INTERPRETER) -m pytest ./tests
-	$(VENV)/coverage report
+	$(PYTHON_INTERPRETER) -m coverage report
 
 .PHONY: lint
 lint:
-	git add --intent-to-add .
-	$(VENV)/ruff check .
-	
+	$(PYTHON_INTERPRETER) -m ruff check .
+
 .PHONY: format
 format:
-	$(VENV)/ruff format .
-
-.PHONY: clean
-clean:
-	@echo "Cleaning up temporary files and build artifacts"
-	rm -rf .pytest_cache
-	rm -rf .coverage
-	rm -rf htmlcov
-	rm -rf .ruff_cache
-	find . -type d -name __pycache__ -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
-
+	$(PYTHON_INTERPRETER) -m ruff format .
 
 #################################################################################
-# SETUP
+# SETUP                                                                        #
 #################################################################################
 
 .PHONY: install
-install: _install_uv _create_venv _install_dependencies _install_direnv
+install:
+ifeq ($(OS),Windows_NT)
+	@echo "Installing on Windows"
+	@echo "Please run setup manually:"
+	@echo "1. Install uv: curl -LsSf https://astral.sh/uv/install.sh | sh"
+	@echo "2. Create virtual environment: uv venv"
+	@echo "3. Install dependencies: uv sync --all-extras"
+else
+	@echo "Installing on Unix"
+	@$(MAKE) _install_uv
+	@$(MAKE) _create_venv
+	@$(MAKE) _install_dependencies
+	@$(MAKE) _install_direnv
 	@echo "Installation complete"
 	@echo "Execute make run to start the application"
+endif
 
-.PHONY: _install_uv
+.PHONY: _install_uv _create_venv _install_dependencies _install_direnv
 _install_uv:
 	@echo "Installing uv"
 	@if ! command -v uv > /dev/null 2>&1; then \
@@ -59,8 +73,6 @@ _install_uv:
 		echo "uv is already installed"; \
 	fi
 
-
-.PHONY: _create_venv
 _create_venv:
 	@if [ ! -d ".venv" ]; then \
 		echo "Creating virtual environment"; \
@@ -69,14 +81,10 @@ _create_venv:
 		echo "Virtual environment already exists"; \
 	fi
 
-
-.PHONY: _install_dependencies
 _install_dependencies:
 	@echo "Installing dependencies"
 	uv sync --all-extras
 
-
-.PHONY: _install_direnv
 _install_direnv:
 	@echo "Installing direnv"
 	@if ! command -v direnv > /dev/null 2>&1; then \
@@ -85,43 +93,36 @@ _install_direnv:
 		echo "direnv is already installed"; \
 	fi
 
-
 #################################################################################
-# DOCKER
+# DOCKER                                                                       #
 #################################################################################
 
-.PHONY: docker-build
+.PHONY: docker-build docker-push docker-up docker-down docker-restart docker-logs docker-overview
 docker-build:
 	docker compose -f "docker/docker-compose.yml" build --pull
 
-.PHONY: docker-push
 docker-push:
 	docker compose -f "docker/docker-compose.yml" push
 
-.PHONY: docker-up
 docker-up:
 	docker compose -f "docker/docker-compose.yml" up --pull always --build --detach --wait
 
-.PHONY: docker-down
 docker-down:
 	docker compose -f "docker/docker-compose.yml" down
 
-.PHONY: docker-restart
 docker-restart:
 	docker compose -f "docker/docker-compose.yml" restart
 
-.PHONY: docker-logs
 docker-logs:
 	docker compose -f "docker/docker-compose.yml" logs --follow
 
-.PHONY: docker-overview
 docker-overview:
 	docker compose -f "docker/docker-compose.yml" ps
 
 #################################################################################
-# DUCKDB
+# DUCKDB                                                                       #
 #################################################################################
 
 .PHONY: duckdb-pipeline
 duckdb-pipeline:
-	$(PYTHON_INTERPRETER) src/functions/duckdb_pipeline.py
+	$(PYTHON_INTERPRETER) src$(PATHSEP)functions$(PATHSEP)duckdb_pipeline.py
