@@ -34,7 +34,7 @@ def main():
     download_callbacks.register(app)
     app.title = "ClimateFinanceBERT UI"
     app.layout = create_layout(app)
-    app.run_server(
+    app.run(
         debug=True,
         host=os.getenv("DOCKER_HOST", "127.0.0.1"),
         port=os.getenv("DOCKER_PORT", "8050"),
