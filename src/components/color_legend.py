@@ -5,17 +5,18 @@ def render(map_mode, color_mode, style_info):
     if map_mode == "base":
         return None
 
-    # Create title based on map mode
-    if map_mode == "total":
-        title = "Total Climate Finance ($)"
-    elif map_mode == "rio_oecd":
-        title = "Rio Marker-based"
-    elif map_mode == "rio_climfinbert":
-        title = "Legend"  # TODO: rework titles for all map modi
-    elif map_mode == "rio_diff":
-        title = "Difference (pp)"
-    else:
-        title = map_mode.replace("_", " ").title()
+    # TODO: implement map_mode title for legends once needed
+    # # Create title based on map mode
+    # if map_mode == "total":
+    #     title = "Total Climate Finance ($)"
+    # elif map_mode == "rio_oecd":
+    #     title = "Rio Marker-based"
+    # elif map_mode == "rio_climfinbert":
+    #     title = "Legend"  # TODO: rework titles for all map modi
+    # elif map_mode == "rio_diff":
+    #     title = "Difference (pp)"
+    # else:
+    #     title = map_mode.replace("_", " ").title()
 
     if color_mode == "continuous":
         # For continuous color scale, display a gradient bar
