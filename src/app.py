@@ -42,7 +42,7 @@ def main():
 
     # # Get configuration with Docker-compatible defaults
     # debug_mode = os.getenv("DEBUG", "false").lower() == "true"
-    app.run_server(
+    app.run(
         # debug=debug_mode,
         debug=True,
         host=os.getenv("HOST", "127.0.0.1"),
