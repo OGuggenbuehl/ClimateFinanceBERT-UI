@@ -7,11 +7,13 @@ services:
       context: ./../
       dockerfile: docker/climatefinancebert_ui/Dockerfile
     ports: 
-      - 8050:8050
+      - ${PORT:-8050}:${PORT:-8050}
+    # env_file: 
+    #   - ./../.env
     environment:
-      - HOST=0.0.0.0  
-      - PORT=8050     
-    # env_file: ./../.env
+      - DEBUG=${DEBUG:-false}
+      - HOST=0.0.0.0  # hard-coded for Docker, always use 0.0.0.0 regardless of .env
+      - PORT=${PORT:-8050}     
     stdin_open: true  # Add this to make tty work properly
     tty: true
     restart: unless-stopped

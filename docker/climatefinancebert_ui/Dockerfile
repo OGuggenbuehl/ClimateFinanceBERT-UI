@@ -50,9 +50,10 @@ USER appuser
 # Expose Dash
 EXPOSE 8050
 
-# Make sure the application can access the environment variables
+# default environment variables
 ENV HOST="0.0.0.0"
 ENV PORT="8050"
+ENV DEBUG="false"
 
 # Run app
 ENTRYPOINT [ "python" ]
