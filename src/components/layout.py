@@ -6,8 +6,8 @@ from components import (
     datatable,
     ids,
     navbar,
+    welcome,
 )
-from src.components import welcome
 
 
 def create_layout(app: Dash) -> html.Div:

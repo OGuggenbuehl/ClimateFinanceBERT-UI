@@ -34,10 +34,23 @@ def main():
     download_callbacks.register(app)
     app.title = "ClimateFinance Explorer"
     app.layout = create_layout(app)
-    app.run_server(
-        debug=True,
-        host=os.getenv("DOCKER_HOST", "127.0.0.1"),
-        port=os.getenv("DOCKER_PORT", "8050"),
+
+    # health endpoint to the underlying Flask app
+    @app.server.route("/health")
+    def health():
+        return "OK", 200
+
+    # config environment
+    debug_mode = os.getenv("DEBUG", "false").lower() == "true"
+    host = os.getenv(
+        "HOST", "127.0.0.1"
+    )  # default to localhost for local dev, use env-config for docker
+    port = int(os.getenv("PORT", "8050"))
+
+    app.run(
+        debug=debug_mode,
+        host=host,
+        port=port,
     )
 
 

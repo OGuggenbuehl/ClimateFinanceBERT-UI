@@ -25,6 +25,30 @@ PYTHON_INTERPRETER := $(VENV)$(PATHSEP)python
 # COMMANDS                                                                      #
 #################################################################################
 
+# Default target
+.PHONY: help
+help:
+	@echo "ClimateFinanceBERT-UI Makefile"
+	@echo "==============================="
+	@echo ""
+	@echo "Usage:"
+	@echo "  make <target>"
+	@echo ""
+	@echo "Targets:"
+	@echo "  run              Run the application locally"
+	@echo "  test             Run tests and generate coverage report"
+	@echo "  lint             Run code linting"
+	@echo "  format           Format code"
+	@echo "  clean            Clean temporary files"
+	@echo "  install          Install dependencies"
+	@echo "  docker-run       Run application in Docker container"
+	@echo "  docker-build     Build Docker image"
+	@echo "  docker-up        Start Docker services"
+	@echo "  docker-down      Stop Docker services"
+	@echo "  docker-logs      View Docker logs"
+	@echo "  dev              Start development environment"
+	@echo "  duckdb-pipeline  Run DuckDB pipeline"
+
 .PHONY: run
 run:
 	$(SET_PYTHONPATH) $(PYTHON_INTERPRETER) src$(PATHSEP)app.py
@@ -41,6 +65,19 @@ lint:
 .PHONY: format
 format:
 	$(PYTHON_INTERPRETER) -m ruff format .
+
+.PHONY: clean
+clean:
+	@echo "Cleaning temporary files"
+	rm -rf .pytest_cache
+	rm -rf .ruff_cache
+	rm -rf .coverage
+	find . -type d -name __pycache__ -exec rm -rf {} +
+	find . -type f -name "*.pyc" -delete
+
+.PHONY: dev
+dev: format lint
+	$(SET_PYTHONPATH) $(PYTHON_INTERPRETER) src$(PATHSEP)app.py --debug
 
 #################################################################################
 # SETUP                                                                        #
@@ -97,27 +134,61 @@ _install_direnv:
 # DOCKER                                                                       #
 #################################################################################
 
-.PHONY: docker-build docker-push docker-up docker-down docker-restart docker-logs docker-overview
+# Docker variables - more robust environment variable handling
+DOCKER_PORT ?= $(if $(PORT),$(PORT),8050)
+DOCKER_DEBUG ?= $(if $(DEBUG),$(DEBUG),false)
+DOCKER_COMPOSE_FILE := docker/docker-compose.yml
+
+# Handle Windows paths in Docker commands
+ifeq ($(OS),Windows_NT)
+    DOCKER_DATA_MOUNT := $(subst /,\,$(PWD)/data):/home/app/data
+else
+    DOCKER_DATA_MOUNT := $(PWD)/data:/home/app/data
+endif
+
+.PHONY: docker-run docker-build docker-push docker-up docker-down docker-restart docker-logs docker-overview
+
+# Run the application in a Docker container - use the same env vars as docker-compose
+docker-run:
+	docker run -v "$(DOCKER_DATA_MOUNT)" \
+		-p $(DOCKER_PORT):$(DOCKER_PORT) \
+		-e PORT=$(DOCKER_PORT) \
+		-e DEBUG=$(DOCKER_DEBUG) \
+		-e HOST=0.0.0.0 \
+		climatefinancebert_ui:latest
+
+# Build Docker images defined in the docker-compose file
 docker-build:
-	docker compose -f "docker/docker-compose.yml" build --pull
+	docker compose -f "$(DOCKER_COMPOSE_FILE)" build --pull
 
+# Push Docker images to registry
 docker-push:
-	docker compose -f "docker/docker-compose.yml" push
+	docker compose -f "$(DOCKER_COMPOSE_FILE)" push
 
+# Start services in detached mode, pulling latest images and waiting for healthchecks
 docker-up:
-	docker compose -f "docker/docker-compose.yml" up --pull always --build --detach --wait
+	PORT=$(DOCKER_PORT) DEBUG=$(DOCKER_DEBUG) docker compose -f "$(DOCKER_COMPOSE_FILE)" up --pull always --build --detach --wait
 
+# Stop and remove containers, networks
 docker-down:
-	docker compose -f "docker/docker-compose.yml" down
+	docker compose -f "$(DOCKER_COMPOSE_FILE)" down
 
+# Restart all containers
 docker-restart:
-	docker compose -f "docker/docker-compose.yml" restart
+	docker compose -f "$(DOCKER_COMPOSE_FILE)" restart
 
+# Follow log output from containers
 docker-logs:
-	docker compose -f "docker/docker-compose.yml" logs --follow
+	docker compose -f "$(DOCKER_COMPOSE_FILE)" logs --follow
 
+# Show status of containers
 docker-overview:
-	docker compose -f "docker/docker-compose.yml" ps
+	docker compose -f "$(DOCKER_COMPOSE_FILE)" ps
+
+# Quick target for development with Docker
+.PHONY: docker-dev
+docker-dev: docker-build
+	PORT=$(DOCKER_PORT) DEBUG=true docker compose -f "$(DOCKER_COMPOSE_FILE)" up
 
 #################################################################################
 # DUCKDB                                                                       #
