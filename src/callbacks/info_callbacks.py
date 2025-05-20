@@ -152,3 +152,124 @@ def register(app):
                 html.P(f"🆔 ID: {country_id}"),
                 html.P("❌ No data available."),
             ]
+
+    @app.callback(
+        Output(ids.CURRENT_FILTERS, "children"),
+        [
+            Input(ids.DONORTYPE_DROPDOWN, "value"),
+            Input(ids.FLOW_TYPE_DROPDOWN, "value"),
+            Input(ids.CATEGORIES_DROPDOWN, "value"),
+            Input(ids.CATEGORIES_SUB_DROPDOWN, "value"),
+            Input(PlaybackSliderAIO.ids.slider(ids.YEAR_SLIDER), "value"),
+        ],
+    )
+    def update_current_filters(
+        donor_types, flow_types, categories, subcategories, year
+    ):
+        """Display the currently active filters in a formatted card."""
+
+        # Handle single items or empty values
+        donor_types = (
+            donor_types
+            if isinstance(donor_types, list)
+            else [donor_types]
+            if donor_types
+            else []
+        )
+        flow_types = (
+            flow_types
+            if isinstance(flow_types, list)
+            else [flow_types]
+            if flow_types
+            else []
+        )
+        categories = (
+            categories
+            if isinstance(categories, list)
+            else [categories]
+            if categories
+            else []
+        )
+        subcategories = (
+            subcategories
+            if isinstance(subcategories, list)
+            else [subcategories]
+            if subcategories
+            else []
+        )
+
+        # Create filter display with transparent style similar to infobox
+        return dbc.Card(
+            [
+                dbc.CardHeader(
+                    html.H6(
+                        "Current Filters",
+                        className="mb-0",
+                        style={
+                            "font-weight": "bold",
+                            "margin-bottom": "8px",
+                        },
+                    ),
+                    className="d-flex justify-content-between align-items-center",
+                    style={
+                        "background": "rgba(255, 255, 255, 0.8)",
+                        "border-bottom": "1px solid rgba(0, 0, 0, 0.125)",
+                    },
+                ),
+                dbc.CardBody(
+                    [
+                        html.P([html.B("Year: "), f"{year}"], className="mb-1"),
+                        html.P(
+                            [
+                                html.B(
+                                    "Donor Type"
+                                    + ("s: " if len(donor_types) > 1 else ": ")
+                                ),
+                                ", ".join(donor_types) if donor_types else "None",
+                            ],
+                            className="mb-1",
+                        ),
+                        html.P(
+                            [
+                                html.B(
+                                    "Flow Type"
+                                    + ("s: " if len(flow_types) > 1 else ": ")
+                                ),
+                                ", ".join(flow_types) if flow_types else "None",
+                            ],
+                            className="mb-1",
+                        ),
+                        html.P(
+                            [
+                                html.B(
+                                    "Categor"
+                                    + ("ies: " if len(categories) > 1 else "y: ")
+                                ),
+                                ", ".join(categories) if categories else "None",
+                            ],
+                            className="mb-1",
+                        ),
+                        html.P(
+                            [
+                                html.B(
+                                    "Subcategor"
+                                    + ("ies: " if len(subcategories) > 1 else "y: ")
+                                ),
+                                ", ".join(subcategories) if subcategories else "None",
+                            ],
+                            className="mb-0",
+                        ),
+                    ],
+                    style={"background": "rgba(255, 255, 255, 0.8)"},
+                ),
+            ],
+            className="mt-0",  # Changed from mt-3
+            style={
+                "fontSize": "0.85rem",
+                "border": "none",
+                "box-shadow": "0 0 15px rgba(0, 0, 0, 0.2)",
+                "border-radius": "5px",
+                "color": "black",
+                "width": "100%",
+            },
+        )

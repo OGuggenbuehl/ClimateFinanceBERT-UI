@@ -7,15 +7,15 @@ GEOJSON_URL = (
 )
 GEOJSON_BASE = requests.get(GEOJSON_URL).json()
 
-# ClimateFinance-DataFrame for prod
-RAW_SOURCE = "./data/all_crs_labelled.csv"
-PARQUET_SOURCE = "./data/ClimFinBERT_DB.parquet"
-DUCKDB_PATH = "./data/ClimFinBERT_DB.duckdb"
+# # ClimateFinance-DataFrame for prod
+# RAW_SOURCE = "./data/all_crs_labelled.csv"
+# PARQUET_SOURCE = "./data/ClimFinBERT_DB.parquet"
+# DUCKDB_PATH = "./data/ClimFinBERT_DB.duckdb"
 
-# # small files for dev
-# RAW_SOURCE = "./data/sampled_df.csv"
-# PARQUET_SOURCE = "./data/sampled_df.parquet"
-# DUCKDB_PATH = "./data/db_small.duckdb"
+# small files for dev
+RAW_SOURCE = "./data/sampled_df.csv"
+PARQUET_SOURCE = "./data/sampled_df.parquet"
+DUCKDB_PATH = "./data/db_small.duckdb"
 
 COLUMN_TYPES = {
     "Year": "INTEGER",

@@ -18,6 +18,20 @@
     color: #ffffff; /* Text color for better visibility */
     min-height: 100vh; /* Ensures the container fills the entire viewport height */
 }
-body {
-    font-family: "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", "Arial", sans-serif;
+
+.map-control-radio .form-check {
+margin-right: 8px;
+}
+.map-control-radio .form-check-input {
+    cursor: pointer;
+}
+.map-control-radio .form-check-label {
+    cursor: pointer;
+    font-weight: normal;
+}
+
+@supports (font-family: "Apple Color Emoji") {
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    }
 }

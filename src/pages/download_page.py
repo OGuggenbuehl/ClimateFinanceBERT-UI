@@ -36,7 +36,7 @@ def render(app: Dash) -> html.Div:
                             className="lead text-center",
                         ),
                     ],
-                    width=12,
+                    width={"size": 8, "offset": 2},
                 )
             ),
             html.Br(),
@@ -101,9 +101,9 @@ def render(app: Dash) -> html.Div:
                 ],
                 className="mb-4",
             ),
+            # buttons row
             dbc.Row(
                 dbc.Col(
-                    # buttons row
                     dbc.Row(
                         [
                             dbc.Col(
@@ -133,7 +133,6 @@ def render(app: Dash) -> html.Div:
                 ),
                 className="mb-4",
             ),
-            # html.Br(),
             # datatable row
             dbc.Row(
                 dbc.Col(

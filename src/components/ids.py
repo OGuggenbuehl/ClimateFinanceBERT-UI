@@ -2,6 +2,7 @@
 INFOBOX = "infobox"
 MAP = "map"
 COUNTRIES_LAYER = "countries"
+COLOR_LEGEND_CONTAINER = "color-legend-container"
 DATATABLE = "datatable"
 DATATABLE_CARD = "datatable-card"
 URL = "url"
@@ -20,11 +21,16 @@ DONORTYPE_DROPDOWN = "donortype_dropdown"
 CATEGORIES_DROPDOWN = "categories_dropdown"
 CATEGORIES_SUB_DROPDOWN = "categories_sub_dropdown"
 MAP_MODE = "map-mode"
+COLOR_MODE = "color-mode"
+CURRENT_FILTERS = "current-filters"
 ## flow data
 FLOW_DATA_BTN = "flow-data-btn"
 FLOW_DATA_TABLE = "flow-data-table"
 FLOW_DATA_MODAL = "flow-data-modal"
 FLOW_TYPE_DROPDOWN = "flow-type-dropdown"
+## welcome modal
+WELCOME_MODAL = "welcome-modal"
+WELCOME_MODAL_CLOSE = "welcome-modal-close"
 
 # Download page
 QUERY_BTN = "query-btn"

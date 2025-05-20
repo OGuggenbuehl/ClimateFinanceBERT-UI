@@ -6,6 +6,7 @@ from components import (
     datatable,
     ids,
     navbar,
+    welcome,
 )
 
 
@@ -39,5 +40,6 @@ def create_layout(app: Dash) -> html.Div:
                 size="xl",
                 is_open=False,
             ),
+            welcome.render(),
         ],
     )
