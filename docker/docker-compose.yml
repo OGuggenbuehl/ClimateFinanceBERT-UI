@@ -7,9 +7,11 @@ services:
       context: ./../
       dockerfile: docker/climatefinancebert_ui/Dockerfile
     ports: 
-      - 9000:9000
+      - 8050:8050
     environment:
-      - DOCKER_HOST=0.0.0.0
-      - DOCKER_PORT=9000 
+      - HOST=0.0.0.0  
+      - PORT=8050     
     # env_file: ./../.env
+    stdin_open: true  # Add this to make tty work properly
     tty: true
+    restart: unless-stopped
