@@ -40,7 +40,7 @@ def main():
     def health():
         return "OK", 200
 
-    # Environment configuration
+    # config environment
     debug_mode = os.getenv("DEBUG", "false").lower() == "true"
     host = os.getenv(
         "HOST", "127.0.0.1"

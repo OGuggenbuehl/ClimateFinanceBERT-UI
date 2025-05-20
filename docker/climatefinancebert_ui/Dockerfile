@@ -37,7 +37,9 @@ ENV PATH="/home/app/.venv/bin:$PATH"
 
 # Copy app source code
 COPY /src /home/app
-COPY /data /home/app/data 
+
+# Create data directory with appropriate permissions
+RUN mkdir -p /home/app/data && chown -R appuser:appuser /home/app/data
 
 # Add healthcheck with a start period 
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=40s \

@@ -97,27 +97,49 @@ _install_direnv:
 # DOCKER                                                                       #
 #################################################################################
 
-.PHONY: docker-build docker-push docker-up docker-down docker-restart docker-logs docker-overview
+# Docker variables - use environment variables with defaults
+DOCKER_PORT ?= ${PORT:-8050}
+DOCKER_DEBUG ?= ${DEBUG:-false}
+DOCKER_COMPOSE_FILE := docker/docker-compose.yml
+
+.PHONY: docker-run docker-build docker-push docker-up docker-down docker-restart docker-logs docker-overview
+
+# Run the application in a Docker container - use the same env vars as docker-compose
+docker-run:
+	docker run -v "$(PWD)/data:/home/app/data" \
+		-p $(DOCKER_PORT):$(DOCKER_PORT) \
+		-e PORT=$(DOCKER_PORT) \
+		-e DEBUG=$(DOCKER_DEBUG) \
+		-e HOST=0.0.0.0 \
+		climatefinancebert_ui:latest
+	
+# Build Docker images defined in the docker-compose file
 docker-build:
-	docker compose -f "docker/docker-compose.yml" build --pull
+	docker compose -f "$(DOCKER_COMPOSE_FILE)" build --pull
 
+# Push Docker images to registry
 docker-push:
-	docker compose -f "docker/docker-compose.yml" push
+	docker compose -f "$(DOCKER_COMPOSE_FILE)" push
 
+# Start services in detached mode, pulling latest images and waiting for healthchecks
 docker-up:
-	docker compose -f "docker/docker-compose.yml" up --pull always --build --detach --wait
+	docker compose -f "$(DOCKER_COMPOSE_FILE)" up --pull always --build --detach --wait
 
+# Stop and remove containers, networks
 docker-down:
-	docker compose -f "docker/docker-compose.yml" down
+	docker compose -f "$(DOCKER_COMPOSE_FILE)" down
 
+# Restart all containers
 docker-restart:
-	docker compose -f "docker/docker-compose.yml" restart
+	docker compose -f "$(DOCKER_COMPOSE_FILE)" restart
 
+# Follow log output from containers
 docker-logs:
-	docker compose -f "docker/docker-compose.yml" logs --follow
+	docker compose -f "$(DOCKER_COMPOSE_FILE)" logs --follow
 
+# Show status of containers
 docker-overview:
-	docker compose -f "docker/docker-compose.yml" ps
+	docker compose -f "$(DOCKER_COMPOSE_FILE)" ps
 
 #################################################################################
 # DUCKDB                                                                       #
