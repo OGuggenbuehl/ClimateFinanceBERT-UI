@@ -5,173 +5,133 @@ from components import constants, current_filters, ids, infobox
 from components.widgets import action_button, color_mode, map_mode, type, year
 
 
-def render() -> html.Div:
+def create_map_layer() -> dl.Map:
+    """Create the main map layer with tile layer and GeoJSON."""
     url = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
     attribution = '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> '
 
-    return html.Div(
+    return dl.Map(
+        id=ids.MAP,
         children=[
-            # Top control row
-            html.Div(
-                children=[
-                    html.Div(
-                        children=[
-                            infobox.render(
-                                top="0px", bottom=None, right=None, left="100px"
-                            )
-                        ],
-                        style={"gridColumn": "1", "zIndex": 10},
-                    ),
-                    html.Div(
-                        children=[
-                            map_mode.render(
-                                top="0px", bottom=None, right=None, left=None
-                            ),
-                            type.render(ids.TYPE_DROPDOWN),
-                        ],
-                        style={
-                            "gridColumn": "2",
-                            "zIndex": 10,
-                            "textAlign": "center",
-                            "maxWidth": "600px",
-                            "margin": "0 auto",
-                        },
-                    ),
-                    html.Div(
-                        children=[
-                            action_button.render(
-                                "Open Filters 🔍",
-                                id=ids.OPEN_FILTERS,
-                                top="0px",
-                                right="100px",
-                                position="absolute",
-                            ),
-                            action_button.render(
-                                "Reset Map ↪️",
-                                id=ids.RESET_MAP,
-                                top="50px",
-                                right="100px",
-                                position="absolute",
-                            ),
-                        ],
-                        style={"gridColumn": "3", "zIndex": 10, "textAlign": "right"},
-                    ),
-                ],
+            dl.TileLayer(url=url, attribution=attribution),
+            dl.GeoJSON(
+                url=constants.GEOJSON_URL,
+                id=ids.COUNTRIES_LAYER,
                 style={
-                    "display": "grid",
-                    "gridTemplateColumns": "auto 1fr auto",
-                    "alignItems": "center",
-                    "position": "absolute",
-                    "top": "20px",
-                    "left": 0,
-                    "right": 0,
-                    "padding": "0 20px",
-                    "zIndex": 10,
-                },
-            ),
-            # Main map
-            dl.Map(
-                id=ids.MAP,
-                children=[
-                    dl.TileLayer(url=url, attribution=attribution),
-                    dl.GeoJSON(
-                        url=constants.GEOJSON_URL,
-                        id=ids.COUNTRIES_LAYER,
-                        style={
-                            "color": "dodgerblue",
-                            "opacity": 0,
-                            "fillColor": "dodgerblue",
-                            "fillOpacity": 0,
-                        },
-                    ),
-                ],
-                center=constants.INITIAL_CENTER,
-                zoom=constants.INITIAL_ZOOM,
-                style={"height": "85vh", "zIndex": 1},
-                maxZoom=5,
-                minZoom=2,
-                maxBounds=[[-90, -180], [90, 180]],
-                maxBoundsViscosity=1.0,
-                scrollWheelZoom=False,
-            ),
-            # Bottom control row (legend, year slider, color mode)
-            html.Div(
-                children=[
-                    html.Div(
-                        [
-                            html.Div(
-                                id=ids.COLOR_LEGEND_CONTAINER,
-                                style={
-                                    "width": "200px",
-                                    "zIndex": "1000",
-                                    "padding": "10px",  # Add padding back
-                                    "background": "rgba(255, 255, 255, 0.8)",
-                                    "boxShadow": "0 0 15px rgba(0, 0, 0, 0.2)",
-                                    "borderRadius": "5px",
-                                    "marginBottom": "8px",
-                                    "overflow": "hidden",
-                                },
-                            ),
-                            html.Div(
-                                color_mode.render(),
-                                id="color-mode-container",
-                                style={
-                                    "width": "200px",
-                                    "zIndex": "1000",
-                                    "padding": "10px",
-                                    "background": "rgba(255, 255, 255, 0.8)",
-                                    "boxShadow": "0 0 15px rgba(0, 0, 0, 0.2)",
-                                    "borderRadius": "5px",
-                                    "display": "flex",
-                                    "flexDirection": "column",
-                                    "alignItems": "center",
-                                },
-                            ),
-                        ],
-                        style={
-                            "display": "flex",
-                            "flexDirection": "column",
-                            "justifyContent": "flex-end",
-                        },
-                    ),
-                    html.Div(
-                        year.render(id=ids.YEAR_SLIDER),
-                        id="year-slider-container",
-                        style={
-                            "flex": "1",  # take remaining space
-                            "maxWidth": "600px",
-                            "margin": "0 auto",  # Center in the available space
-                            "padding": "10px",
-                            "borderRadius": "8px",
-                            "backgroundColor": "rgba(255, 255, 255, 0.8)",
-                            "boxShadow": "0 0 15px rgba(0, 0, 0, 0.2)",
-                        },
-                    ),
-                    html.Div(
-                        current_filters.render(),
-                        id="current-filters-container",
-                        style={
-                            "width": "200px",
-                            "zIndex": "1000",
-                            "background": "rgba(255, 255, 255, 0.8)",
-                            "boxShadow": "0 0 15px rgba(0, 0, 0, 0.2)",
-                            "borderRadius": "5px",
-                            "overflow": "hidden",
-                        },
-                    ),
-                ],
-                style={
-                    "position": "absolute",
-                    "bottom": "10px",
-                    "left": 0,
-                    "right": 0,
-                    "display": "flex",
-                    "justifyContent": "space-between",
-                    "alignItems": "flex-end",  # Align items to bottom
-                    "padding": "0 40px",
-                    "zIndex": 10,
+                    "color": "dodgerblue",
+                    "opacity": 0,
+                    "fillColor": "dodgerblue",
+                    "fillOpacity": 0,
                 },
             ),
         ],
-        style={"position": "relative"},
+        center=constants.INITIAL_CENTER,
+        zoom=constants.INITIAL_ZOOM,
+        style={"height": "85vh", "zIndex": 1},
+        maxZoom=5,
+        minZoom=2,
+        maxBounds=[[-90, -180], [90, 180]],
+        maxBoundsViscosity=1.0,
+        scrollWheelZoom=False,
+    )
+
+
+def create_top_controls() -> html.Div:
+    """Create the top control panel with info box, mode controls, and action buttons."""
+    return html.Div(
+        children=[
+            # Left column: Info box
+            html.Div(
+                children=[
+                    infobox.render(top="0px", bottom=None, right=None, left="100px")
+                ],
+                className="left-column",
+            ),
+            # Center column: Map mode and type controls
+            html.Div(
+                children=[
+                    map_mode.render(top="0px", bottom=None, right=None, left=None),
+                    type.render(ids.TYPE_DROPDOWN),
+                ],
+                className="center-column",
+            ),
+            # Right column: Action buttons
+            html.Div(
+                children=[
+                    action_button.render(
+                        "Open Filters 🔍",
+                        id=ids.OPEN_FILTERS,
+                        top="0px",
+                        right="100px",
+                        position="absolute",
+                    ),
+                    action_button.render(
+                        "Reset Map ↪️",
+                        id=ids.RESET_MAP,
+                        top="50px",
+                        right="100px",
+                        position="absolute",
+                    ),
+                ],
+                className="right-column",
+            ),
+        ],
+        className="control-panel top-control-panel",
+    )
+
+
+def create_legend_controls() -> html.Div:
+    """Create the left side of bottom controls with color legend and color mode selector."""
+    return html.Div(
+        [
+            html.Div(
+                id=ids.COLOR_LEGEND_CONTAINER,
+                className="map-widget legend-container",
+            ),
+            html.Div(
+                color_mode.render(),
+                id="color-mode-container",
+                className="map-widget color-mode-container",
+            ),
+        ],
+        style={
+            "display": "flex",
+            "flexDirection": "column",
+            "justifyContent": "flex-end",
+        },
+    )
+
+
+def create_bottom_controls() -> html.Div:
+    """Create the bottom control panel with legend, year slider, and filters display."""
+    return html.Div(
+        children=[
+            # Left: Legend and color mode
+            create_legend_controls(),
+            # Center: Year slider
+            html.Div(
+                year.render(id=ids.YEAR_SLIDER),
+                id="year-slider-container",
+                className="map-widget year-slider-container",
+            ),
+            # Right: Current filters display
+            html.Div(
+                current_filters.render(),
+                id="current-filters-container",
+                className="map-widget filters-container",
+            ),
+        ],
+        className="control-panel bottom-control-panel",
+    )
+
+
+def render() -> html.Div:
+    """Render the complete map component with all controls."""
+    return html.Div(
+        children=[
+            create_top_controls(),
+            create_map_layer(),
+            create_bottom_controls(),
+        ],
+        className="map-container",
     )

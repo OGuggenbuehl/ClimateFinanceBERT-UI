@@ -24,9 +24,7 @@ def register(app):
 
     @app.callback(
         Output(ids.FLOW_DATA_MODAL, "is_open"),
-        [
-            Input(ids.FLOW_DATA_BTN, "n_clicks"),
-        ],
+        [Input(ids.FLOW_DATA_BTN, "n_clicks")],
         [State(ids.FLOW_DATA_MODAL, "is_open")],
         prevent_initial_call=True,
     )

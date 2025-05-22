@@ -1,9 +1,9 @@
 import logging
 
 import polars as pl
+
 from components.constants import PARQUET_SOURCE, RAW_SOURCE
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 

@@ -11,11 +11,11 @@ def register(app):
     )
     def display_page(pathname):
         if pathname == "/":
-            return map_page.render(app)
+            return map_page.render()
         elif pathname == "/about":
-            return about_page.render(app)
+            return about_page.render()
         elif pathname == "/download":
-            return download_page.render(app)
+            return download_page.render()
         else:
             return html.Div(
                 [
