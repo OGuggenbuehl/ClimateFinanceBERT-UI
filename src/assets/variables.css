@@ -1,0 +1,41 @@
+/* 
+ * variables.css - Design system variables
+ * Contains global CSS variables for colors, typography, spacing, and other design elements
+ */
+
+:root {
+  /* Color Palette */
+  --color-primary: #1b3054;      /* TUM Think Tank dark blue */
+  --color-text-light: #F0F0F0;   /* Light text for dark backgrounds */
+  --color-text-dark: #333333;    /* Dark text for light backgrounds */
+  --color-background-light: #FFFFFF;
+  --color-background-off-white: #FAFAFA;
+  --color-muted: #777777;        /* Subdued text color */
+  
+  /* Transparency */
+  --transparency-light: rgba(255, 255, 255, 0.8);
+  
+  /* Shadows */
+  --shadow-standard: 0 0 15px rgba(0, 0, 0, 0.2);
+  
+  /* Border Radius */
+  --border-radius-standard: 5px;
+  
+  /* Spacing */
+  --spacing-xs: 5px;
+  --spacing-sm: 8px;
+  --spacing-md: 10px;
+  --spacing-lg: 20px;
+  
+  /* Z-index layers */
+  --z-index-base: 1;
+  --z-index-controls: 10;
+  --z-index-overlay: 1000;
+  
+  /* Typography */
+  --font-family-primary: "RobotoSans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 
+                         "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", Arial, sans-serif;
+  --font-family-secondary: Arial, Helvetica, sans-serif;
+  --font-size-small: 14px;
+  --line-height-small: 16px;
+}

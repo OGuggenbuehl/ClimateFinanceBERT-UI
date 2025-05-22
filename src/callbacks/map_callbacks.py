@@ -10,7 +10,6 @@ from components import color_legend, constants, ids
 from utils.data_operations import merge_data
 from utils.map_styler import style_map
 
-# Configure logging
 logger = logging.getLogger(__name__)
 
 
