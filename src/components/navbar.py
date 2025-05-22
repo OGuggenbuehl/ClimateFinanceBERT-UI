@@ -3,23 +3,14 @@ from dash import Dash, html
 
 
 def render(app: Dash) -> dbc.NavbarSimple:
-    """
-    Render the navbar component with logo and navigation items.
-
-    Args:
-        app: The Dash application instance
-
-    Returns:
-        dbc.NavbarSimple: A Bootstrap navbar component
-    """
     return dbc.NavbarSimple(
         children=_create_nav_items(),
         brand=_create_brand_with_logo(),
         brand_href="#",
         color="#0E2050",
         dark=True,
-        className="py-1",  # Add padding control to navbar
-        style={"max-height": "60px"},  # Set a consistent height
+        className="py-1",
+        style={"height": "56px"},
     )
 
 
@@ -31,9 +22,8 @@ def _create_brand_with_logo() -> html.Div:
         html.Div: A div containing the logo image
     """
     logo = html.Img(
-        src="/assets/tumthinktank-logo-name-light.svg",  # Path to SVG file
-        height="600px",  # Increased height
-        className="me-2",  # Add margin to the right (Bootstrap spacing)
+        src="/assets/tumthinktank-logo-name-light.svg",
+        className="me-2",
     )
 
     # Brand with logo
