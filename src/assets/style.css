@@ -76,5 +76,5 @@ body {
 
 .navbar-brand img {
     object-fit: contain;
-    max-height: 60px;
+    max-height: 400px; /* Adjusted to be proportional to navbar height */
 }
