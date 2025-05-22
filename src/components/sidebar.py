@@ -1,9 +1,7 @@
 import dash_bootstrap_components as dbc
-from dash import Dash, html
+from dash import html
 
-from components import (
-    ids,
-)
+from components import ids
 from components.widgets import (
     categories,
     donor_type,
@@ -12,26 +10,13 @@ from components.widgets import (
 )
 
 
-def render(app: Dash):
-    offcanvas = html.Div(
+def render() -> html.Div:
+    return html.Div(
         [
             dbc.Offcanvas(
                 [
-                    html.P("Mix and match your selection to filter the data"),
-                    dbc.Nav(
-                        [
-                            html.Hr(),
-                            donor_type.render(ids.DONORTYPE_DROPDOWN),
-                            html.Hr(),
-                            flow_type.render(ids.FLOW_TYPE_DROPDOWN),
-                            html.Hr(),
-                            categories.render(ids.CATEGORIES_DROPDOWN),
-                            html.Hr(),
-                            sub_categories.render(ids.CATEGORIES_SUB_DROPDOWN),
-                        ],
-                        vertical=True,
-                        pills=True,
-                    ),
+                    _create_header(),
+                    _create_filters_nav(),
                 ],
                 id="offcanvas",
                 title=html.B("Filters"),
@@ -40,4 +25,35 @@ def render(app: Dash):
         ]
     )
 
-    return offcanvas
+
+def _create_header() -> html.P:
+    """
+    Create the header text for the sidebar.
+
+    Returns:
+        html.P: A paragraph element with instruction text
+    """
+    return html.P("Mix and match your selection to filter the data")
+
+
+def _create_filters_nav() -> dbc.Nav:
+    """
+    Create the navigation component containing all filter widgets.
+
+    Returns:
+        dbc.Nav: A Bootstrap Nav component with all filter widgets
+    """
+    return dbc.Nav(
+        [
+            html.Hr(),
+            donor_type.render(ids.DONORTYPE_DROPDOWN),
+            html.Hr(),
+            flow_type.render(ids.FLOW_TYPE_DROPDOWN),
+            html.Hr(),
+            categories.render(ids.CATEGORIES_DROPDOWN),
+            html.Hr(),
+            sub_categories.render(ids.CATEGORIES_SUB_DROPDOWN),
+        ],
+        vertical=True,
+        pills=True,
+    )

@@ -4,8 +4,6 @@ from components import ids
 
 
 def render(id: str) -> html.Div:
-    # types = ["donors", "recipients"]
-
     return html.Div(
         children=[
             # html.H5("Donors or Recipients?"),
