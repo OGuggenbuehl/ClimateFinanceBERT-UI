@@ -319,9 +319,6 @@ if __name__ == "__main__":
     from components.constants import DUCKDB_PATH
     from utils.query_duckdb import construct_query, query_duckdb
 
-    # Set up logging for the test
-    logging.basicConfig(level=logging.INFO)
-
     # Fetch GeoJSON data for testing
     geojson_url = "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
     response = requests.get(geojson_url)

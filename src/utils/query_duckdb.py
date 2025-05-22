@@ -7,7 +7,6 @@ import pandas as pd
 
 from components.widgets.donor_type import DONOR_TYPE_MAP
 
-# Configure logging
 logger = logging.getLogger(__name__)
 
 
@@ -289,9 +288,6 @@ def query_duckdb(
 if __name__ == "__main__":
     """Test code for query functions."""
     from components.constants import DUCKDB_PATH
-
-    # Set up logging for the test
-    logging.basicConfig(level=logging.INFO)
 
     # Example of aggregated query
     test_query = construct_aggregated_query(

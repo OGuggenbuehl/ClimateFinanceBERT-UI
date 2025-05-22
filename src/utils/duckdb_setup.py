@@ -1,9 +1,9 @@
 import logging
 
 import duckdb
+
 from components.constants import COLUMN_TYPES
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 

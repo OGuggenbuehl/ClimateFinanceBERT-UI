@@ -10,7 +10,6 @@ from components.constants import DUCKDB_PATH
 from utils.query_duckdb import construct_query, query_duckdb
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
 
 
 def register(app):

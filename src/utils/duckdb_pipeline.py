@@ -4,7 +4,6 @@ import time
 from components.constants import DUCKDB_PATH, PARQUET_SOURCE, RAW_SOURCE
 from utils import duckdb_setup, parquet_converter
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
