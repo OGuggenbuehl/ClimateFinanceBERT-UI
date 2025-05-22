@@ -38,16 +38,7 @@ def create_gradient_style(colorscale: list[str]) -> str:
 def render_continuous_legend(
     min_val: float, max_val: float, colorscale: list[str]
 ) -> html.Div:
-    """Render a continuous color legend with a gradient bar.
-
-    Args:
-        min_val: Minimum value in the data
-        max_val: Maximum value in the data
-        colorscale: List of colors for the gradient
-
-    Returns:
-        Legend component with continuous color scale
-    """
+    """Render a continuous color legend with a gradient bar."""
     min_text = format_value(min_val)
     max_text = format_value(max_val)
     gradient = create_gradient_style(colorscale)
@@ -122,15 +113,7 @@ def create_quartile_items(breaks: list[float], colors: list[str]) -> list[html.D
 
 
 def render_quartile_legend(breaks: list[float], colors: list[str]) -> html.Div:
-    """Render a quartile-based color legend with color blocks.
-
-    Args:
-        breaks: List of quartile break points
-        colors: List of colors for quartiles
-
-    Returns:
-        Legend component with quartile blocks
-    """
+    """Render a quartile-based color legend with color blocks."""
     if not breaks or len(breaks) < 2:
         return html.Div()  # Return empty div
 

@@ -15,7 +15,6 @@ from callbacks import (
 )
 from components.layout import create_layout
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",

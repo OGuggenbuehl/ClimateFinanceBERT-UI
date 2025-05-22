@@ -126,7 +126,6 @@ def create_bottom_controls() -> html.Div:
 
 
 def render() -> html.Div:
-    """Render the complete map component with all controls."""
     return html.Div(
         children=[
             create_top_controls(),

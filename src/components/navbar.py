@@ -1,8 +1,8 @@
 import dash_bootstrap_components as dbc
-from dash import Dash, html
+from dash import html
 
 
-def render(app: Dash) -> dbc.NavbarSimple:
+def render() -> dbc.NavbarSimple:
     return dbc.NavbarSimple(
         children=_create_nav_items(),
         brand=_create_brand_with_logo(),

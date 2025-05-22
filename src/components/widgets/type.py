@@ -16,8 +16,6 @@ def render(id: str) -> html.Div:
                     },
                     {"label": " Recipients", "value": "recipients"},
                 ],
-                ## kinda hacky, but for some reason label formatting won't work as intended anymore
-                # [{"label": type.title(), "value": type} for type in types],
                 value="donors",
                 inline=True,
                 className="p-2",
