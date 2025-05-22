@@ -14,10 +14,9 @@ def create_layout(app: Dash) -> html.Div:
     return html.Div(
         className="app-container",
         children=[
-            # Add the new map.css file to the layout
             html.Link(rel="stylesheet", href=app.get_asset_url("map.css")),
             dcc.Location(id=ids.URL, refresh=False),
-            navbar.render(app),
+            navbar.render(),
             dcc.Store(id=ids.STORED_DATA),  # storage for queried dataset
             dcc.Store(id=ids.MODE_DATA),  # storage for mode data
             dcc.Store(id=ids.STORED_GEOJSON),  # storage for geojson
