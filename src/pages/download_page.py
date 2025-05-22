@@ -16,52 +16,47 @@ def render() -> html.Div:
     return html.Div(
         id="download-page",
         children=[
-            _create_title_section(),
-            _create_description_section(),
-            html.Br(),
-            _create_filters_section(),
-            _create_buttons_section(),
-            _create_datatable_section(),
+            dbc.Row(
+                dbc.Col(
+                    [
+                        html.Br(),
+                        _create_title_section(),
+                        _create_description_section(),
+                        html.Br(),
+                        _create_filters_section(),
+                        _create_buttons_section(),
+                        _create_datatable_section(),
+                    ],
+                    width={"size": 12},
+                    lg={"size": 10, "offset": 1},
+                ),
+            )
         ],
     )
 
 
-def _create_title_section() -> dbc.Row:
+def _create_title_section() -> html.H1:
     """
     Create the title section of the download page.
 
     Returns:
-        dbc.Row: A Bootstrap row containing the page title
+        html.H1: The page title component
     """
-    return dbc.Row(
-        dbc.Col(
-            [
-                html.H1("Download Data", className="text-center my-4"),
-            ],
-            width=12,
-        )
-    )
+    return html.H1("Download Data", className="mb-4 text-center fw-bold")
 
 
-def _create_description_section() -> dbc.Row:
+def _create_description_section() -> html.P:
     """
     Create the description section with instructions.
 
     Returns:
-        dbc.Row: A Bootstrap row containing the page description
+        html.H4: The description component
     """
-    return dbc.Row(
-        dbc.Col(
-            [
-                html.P(
-                    "Download the data in CSV format. You can filter the data "
-                    "by selecting the type of flow, the donor type, the categories, "
-                    "and the subcategories. Once you're ready, click 'Query' to pull the data and 'Download' to get it in CSV format.",
-                    className="lead text-center",
-                ),
-            ],
-            width={"size": 8, "offset": 2},
-        )
+    return html.P(
+        "Download the data in CSV format. You can filter the data "
+        "by selecting the type of flow, the donor type, the categories, "
+        "and the subcategories. Once you're ready, click 'Query' to pull the data and 'Download' to get it in CSV format.",
+        className="mb-4 text-center",
     )
 
 

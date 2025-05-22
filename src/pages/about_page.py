@@ -1,10 +1,3 @@
-"""
-About page module for the ClimateFinanceBERT UI application.
-
-This module provides the about page with information about the project,
-its methodology, publications, and affiliations.
-"""
-
 import dash_bootstrap_components as dbc
 from dash import html
 
