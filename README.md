@@ -2,8 +2,8 @@
 
 <div align="center">
   <img src="src/assets/tumthinktank-logo.svg" alt="TUM Think Tank Logo" width="120">
-  <h3>Climate Finance Analysis & Visualization Platform</h3>
-  <p>An interactive dashboard for exploring and analyzing global climate finance data powered by the ClimateFinanceBERT model.</p>
+    <h3>Climate Finance Analysis & Visualization Platform</h3>
+      <p>An interactive dashboard for exploring and analyzing global climate finance data powered by the <a href="https://github.com/MalteToetzke/consistent-and-replicable-estimation-of-bilateral-climate-finance">ClimateFinanceBERT</a> model as described in <a href="https://doi.org/10.1038/s41558-022-01482-7">Toetzke, M., Stünzi, A. & Egli, F. (2022)</a>.</p>
 </div>
 
 ## 📊 Features
