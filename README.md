@@ -18,7 +18,7 @@
 ### Prerequisites
 
 - Python 3.12+ 
-- Make (for using the Makefile commands)
+- [Make](https://www.gnu.org/software/make/)
 
 ### Installation
 
