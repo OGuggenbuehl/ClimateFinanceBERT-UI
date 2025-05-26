@@ -195,5 +195,5 @@ docker-dev: docker-build
 #################################################################################
 
 .PHONY: duckdb-pipeline
-duckdb-pipeline:
-	$(PYTHON_INTERPRETER) src$(PATHSEP)functions$(PATHSEP)duckdb_pipeline.py
+duckdb-pipeline: 
+	$(PYTHON_INTERPRETER) src$(PATHSEP)utils$(PATHSEP)duckdb_pipeline.py
