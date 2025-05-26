@@ -41,7 +41,7 @@ class DataSources:
 # from src.components.constants import DataSources
 # RAW_SOURCE = DataSources.Development.RAW_SOURCE
 RAW_SOURCE = DataSources.Production.RAW_SOURCE
-PARQUET_SOURCE = DataSources.Development.PARQUET_SOURCE
+PARQUET_SOURCE = DataSources.Production.PARQUET_SOURCE
 DUCKDB_PATH = DataSources.Production.DUCKDB_PATH
 
 # ====================================
