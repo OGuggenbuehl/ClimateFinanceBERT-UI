@@ -31,22 +31,21 @@ FROM base as final
 WORKDIR /home/app
 
 # Copy virtual environment with dependencies
-COPY --from=builder /.venv /home/app/.venv
+COPY --from=builder --chown=appuser:appuser /.venv /home/app/.venv
 ENV VIRTUAL_ENV=/home/app/.venv
 ENV PATH="/home/app/.venv/bin:$PATH"
 
-# Copy app source code
-COPY /src /home/app
+# Copy app source code with ownership
+COPY --chown=appuser:appuser /src /home/app
 
 # Create data directory with appropriate permissions
-RUN mkdir -p /home/app/data && chown -R appuser:appuser /home/app/data
+RUN mkdir -p /home/app/data
 
 # Add healthcheck with a start period 
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=40s \
   CMD wget --spider --quiet http://localhost:8050/health || exit 1
 
-# Change ownership of the app directory and switch to non-root user 
-RUN chown -R appuser:appuser /home/app
+# Switch to non-root user
 USER appuser
 
 # Expose Dash

@@ -1,0 +1,86 @@
+# Python cache files
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+**/*.so
+.Python
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Distribution / packaging / build artifacts
+.installed.cfg
+*.egg
+*.egg-info/
+*.manifest
+*.spec
+.eggs/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Testing and coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Data files and directories (which should be mounted as volumes)
+data/
+models/
+*.csv
+*.zip
+*.tar.gz
+
+# Git and version control
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Logs
+logs/
+*.log
+
+# Docker files themselves (no need to copy)
+docker/
+Dockerfile
+docker-compose.yml
+docker-compose.yaml
+
+# Jupyter notebook files
+.ipynb_checkpoints/
+*.ipynb
