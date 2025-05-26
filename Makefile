@@ -68,12 +68,21 @@ format:
 
 .PHONY: clean
 clean:
+ifeq ($(OS),Windows_NT)
+	@echo "Cleaning temporary files"
+	@if exist .pytest_cache rmdir /s /q .pytest_cache
+	@if exist .ruff_cache rmdir /s /q .ruff_cache
+	@if exist .coverage del /f /q .coverage
+	@for /d /r %%d in (__pycache__) do @if exist "%%d" rmdir /s /q "%%d"
+	@for /r %%f in (*.pyc) do @del /f /q "%%f"
+else
 	@echo "Cleaning temporary files"
 	rm -rf .pytest_cache
 	rm -rf .ruff_cache
 	rm -rf .coverage
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
+endif
 
 .PHONY: dev
 dev: format lint
@@ -167,7 +176,11 @@ docker-push:
 
 # Start services in detached mode, pulling latest images and waiting for healthchecks
 docker-up:
+ifeq ($(OS),Windows_NT)
+	set "PORT=$(DOCKER_PORT)" && set "DEBUG=$(DOCKER_DEBUG)" && docker compose -f "$(DOCKER_COMPOSE_FILE)" up --pull always --build --detach --wait
+else
 	PORT=$(DOCKER_PORT) DEBUG=$(DOCKER_DEBUG) docker compose -f "$(DOCKER_COMPOSE_FILE)" up --pull always --build --detach --wait
+endif
 
 # Stop and remove containers, networks
 docker-down:
@@ -188,7 +201,11 @@ docker-overview:
 # Quick target for development with Docker
 .PHONY: docker-dev
 docker-dev: docker-build
+ifeq ($(OS),Windows_NT)
+	set "PORT=$(DOCKER_PORT)" && set "DEBUG=true" && docker compose -f "$(DOCKER_COMPOSE_FILE)" up
+else
 	PORT=$(DOCKER_PORT) DEBUG=true docker compose -f "$(DOCKER_COMPOSE_FILE)" up
+endif
 
 #################################################################################
 # DUCKDB                                                                       #
