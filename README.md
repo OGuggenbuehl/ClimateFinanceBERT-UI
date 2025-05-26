@@ -39,10 +39,10 @@ make install
 ```
    
 This will:
-- Install uv package manager
-- Create a virtual environment
-- Install all dependencies
-- Set up direnv for environment management
+- Install [uv](https://docs.astral.sh/uv/) package manager
+- Create a [virtual environment](https://docs.python.org/3/library/venv.html)
+- Install dependencies as defined in `pyproject.toml`
+- Set up [direnv](https://direnv.net/) for environment management
 
 3. Prepare the database:
 ```bash
