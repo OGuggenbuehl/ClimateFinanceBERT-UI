@@ -1,7 +1,7 @@
 [project]
 name = "climatefinancebert-ui"
-version = "0.1.0"
-description = "Add your description here"
+version = "1.0.0"
+description = "An interactive dashboard for exploring and analyzing global climate finance data powered by the ClimateFinanceBERT model as described in Toetzke, M., Stünzi, A. & Egli, F. (2022)."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -16,9 +16,6 @@ dependencies = [
     "emoji-country-flag>=2.0.1",
     "pycountry>=24.6.1",
 ]
-
-[tool.ruff]
-extend-include = ["*.ipynb"]
 
 [dependency-groups]
 dev = [
