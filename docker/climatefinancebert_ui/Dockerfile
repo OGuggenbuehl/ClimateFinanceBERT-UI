@@ -23,7 +23,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.4.30 /uv /uvx /bin/
 
 # Install dependencies into virtual environment
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen
+RUN uv sync --frozen --no-dev
 
 ### Final Image
 FROM base as final
