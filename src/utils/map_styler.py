@@ -1,7 +1,10 @@
+import logging
 from typing import Any, Literal, Optional
 
 import numpy as np
 from dash_extensions.javascript import assign
+
+logger = logging.getLogger("map_styler")
 
 
 def get_colorscale_for_mode(map_mode: str) -> list[str]:
@@ -16,8 +19,8 @@ def get_colorscale_for_mode(map_mode: str) -> list[str]:
     mode_colorscales = {
         "total": ["#00BFFF", "#FFFF00", "#FF4500"],  # Blue → Yellow → Red
         "rio_oecd": ["#d9f0a3", "#addd8e", "#31a354"],  # Light → Mid → Dark Green
-        "rio_climfinbert": ["#ffffcc", "#ffeda0", "#f03b20"],  # Yellow → Orange → Red
-        "rio_diff": ["#0571b0", "#f7f7f7", "#ca0020"],  # Blue → White → Red
+        "rio_diff": ["#ffffcc", "#ffeda0", "#f03b20"],  # Yellow → Orange → Red
+        "rio_climfinbert": ["#0571b0", "#f7f7f7", "#ca0020"],  # Blue → White → Red
     }
 
     return mode_colorscales.get(
@@ -41,7 +44,11 @@ def calculate_quartiles(geojson_data: dict) -> dict[str, Any]:
         if feature["properties"].get("value") is not None
     ]
 
+    logger.info(
+        f"Extracted {len(values)} values from geojson_data for quartile calculation."
+    )
     if not values:
+        logger.warning("No values found in geojson_data for quartile calculation.")
         return {
             "min_val": 0,
             "max_val": 1000,
@@ -55,6 +62,10 @@ def calculate_quartiles(geojson_data: dict) -> dict[str, Any]:
     q1 = np.percentile(values, 25)
     q2 = np.percentile(values, 50)
     q3 = np.percentile(values, 75)
+
+    logger.info(
+        f"Quartile calculation: min={min_val}, q1={q1}, q2={q2}, q3={q3}, max={max_val}"
+    )
 
     return {
         "min_val": min_val,
@@ -128,8 +139,10 @@ def style_map(
     Returns:
         Dictionary containing style configuration
     """
+    logger.info(f"style_map called with map_mode={map_mode}, color_mode={color_mode}")
     # Handle base map mode (no data visualization)
     if map_mode == "base":
+        logger.info("Base map mode selected, returning default style.")
         return {
             "style": {"fillColor": "dodgerblue", "color": "dodgerblue"},
             "style_handle": None,
@@ -141,6 +154,7 @@ def style_map(
 
     # Get the color scale for this visualization mode
     colorscale = get_colorscale_for_mode(map_mode)
+    logger.info(f"Using colorscale: {colorscale}")
 
     # Default values (will be overridden if data is provided)
     min_val = 0
@@ -150,6 +164,7 @@ def style_map(
 
     # Calculate quartiles if we have data and are using quartile coloring
     if geojson_data and color_mode == "quartile":
+        logger.info("Calculating quartiles for quartile color mode.")
         quartile_data = calculate_quartiles(geojson_data)
         min_val = quartile_data["min_val"]
         max_val = quartile_data["max_val"]
@@ -166,6 +181,22 @@ def style_map(
                 colorscale[min(1, len(colorscale) - 1)],  # Third quartile
                 colorscale[-1],  # Fourth quartile: last color
             ]
+        logger.info(f"Quartile breaks: {quartile_breaks}")
+        logger.info(f"Quartile colors: {quartile_colors}")
+
+    # For continuous mode, calculate min/max from data if available
+    if geojson_data and color_mode == "continuous":
+        values = [
+            feature["properties"].get("value")
+            for feature in geojson_data["features"]
+            if feature["properties"].get("value") is not None
+        ]
+        if values:
+            min_val = min(values)
+            max_val = max(values)
+            logger.info(f"Continuous mode value range: min={min_val}, max={max_val}")
+        else:
+            logger.warning("No values found in geojson_data for continuous mode.")
 
     # Base style for all features
     style = dict(weight=2, opacity=1, color="white", dashArray="3", fillOpacity=0.7)
@@ -178,6 +209,10 @@ def style_map(
     )
 
     # Return the complete style configuration
+    logger.info(
+        f"Returning style config: min={min_val}, max={max_val}, "
+        f"quartile_breaks={quartile_breaks}, quartile_colors={quartile_colors}"
+    )
     return {
         "style": style,
         "style_handle": style_handle,
