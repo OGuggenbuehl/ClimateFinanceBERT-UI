@@ -151,6 +151,7 @@ def merge_data(
 
     # Create mapping dictionary based on the mode
     if map_mode in ["rio_oecd", "rio_climfinbert"]:
+        # Aggregate by CountryCode to ensure unique values when multiple subcategories are selected
         agg_df = df.groupby("CountryCode")["USD_Disbursement"].sum().reset_index()
         merge_dict = pd.Series(
             agg_df.USD_Disbursement.values, index=agg_df["CountryCode"]
