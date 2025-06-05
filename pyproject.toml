@@ -13,6 +13,7 @@ dependencies = [
     "duckdb>=1.2.1",
     "emoji-country-flag>=2.0.1",
     "pycountry>=24.6.1",
+    "matplotlib>=3.10.3",
 ]
 
 [dependency-groups]

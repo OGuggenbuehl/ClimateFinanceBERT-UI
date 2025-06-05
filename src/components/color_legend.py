@@ -4,17 +4,12 @@ from dash import html
 
 
 def format_value(value: float) -> str:
-    """Format a numeric value for display in the legend.
-
-    Args:
-        value: The numeric value to format
-
-    Returns:
-        Formatted string representation with appropriate formatting
-    """
+    """Format a numeric value for display in the legend as $ Mio USD."""
     if value >= 1000:
-        return f"{int(value):,}"
-    return f"{value:.2f}"
+        formatted = f"{int(value):,}"
+    else:
+        formatted = f"{value:.2f}"
+    return f"${formatted} M"
 
 
 def create_gradient_style(colorscale: list[str]) -> str:

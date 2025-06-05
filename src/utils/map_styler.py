@@ -1,6 +1,8 @@
 import logging
 from typing import Any, Literal, Optional
 
+import matplotlib
+import matplotlib.colors as mcolors
 import numpy as np
 from dash_extensions.javascript import assign
 
@@ -19,8 +21,11 @@ def get_colorscale_for_mode(map_mode: str) -> list[str]:
     mode_colorscales = {
         "total": ["#00BFFF", "#FFFF00", "#FF4500"],  # Blue → Yellow → Red
         "rio_oecd": ["#d9f0a3", "#addd8e", "#31a354"],  # Light → Mid → Dark Green
-        "rio_diff": ["#ffffcc", "#ffeda0", "#f03b20"],  # Yellow → Orange → Red
-        "rio_climfinbert": ["#0571b0", "#f7f7f7", "#ca0020"],  # Blue → White → Red
+        "rio_climfinbert": [
+            "#ffffff",
+            "#00bfff",
+            "#023858",
+        ],  # White → Bright Blue → Blue
     }
 
     return mode_colorscales.get(
@@ -170,17 +175,15 @@ def style_map(
         max_val = quartile_data["max_val"]
         quartile_breaks = quartile_data["quartile_breaks"]
 
-        # Extract colors for quartiles from colorscale
+        # Always generate 4 distinct quartile colors, even if colorscale has < 4 colors
         if len(colorscale) >= 4:
             quartile_colors = colorscale[:4]
         else:
-            # Create 4 colors from our colorscale
-            quartile_colors = [
-                colorscale[0],  # First quartile: first color
-                colorscale[min(1, len(colorscale) - 1)],  # Second quartile
-                colorscale[min(1, len(colorscale) - 1)],  # Third quartile
-                colorscale[-1],  # Fourth quartile: last color
-            ]
+            # Interpolate colors to get 4 distinct quartile colors
+            cmap = mcolors.LinearSegmentedColormap.from_list(
+                "quartile", colorscale, N=4
+            )
+            quartile_colors = [matplotlib.colors.rgb2hex(cmap(i / 3)) for i in range(4)]
         logger.info(f"Quartile breaks: {quartile_breaks}")
         logger.info(f"Quartile colors: {quartile_colors}")
 
