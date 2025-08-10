@@ -55,8 +55,8 @@ run:
 
 .PHONY: test
 test:
-	$(PYTHON_INTERPRETER) -m pytest ./tests
-	$(PYTHON_INTERPRETER) -m coverage report
+	uv pip install -e ".[test]"
+	$(PYTHON_INTERPRETER) -m pytest
 
 .PHONY: lint
 lint:
