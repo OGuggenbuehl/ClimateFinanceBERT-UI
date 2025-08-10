@@ -8,10 +8,8 @@ from utils.data_operations import reshape_by_type
 
 def test_reshape_by_type_donors(sample_finance_data):
     """Test reshape_by_type function with donors."""
-    # Act
     result = reshape_by_type(sample_finance_data, "donors")
 
-    # Assert
     assert "CountryCode" in result.columns
     assert "CountryName" in result.columns
     assert "DERecipientcode" not in result.columns
@@ -22,10 +20,8 @@ def test_reshape_by_type_donors(sample_finance_data):
 
 def test_reshape_by_type_recipients(sample_finance_data):
     """Test reshape_by_type function with recipients."""
-    # Act
     result = reshape_by_type(sample_finance_data, "recipients")
 
-    # Assert
     assert "CountryCode" in result.columns
     assert "CountryName" in result.columns
     assert "DEDonorcode" not in result.columns
@@ -41,7 +37,6 @@ def test_reshape_by_type_recipients(sample_finance_data):
 
 def test_reshape_by_type_invalid():
     """Test reshape_by_type function with invalid type."""
-    # Arrange
     df = pd.DataFrame(
         {
             "DEDonorcode": ["USA"],
@@ -51,6 +46,5 @@ def test_reshape_by_type_invalid():
         }
     )
 
-    # Act & Assert
     with pytest.raises(ValueError, match="Invalid selected type"):
         reshape_by_type(df, "invalid_type")

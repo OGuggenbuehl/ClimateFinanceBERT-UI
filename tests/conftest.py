@@ -8,7 +8,7 @@ import pytest
 from dash.testing.application_runners import ThreadedRunner
 from dash.testing.composite import DashComposite
 
-# Add the src directory to the path so we can import modules
+# add src to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
 
@@ -73,7 +73,7 @@ def mock_duckdb_conn(monkeypatch):
 
     class MockConnection:
         def execute(self, query):
-            # Return a mock cursor
+            # return a mock cursor
             return MockCursor()
 
         def close(self):
@@ -81,7 +81,7 @@ def mock_duckdb_conn(monkeypatch):
 
     class MockCursor:
         def fetchdf(self):
-            # Return a sample DataFrame
+            # return a sample DataFrame
             return pd.DataFrame(
                 {
                     "DEDonorcode": ["USA", "DEU"],

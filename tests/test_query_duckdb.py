@@ -30,9 +30,7 @@ def test_format_value_list():
 
 def test_validate_donor_types_valid():
     """Test validate_donor_types with valid types."""
-    # Use values from the actual DONOR_TYPE_MAP
-    valid_types = list(DONOR_TYPE_MAP.values())[:2]  # Take a few valid types
-    # This should not raise an exception
+    valid_types = list(DONOR_TYPE_MAP.values())[:2]  # first two valid types
     validate_donor_types(valid_types)
 
 
@@ -44,14 +42,10 @@ def test_validate_donor_types_invalid():
 
 def test_query_duckdb_connection(mock_duckdb_conn):
     """Test DuckDB connection and query execution."""
-    # Import the actual function we want to test
     from utils.query_duckdb import query_duckdb
 
-    # Execute a query using our function
-    # The mock_duckdb_conn fixture will handle the connection
     result_df = query_duckdb("dummy.duckdb", "SELECT * FROM dummy")
 
-    # Verify the result
     assert len(result_df) > 0
     assert "DEDonorcode" in result_df.columns
     assert "DonorName" in result_df.columns
