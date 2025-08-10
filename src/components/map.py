@@ -6,9 +6,9 @@ from components.widgets import action_button, color_mode, map_mode, type, year
 
 
 def create_map_layer() -> dl.Map:
-    """Create the main map layer with tile layer and GeoJSON."""
-    url = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
-    attribution = '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> '
+    """Create the main map layer with CartoDB Positron raster tiles and GeoJSON."""
+    url = "https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png"
+    attribution = '&copy; <a href="https://carto.com/">CartoDB</a> contributors'
 
     return dl.Map(
         id=ids.MAP,

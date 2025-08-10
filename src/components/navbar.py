@@ -30,7 +30,7 @@ def _create_brand_with_logo() -> html.Div:
         [
             html.A(
                 logo,
-                href="https://tumthinktank.de/de/projekt/transformation-finance-lab/",
+                href="https://tumthinktank.de/project/transformation-finance-lab/",
                 target="_blank",  # Opens in a new tab
             )
         ],
