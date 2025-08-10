@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def create_base_map_layers(style_info: dict) -> list:
-    url = "https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png"
+    url = "https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
     attribution = '&copy; <a href="https://carto.com/">CartoDB</a> contributors'
 
     return [
@@ -31,7 +31,7 @@ def create_base_map_layers(style_info: dict) -> list:
 def create_data_map_layers(
     stored_geojson: dict, style_info: dict, color_mode: str
 ) -> list:
-    url = "https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png"
+    url = "https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
     attribution = '&copy; <a href="https://carto.com/">CartoDB</a> contributors'
 
     # Create the base hideout dictionary

@@ -7,7 +7,7 @@ from components.widgets import action_button, color_mode, map_mode, type, year
 
 def create_map_layer() -> dl.Map:
     """Create the main map layer with CartoDB Positron raster tiles and GeoJSON."""
-    url = "https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png"
+    url = "https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
     attribution = '&copy; <a href="https://carto.com/">CartoDB</a> contributors'
 
     return dl.Map(
