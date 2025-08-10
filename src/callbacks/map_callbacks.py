@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 
 
 def create_base_map_layers(style_info: dict) -> list:
-    url = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
-    attribution = '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> '
+    url = "https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
+    attribution = '&copy; <a href="https://carto.com/">CartoDB</a> contributors'
 
     return [
         dl.TileLayer(url=url, attribution=attribution),
@@ -31,8 +31,8 @@ def create_base_map_layers(style_info: dict) -> list:
 def create_data_map_layers(
     stored_geojson: dict, style_info: dict, color_mode: str
 ) -> list:
-    url = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
-    attribution = '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> '
+    url = "https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
+    attribution = '&copy; <a href="https://carto.com/">CartoDB</a> contributors'
 
     # Create the base hideout dictionary
     hideout_dict = dict(

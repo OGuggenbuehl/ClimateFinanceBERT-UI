@@ -22,10 +22,10 @@ def get_colorscale_for_mode(map_mode: str) -> list[str]:
         "total": ["#00BFFF", "#FFFF00", "#FF4500"],  # Blue → Yellow → Red
         "rio_oecd": ["#d9f0a3", "#addd8e", "#31a354"],  # Light → Mid → Dark Green
         "rio_climfinbert": [
-            "#ffffff",
+            "#dbe9f6",
             "#00bfff",
             "#023858",
-        ],  # White → Bright Blue → Blue
+        ],  # Light gray → Bright Blue → Blue
     }
 
     return mode_colorscales.get(
@@ -202,7 +202,7 @@ def style_map(
             logger.warning("No values found in geojson_data for continuous mode.")
 
     # Base style for all features
-    style = dict(weight=2, opacity=1, color="white", dashArray="3", fillOpacity=0.7)
+    style = dict(weight=2, opacity=1, color="#23436b", dashArray="3", fillOpacity=0.7)
 
     # Different style handlers for continuous vs. quartile coloring
     style_handle = (

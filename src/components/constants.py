@@ -114,7 +114,7 @@ class SchemaDefinition:
         "climate_class": ColumnType.VARCHAR,
         "meta_category": ColumnType.VARCHAR,
         # Other attributes
-        "labelled_bilateral": ColumnType.BIGINT,
+        # "labelled_bilateral": ColumnType.BIGINT,
         "DonorType": ColumnType.VARCHAR,
     }
 

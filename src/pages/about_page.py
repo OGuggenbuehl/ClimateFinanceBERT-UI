@@ -256,7 +256,7 @@ def _create_affiliation_card() -> dbc.Card:
                                     "The development of this dashboard was supported by the ",
                                     html.A(
                                         "Transformation Finance Lab (TFL)",
-                                        href="https://tumthinktank.de/de/projekt/transformation-finance-lab/",
+                                        href="https://tumthinktank.de/project/transformation-finance-lab/",
                                         target="_blank",
                                         className="fw-bold",
                                     ),
