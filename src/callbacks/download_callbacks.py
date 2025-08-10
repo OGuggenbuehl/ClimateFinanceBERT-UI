@@ -92,7 +92,10 @@ def register(app):
         Returns:
             Either an error message if no data is available, or a DataTable component
         """
-        df_table = pd.DataFrame(queried_data)
+        df_table = pd.DataFrame(queried_data).drop(
+            columns=["labelled_bilateral"],
+            errors="ignore",
+        )
 
         if len(df_table) == 0:
             return html.H3("No data available for the selected filters.")

@@ -16,6 +16,12 @@ dependencies = [
     "matplotlib>=3.10.3",
 ]
 
+[project.optional-dependencies]
+test = [
+    "pytest>=7.4.0",
+    "dash[testing]>=2.18.2",
+]
+
 [dependency-groups]
 dev = [
     "ipykernel>=6.29.5",
