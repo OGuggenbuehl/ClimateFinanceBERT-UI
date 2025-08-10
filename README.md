@@ -44,10 +44,11 @@ This will:
 - Install dependencies as defined in `pyproject.toml`
 - Set up [direnv](https://direnv.net/) for environment management
 
-3. Prepare the database:
+3. Prepare the database from the raw CSV data using the DuckDB pipeline:
 ```bash
 make duckdb-pipeline
 ```
+For more details on the pipeline, see the [DuckDB Pipeline documentation](src/utils/README.md).
 
 ### Running the Application
 
