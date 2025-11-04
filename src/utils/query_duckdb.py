@@ -257,6 +257,68 @@ def construct_aggregated_query(
     return query
 
 
+def construct_country_summary_query(
+    selected_year: int,
+    selected_categories: Optional[str | list[str]] = None,
+    selected_subcategories: Optional[str | list[str]] = None,
+    selected_donor_types: Optional[str | list[str]] = None,
+    selected_flow_types: Optional[str | list[str]] = None,
+) -> str:
+    """Construct a country-level aggregation query for map visualizations.
+
+    Args:
+        selected_year: Year to filter by
+        selected_categories: Categories to filter by
+        selected_subcategories: Subcategories to filter by
+        selected_donor_types: Donor types to filter by
+        selected_flow_types: Flow types to filter by
+
+    Returns:
+        SQL query string aggregated at the country level
+    """
+
+    query = """
+        SELECT
+            Year,
+            DonorName,
+            DEDonorcode,
+            RecipientName,
+            DERecipientcode,
+            meta_category,
+            climate_class,
+            SUM(COALESCE(USD_Disbursement, 0)) AS USD_Disbursement,
+            SUM(COALESCE(ClimateMitigation, 0)) AS ClimateMitigation,
+            SUM(COALESCE(ClimateAdaptation, 0)) AS ClimateAdaptation,
+            SUM(COALESCE(Biodiversity, 0)) AS Biodiversity
+        FROM my_table
+    """
+
+    query = add_year_filter(query, "single_year", selected_year)
+
+    categories = ensure_list(selected_categories)
+    subcategories = ensure_list(selected_subcategories)
+    donor_types = ensure_list(selected_donor_types)
+    flow_types = ensure_list(selected_flow_types)
+
+    query = add_category_filter(query, categories)
+    query = add_subcategory_filter(query, subcategories)
+    query = add_flow_type_filter(query, flow_types)
+    query = add_donor_type_filter(query, donor_types)
+
+    query += """
+        GROUP BY
+            Year,
+            DonorName,
+            DEDonorcode,
+            RecipientName,
+            DERecipientcode,
+            meta_category,
+            climate_class
+    """
+
+    return query
+
+
 def query_duckdb(
     duckdb_db: str,
     query: str,

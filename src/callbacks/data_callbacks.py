@@ -10,7 +10,11 @@ from components import ids
 from components.constants import CATEGORIES_DF, DUCKDB_PATH
 from components.widgets.year import PlaybackSliderAIO
 from utils.data_operations import create_mode_data, reshape_by_type
-from utils.query_duckdb import construct_aggregated_query, construct_query, query_duckdb
+from utils.query_duckdb import (
+    construct_aggregated_query,
+    construct_country_summary_query,
+    query_duckdb,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -117,8 +121,7 @@ def register(app):
         )
 
         # Construct and execute query based on selected filters
-        query = construct_query(
-            year_type="single_year",
+        query = construct_country_summary_query(
             selected_year=selected_year,
             selected_categories=selected_categories,
             selected_subcategories=selected_subcategories,
@@ -134,12 +137,30 @@ def register(app):
         # Reshape data based on selected view type
         df_reshaped = reshape_by_type(df_queried, selected_type)
 
+        columns_to_keep = [
+            col
+            for col in df_reshaped.columns
+            if col
+            in {
+                "Year",
+                "CountryCode",
+                "CountryName",
+                "USD_Disbursement",
+                "meta_category",
+                "climate_class",
+                "ClimateMitigation",
+                "ClimateAdaptation",
+                "Biodiversity",
+            }
+        ]
+        df_trimmed = df_reshaped.loc[:, columns_to_keep]
+
         end = time.time()
         logger.info(
             f"Execution time for updating stored data: {end - start:.2f} seconds."
         )
 
-        return df_reshaped.to_dict("records")
+        return df_trimmed.to_dict("records")
 
     @app.callback(
         Output(ids.MODE_DATA, "data"),

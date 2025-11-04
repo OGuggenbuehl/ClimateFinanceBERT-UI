@@ -319,7 +319,7 @@ def calculate_difference(
 if __name__ == "__main__":
     """Test code for the data operations module."""
     from components.constants import DUCKDB_PATH
-    from utils.query_duckdb import construct_query, query_duckdb
+    from utils.query_duckdb import construct_country_summary_query, query_duckdb
 
     # Fetch GeoJSON data for testing
     geojson_url = "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
@@ -327,8 +327,7 @@ if __name__ == "__main__":
     geojson_data = response.json()
 
     # Query test data
-    test_query = construct_query(
-        year_type="single_year",
+    test_query = construct_country_summary_query(
         selected_year=2020,
         selected_categories=["Adaptation"],
         selected_subcategories=["Adaptation"],
