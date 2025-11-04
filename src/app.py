@@ -42,7 +42,6 @@ def create_app() -> Dash:
         ],
         suppress_callback_exceptions=True,
     )
-    app.title = "ClimateFinanceBERT UI"
     app.layout = create_layout(app)
     register_callbacks(app)
     register_health_endpoint(app)

@@ -131,13 +131,13 @@ def aggregate(
 
 
 def merge_data(
-    df: pd.DataFrame, geojson: dict[str, Any], map_mode: str
+    df: pd.DataFrame, geojson_base: dict[str, Any], map_mode: str
 ) -> dict[str, Any]:
     """Merge the GeoJSON data with the DataFrame data for map visualization.
 
     Args:
         df: DataFrame with climate finance data
-        geojson: GeoJSON object with country polygons
+        geojson_base: Cached GeoJSON base object with country polygons
         map_mode: Selected map visualization mode
 
     Returns:
@@ -147,7 +147,7 @@ def merge_data(
 
     # For base mode, just return the original GeoJSON
     if map_mode == "base":
-        return geojson
+        return geojson_base
 
     # Create mapping dictionary based on the mode
     if map_mode in ["rio_oecd", "rio_climfinbert"]:
@@ -162,19 +162,24 @@ def merge_data(
         ).to_dict()
     else:
         logger.warning(f"Unrecognized map_mode '{map_mode}' in merge_data")
-        return geojson
+        return geojson_base
 
     # Filter features to include only countries with data
-    filtered_features = [
-        feature for feature in geojson["features"] if feature["id"] in merge_dict
-    ]
+    filtered_features = []
+    for feature in geojson_base["features"]:
+        country_id = feature.get("id")
+        if country_id not in merge_dict:
+            continue
 
-    # Add values to each feature's properties
-    for feature in filtered_features:
-        country_id = feature["id"]
-        feature["properties"]["value"] = merge_dict.get(country_id, 0)
+        feature_properties = dict(feature.get("properties", {}))
+        feature_properties["value"] = merge_dict.get(country_id, 0)
 
-    # Update the geojson with filtered features
+        filtered_features.append(
+            {key: feature[key] for key in feature if key not in {"properties"}}
+            | {"properties": feature_properties}
+        )
+
+    geojson = {key: value for key, value in geojson_base.items() if key != "features"}
     geojson["features"] = filtered_features
 
     # Log performance data
@@ -319,7 +324,7 @@ def calculate_difference(
 if __name__ == "__main__":
     """Test code for the data operations module."""
     from components.constants import DUCKDB_PATH
-    from utils.query_duckdb import construct_query, query_duckdb
+    from utils.query_duckdb import construct_country_summary_query, query_duckdb
 
     # Fetch GeoJSON data for testing
     geojson_url = "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
@@ -327,8 +332,7 @@ if __name__ == "__main__":
     geojson_data = response.json()
 
     # Query test data
-    test_query = construct_query(
-        year_type="single_year",
+    test_query = construct_country_summary_query(
         selected_year=2020,
         selected_categories=["Adaptation"],
         selected_subcategories=["Adaptation"],
@@ -355,7 +359,11 @@ if __name__ == "__main__":
     print(df_prepared.head())
 
     # Test merge operation
-    merged = merge_data(df=df_prepared, geojson=geojson_data, map_mode="rio_oecd")
+    merged = merge_data(
+        df=df_prepared,
+        geojson_base=geojson_data,
+        map_mode="rio_oecd",
+    )
     print("\nMerged data sample (first 3 countries):")
     for i, feature in enumerate(merged["features"][:3]):
         print(f"{feature['id']}: {feature['properties']['value']}")
