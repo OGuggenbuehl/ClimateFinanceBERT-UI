@@ -1,4 +1,3 @@
-import copy
 import logging
 
 import dash_leaflet as dl
@@ -109,10 +108,11 @@ def register(app):
         Returns:
             Updated GeoJSON data
         """
+
         logger.info(f"Updating stored GeoJSON data for map mode: {map_mode}")
         df_mode = pd.DataFrame(mode_data)
-        geojson_copy = copy.deepcopy(constants.GEOJSON_BASE)
-        return merge_data(df_mode, geojson_copy, map_mode)
+        geojson_base = constants.get_geojson_base()
+        return merge_data(df_mode, geojson_base, map_mode)
 
     @app.callback(
         Output(ids.MAP, "children"),
