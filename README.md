@@ -24,7 +24,7 @@
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/ClimateFinanceBERT-UI.git
+git clone https://github.com/OGuggenbuehl/ClimateFinanceBERT-UI.git
 cd ClimateFinanceBERT-UI
 ```
 
