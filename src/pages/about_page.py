@@ -23,8 +23,31 @@ def render() -> html.Div:
                         lg={"size": 10, "offset": 1},
                     )
                 ]
+            ),
+            _create_version_info_box(),
+        ],
+    )
+
+
+def _create_version_info_box() -> html.Div:
+    """
+    Create a small info box at the bottom with the current version.
+
+    Returns:
+        html.Div: The version info box component
+    """
+    return html.Div(
+        [
+            dbc.Alert(
+                [
+                    html.Span("Version 1.0.0", className="fw-bold"),
+                ],
+                color="secondary",
+                className="text-center mt-4 mb-0 py-2 small",
+                style={"maxWidth": "250px", "margin": "0 auto"},
             )
         ],
+        className="d-flex justify-content-center",
     )
 
 

@@ -39,7 +39,7 @@ class DataSources:
 # Use Development sources by default
 # To use production sources, import and modify:
 # from src.components.constants import DataSources
-# RAW_SOURCE = DataSources.production.RAW_SOURCE
+# RAW_SOURCE = DataSources.Production.RAW_SOURCE
 RAW_SOURCE = DataSources.Development.RAW_SOURCE
 PARQUET_SOURCE = DataSources.Development.PARQUET_SOURCE
 DUCKDB_PATH = DataSources.Development.DUCKDB_PATH

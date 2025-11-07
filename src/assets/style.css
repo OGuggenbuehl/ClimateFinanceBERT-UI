@@ -20,6 +20,8 @@ body {
     font-family: var(--font-family-primary);
     margin: 0;
     padding: 0;
+    background-color: var(--color-primary);
+    min-height: 100vh;
 }
 
 /* Info Box Component */
