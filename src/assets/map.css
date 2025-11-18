@@ -19,6 +19,11 @@
     padding: 0 40px;
     display: flex;
     justify-content: space-between;
+    pointer-events: none;
+}
+
+.control-panel > * {
+    pointer-events: auto;
 }
 
 /* Top Control Panel */
