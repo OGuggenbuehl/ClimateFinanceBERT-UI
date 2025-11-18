@@ -36,8 +36,8 @@ class DataSources:
         DUCKDB_PATH = "./data/db_small.duckdb"
 
 
-# Use Production sources by default
-# To use development sources, import and modify:
+# Use development sources by default
+# To use production sources, import and modify:
 # from src.components.constants import DataSources
 # RAW_SOURCE = DataSources.Production.RAW_SOURCE
 RAW_SOURCE = DataSources.Development.RAW_SOURCE
