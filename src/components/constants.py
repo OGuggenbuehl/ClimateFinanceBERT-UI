@@ -53,8 +53,22 @@ GEOJSON_URL = (
     "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
 )
 
-# For backward compatibility, but consider migrating to get_geojson_base()
-GEOJSON_BASE = requests.get(GEOJSON_URL).json()
+# fail gracefully if the GeoJSON cannot be fetched
+try:
+    response = requests.get(GEOJSON_URL, timeout=10)
+    response.raise_for_status()
+    GEOJSON_BASE = response.json()
+except requests.exceptions.RequestException as e:
+    raise RuntimeError(
+        f"Failed to fetch GeoJSON data from {GEOJSON_URL}. "
+        f"Please check your internet connection or verify the URL is accessible. "
+        f"Error: {e}"
+    ) from e
+except ValueError as e:
+    raise RuntimeError(
+        f"Failed to parse GeoJSON data from {GEOJSON_URL}. "
+        f"The response was not valid JSON. Error: {e}"
+    ) from e
 
 # For future use - lazy loading approach
 _geojson_cache: Optional[Dict[str, Any]] = None
