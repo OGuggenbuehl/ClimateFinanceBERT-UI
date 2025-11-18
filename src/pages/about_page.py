@@ -1,7 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import html
 
-from __about__ import __version__
+from __about__ import __title__, __version__
 
 
 def render() -> html.Div:
@@ -74,7 +74,7 @@ def _create_subtitle() -> html.H4:
         html.H4: The subtitle component
     """
     return html.H4(
-        "The Natural Language Model underlying ClimateFinance Explorer",
+        f"The Natural Language Model underlying {__title__}",
         className="mb-4 text-center",
     )
 

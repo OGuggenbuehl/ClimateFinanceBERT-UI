@@ -58,7 +58,7 @@ def register_callbacks(app: Dash) -> None:
     info_callbacks.register(app)
     map_callbacks.register(app)
     download_callbacks.register(app)
-    app.title = "ClimateFinance Explorer"
+    app.title = __title__
     app.layout = create_layout(app)
 
 
