@@ -67,7 +67,7 @@ def render(id: str) -> html.Div:
                     "min": YEAR_RANGE["min"],
                     "max": YEAR_RANGE["max"],
                     "step": 1,
-                    "value": 2020,
+                    "value": 2022,
                 },
                 button_props={"className": "float-left"},
             ),

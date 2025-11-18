@@ -38,7 +38,7 @@ def _create_dropdown(id: str, style: Optional[dict] = None) -> dcc.Dropdown:
     return dcc.Dropdown(
         id=id,
         options=_get_subcategory_options(),
-        value=["Solar-energy"],  # CATEGORIES_DF["meta_category"].unique(),
+        value=CATEGORIES_DF["meta_category"].unique(),
         multi=True,
         style=style,
     )

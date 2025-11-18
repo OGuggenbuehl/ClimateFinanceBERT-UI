@@ -38,7 +38,7 @@ def _create_dropdown(id: str, style: Optional[dict] = None) -> dcc.Dropdown:
     return dcc.Dropdown(
         id=id,
         options=_get_category_options(),
-        value=["Mitigation"],  # CATEGORIES_DF["climate_class"].unique(),
+        value=CATEGORIES_DF["climate_class"].unique(),
         multi=True,
         style=style,
     )
