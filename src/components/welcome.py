@@ -1,11 +1,23 @@
 import dash_bootstrap_components as dbc
 from dash import html
 
+from __about__ import __title__
 from components import ids
+from components.constants import CATEGORIES_DF
 
 
-def create_header() -> dbc.ModalHeader:
-    return dbc.ModalHeader(dbc.ModalTitle("Welcome to ClimateFinanceBERT UI! 👋"))
+def _format_subcategory_summary() -> str:
+    """Describe the default sub-category selection for the welcome modal."""
+    subcategories = CATEGORIES_DF["meta_category"].dropna().unique()
+    return f"All {len(subcategories)} subcategories preselected"
+
+
+def _format_category_summary() -> str:
+    """Describe the default category selection for the welcome modal."""
+    categories = CATEGORIES_DF["climate_class"].dropna().unique()
+    return (
+        "All categories preselected" if len(categories) > 1 else ", ".join(categories)
+    )
 
 
 def create_intro_section() -> html.Div:
@@ -102,7 +114,7 @@ def create_default_filters() -> dbc.Col:
                                         [
                                             "🏷️ Categories: ",
                                             html.Span(
-                                                "Mitigation",
+                                                _format_category_summary(),
                                                 className="fw-bold",
                                             ),
                                         ],
@@ -110,9 +122,9 @@ def create_default_filters() -> dbc.Col:
                                     ),
                                     html.Li(
                                         [
-                                            "☀️ Sub-categories: ",
+                                            "📚 Sub-categories: ",
                                             html.Span(
-                                                "Solar Energy",
+                                                _format_subcategory_summary(),
                                                 className="fw-bold",
                                             ),
                                         ],
@@ -151,7 +163,7 @@ def create_performance_note() -> dbc.Alert:
 def render() -> dbc.Modal:
     return dbc.Modal(
         [
-            dbc.ModalHeader(dbc.ModalTitle("Welcome to ClimateFinance Explorer! 👋")),
+            dbc.ModalHeader(dbc.ModalTitle(f"Welcome to {__title__}! 👋")),
             dbc.ModalBody(
                 [
                     create_intro_section(),

@@ -1,6 +1,6 @@
 [project]
 name = "climatefinancebert-ui"
-version = "1.0.0"
+version = "1.0.1"
 description = "An interactive dashboard for exploring and analyzing global climate finance data powered by the ClimateFinanceBERT model as described in Toetzke, M., Stünzi, A. & Egli, F. (2022)."
 readme = "README.md"
 requires-python = ">=3.12"

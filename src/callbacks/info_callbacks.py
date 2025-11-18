@@ -9,6 +9,8 @@ from dash import Input, Output, State, html
 from flag import flag
 
 from components import ids
+from components.constants import CATEGORIES_DF, FLOW_TYPES
+from components.widgets.donor_type import DONOR_TYPE_MAP
 from components.widgets.year import PlaybackSliderAIO
 from utils.data_operations import aggregate
 
@@ -421,31 +423,60 @@ def _create_filter_card_body(
             html.P([html.B("Year: "), f"{year}"], className="mb-1"),
             html.P(
                 [
-                    html.B("Donor Type" + ("s: " if len(donor_types) > 1 else ": ")),
-                    ", ".join(donor_types) if donor_types else "None",
-                ],
-                className="mb-1",
-            ),
-            html.P(
-                [
-                    html.B("Flow Type" + ("s: " if len(flow_types) > 1 else ": ")),
-                    ", ".join(flow_types) if flow_types else "None",
-                ],
-                className="mb-1",
-            ),
-            html.P(
-                [
-                    html.B("Categor" + ("ies: " if len(categories) > 1 else "y: ")),
-                    ", ".join(categories) if categories else "None",
+                    html.B(
+                        "Donor Type"
+                        + (
+                            "s: "
+                            if _uses_plural(donor_types, _ALL_DONOR_TYPES_SET)
+                            else ": "
+                        )
+                    ),
+                    _format_all_or_selection(donor_types, _ALL_DONOR_TYPES_SET),
                 ],
                 className="mb-1",
             ),
             html.P(
                 [
                     html.B(
-                        "Subcategor" + ("ies: " if len(subcategories) > 1 else "y: ")
+                        "Flow Type"
+                        + (
+                            "s: "
+                            if _uses_plural(flow_types, _ALL_FLOW_TYPES_SET)
+                            else ": "
+                        )
                     ),
-                    ", ".join(subcategories) if subcategories else "None",
+                    _format_all_or_selection(flow_types, _ALL_FLOW_TYPES_SET),
+                ],
+                className="mb-1",
+            ),
+            html.P(
+                [
+                    html.B(
+                        "Categor"
+                        + (
+                            "ies: "
+                            if _uses_plural(categories, _ALL_CATEGORY_VALUES_SET)
+                            else "y: "
+                        )
+                    ),
+                    _format_explicit_or_all(categories, _ALL_CATEGORY_VALUES),
+                ],
+                className="mb-1",
+            ),
+            html.P(
+                [
+                    html.B(
+                        "Subcategor"
+                        + (
+                            "ies: "
+                            if _uses_plural(subcategories, _ALL_SUBCATEGORY_VALUES)
+                            else "y: "
+                        )
+                    ),
+                    _format_filter_selection(
+                        subcategories,
+                        _ALL_SUBCATEGORY_VALUES,
+                    ),
                 ],
                 className="mb-0",
             ),
@@ -469,3 +500,67 @@ def _get_filter_card_style() -> dict[str, str]:
         "color": "black",
         "width": "100%",
     }
+
+
+_ALL_DONOR_TYPES = [str(value) for value in DONOR_TYPE_MAP.values()]
+_ALL_FLOW_TYPES = [str(value) for value in FLOW_TYPES]
+_ALL_CATEGORY_VALUES = [
+    str(value) for value in CATEGORIES_DF["climate_class"].dropna().unique().tolist()
+]
+_ALL_DONOR_TYPES_SET = set(_ALL_DONOR_TYPES)
+_ALL_FLOW_TYPES_SET = set(_ALL_FLOW_TYPES)
+_ALL_CATEGORY_VALUES_SET = set(_ALL_CATEGORY_VALUES)
+_ALL_SUBCATEGORY_VALUES = set(
+    map(str, CATEGORIES_DF["meta_category"].dropna().unique().tolist())
+)
+
+
+def _format_filter_selection(values: list[str], all_values: set[str]) -> str:
+    """Return "All" when the selection includes every available option."""
+    if not values:
+        return "All"
+
+    normalized_selection = {str(value) for value in values}
+
+    if normalized_selection == all_values:
+        return "All"
+
+    return ", ".join(map(str, values))
+
+
+def _format_explicit_or_all(values: list[str], all_values: list[str]) -> str:
+    """List selections explicitly, but collapse empty selection to all values."""
+    if not values:
+        return ", ".join(all_values)
+
+    return ", ".join(map(str, values))
+
+
+def _format_all_or_selection(values: list[str], all_values: set[str]) -> str:
+    """Display "All" when none or all values are selected."""
+    if not values:
+        return "All"
+
+    normalized_selection = {str(value) for value in values}
+
+    if normalized_selection == all_values:
+        return "All"
+
+    return ", ".join(map(str, values))
+
+
+def _is_all_selection(values: list[str], all_values: set[str]) -> bool:
+    """Return True when the selection is empty or includes all options."""
+    if not values:
+        return True
+
+    normalized_selection = {str(value) for value in values}
+    return normalized_selection == all_values
+
+
+def _uses_plural(values: list[str], all_values: set[str]) -> bool:
+    """Decide whether to use plural wording for filter labels."""
+    if _is_all_selection(values, all_values):
+        return True
+
+    return len(values) != 1

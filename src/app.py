@@ -5,6 +5,7 @@ from typing import Any
 from dash import Dash
 from dash_bootstrap_components.themes import BOOTSTRAP
 
+from __about__ import __title__
 from callbacks import (
     data_callbacks,
     download_callbacks,
@@ -57,7 +58,7 @@ def register_callbacks(app: Dash) -> None:
     info_callbacks.register(app)
     map_callbacks.register(app)
     download_callbacks.register(app)
-    app.title = "ClimateFinance Explorer"
+    app.title = __title__
     app.layout = create_layout(app)
 
 
@@ -71,7 +72,7 @@ def main():
     app = create_app()
     config = get_app_config()
 
-    logger.info("Starting ClimateFinanceBERT UI server...")
+    logger.info(f"Starting {__title__} server...")
     logger.info(f"Debug mode: {config['debug']}")
     logger.info(f"Host: {config['host']}")
     logger.info(f"Port: {config['port']}")
