@@ -79,6 +79,13 @@ def mock_duckdb_conn(monkeypatch):
         def close(self):
             pass
 
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            self.close()
+            return False
+
     class MockCursor:
         def fetchdf(self):
             # return a sample DataFrame
