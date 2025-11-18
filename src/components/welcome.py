@@ -1,6 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import html
 
+from __about__ import __title__
 from components import ids
 from components.constants import CATEGORIES_DF
 
@@ -17,10 +18,6 @@ def _format_category_summary() -> str:
     return (
         "All categories preselected" if len(categories) > 1 else ", ".join(categories)
     )
-
-
-def create_header() -> dbc.ModalHeader:
-    return dbc.ModalHeader(dbc.ModalTitle("Welcome to ClimateFinanceBERT UI! 👋"))
 
 
 def create_intro_section() -> html.Div:
@@ -166,7 +163,7 @@ def create_performance_note() -> dbc.Alert:
 def render() -> dbc.Modal:
     return dbc.Modal(
         [
-            dbc.ModalHeader(dbc.ModalTitle("Welcome to ClimateFinance Explorer! 👋")),
+            dbc.ModalHeader(dbc.ModalTitle(f"Welcome to {__title__}! 👋")),
             dbc.ModalBody(
                 [
                     create_intro_section(),
