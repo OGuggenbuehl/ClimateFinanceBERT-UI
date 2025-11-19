@@ -15,7 +15,6 @@ def create_map_layer() -> dl.Map:
         children=[
             dl.TileLayer(url=url, attribution=attribution),
             dl.GeoJSON(
-                url=constants.GEOJSON_URL,
                 id=ids.COUNTRIES_LAYER,
                 style={
                     "color": "dodgerblue",
