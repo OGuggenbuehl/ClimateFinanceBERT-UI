@@ -121,3 +121,4 @@ ClimateFinanceBERT-UI/
     - Florian Egli - TUM Think Tank
     - Malte Toetzke - TUM Think Tank
 - TUM Think Tank for supporting the project
+- Country GeoJSON data from [johan/world.geo.json](https://github.com/johan/world.geo.json)
