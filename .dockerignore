@@ -56,6 +56,7 @@ coverage.xml
 
 # Data files and directories (which should be mounted as volumes)
 data/
+!data/countries.geo.json
 models/
 *.csv
 *.zip

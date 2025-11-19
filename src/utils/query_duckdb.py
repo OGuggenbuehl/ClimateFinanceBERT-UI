@@ -335,10 +335,8 @@ def query_duckdb(
     logger.info(f"Executing query on {duckdb_db}...")
     start = time.time()
 
-    # Connect to database, execute query, and close connection
-    con = duckdb.connect(database=duckdb_db)
-    result_df = con.execute(query).fetchdf()
-    con.close()
+    with duckdb.connect(database=duckdb_db) as con:
+        result_df = con.execute(query).fetchdf()
 
     # Log performance data
     end = time.time()

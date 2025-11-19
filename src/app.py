@@ -59,7 +59,6 @@ def register_callbacks(app: Dash) -> None:
     map_callbacks.register(app)
     download_callbacks.register(app)
     app.title = __title__
-    app.layout = create_layout(app)
 
 
 def register_health_endpoint(app: Dash) -> None:
