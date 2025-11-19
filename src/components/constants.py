@@ -53,32 +53,46 @@ GEOJSON_URL = (
     "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
 )
 
-# fail gracefully if the GeoJSON cannot be fetched
-try:
-    response = requests.get(GEOJSON_URL, timeout=10)
-    response.raise_for_status()
-    GEOJSON_BASE = response.json()
-except requests.exceptions.RequestException as e:
-    raise RuntimeError(
-        f"Failed to fetch GeoJSON data from {GEOJSON_URL}. "
-        f"Please check your internet connection or verify the URL is accessible. "
-        f"Error: {e}"
-    ) from e
-except ValueError as e:
-    raise RuntimeError(
-        f"Failed to parse GeoJSON data from {GEOJSON_URL}. "
-        f"The response was not valid JSON. Error: {e}"
-    ) from e
-
-# For future use - lazy loading approach
+# Cache for the GeoJSON data
 _geojson_cache: Optional[Dict[str, Any]] = None
 
 
 def get_geojson_base() -> Dict[str, Any]:
-    """Lazily load the GeoJSON data when needed"""
+    """Lazily load and cache the GeoJSON data when first needed.
+
+    Returns:
+        Dictionary containing GeoJSON data with country geometries
+
+    Raises:
+        RuntimeError: If GeoJSON data cannot be fetched or parsed
+    """
     global _geojson_cache
+
     if _geojson_cache is None:
-        _geojson_cache = GEOJSON_BASE
+        import logging
+
+        logger = logging.getLogger(__name__)
+        logger.info(f"Fetching GeoJSON data from {GEOJSON_URL}...")
+
+        try:
+            response = requests.get(GEOJSON_URL, timeout=10)
+            response.raise_for_status()
+            _geojson_cache = response.json()
+            logger.info("GeoJSON data successfully loaded and cached")
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Failed to fetch GeoJSON data: {e}")
+            raise RuntimeError(
+                f"Failed to fetch GeoJSON data from {GEOJSON_URL}. "
+                f"Please check your internet connection or verify the URL is accessible. "
+                f"Error: {e}"
+            ) from e
+        except ValueError as e:
+            logger.error(f"Failed to parse GeoJSON data: {e}")
+            raise RuntimeError(
+                f"Failed to parse GeoJSON data from {GEOJSON_URL}. "
+                f"The response was not valid JSON. Error: {e}"
+            ) from e
+
     return _geojson_cache
 
 
@@ -157,7 +171,8 @@ class MapSettings:
     @classmethod
     def get_country_ids(cls):
         """Get list of country IDs from GeoJSON data"""
-        return [feature["id"] for feature in GEOJSON_BASE["features"]]
+        geojson_data = get_geojson_base()
+        return [feature["id"] for feature in geojson_data["features"]]
 
 
 # For backward compatibility
