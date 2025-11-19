@@ -41,6 +41,9 @@ COPY --chown=appuser:appuser /src /home/app
 # Create data directory with appropriate permissions
 RUN mkdir -p /home/app/data
 
+# Copy GeoJSON fallback file (for offline operation)
+COPY --chown=appuser:appuser /data/countries.geo.json /home/app/data/countries.geo.json
+
 # Add healthcheck with a start period 
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=40s \
   CMD wget --spider --quiet http://localhost:8050/health || exit 1

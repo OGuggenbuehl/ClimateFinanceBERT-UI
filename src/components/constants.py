@@ -53,6 +53,9 @@ GEOJSON_URL = (
     "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
 )
 
+# Local fallback path
+GEOJSON_LOCAL_PATH = "./data/countries.geo.json"
+
 # Cache for the GeoJSON data
 _geojson_cache: Optional[Dict[str, Any]] = None
 
@@ -60,34 +63,56 @@ _geojson_cache: Optional[Dict[str, Any]] = None
 def get_geojson_base() -> Dict[str, Any]:
     """Lazily load and cache the GeoJSON data when first needed.
 
+    Tries to fetch from URL first, falls back to local file if network fails.
+
     Returns:
         Dictionary containing GeoJSON data with country geometries
 
     Raises:
-        RuntimeError: If GeoJSON data cannot be fetched or parsed
+        RuntimeError: If GeoJSON data cannot be fetched from URL or local file
     """
     global _geojson_cache
 
     if _geojson_cache is None:
+        import json
         import logging
+        import os
 
         logger = logging.getLogger(__name__)
-        logger.info(f"Fetching GeoJSON data from {GEOJSON_URL}...")
 
+        # Try to fetch from URL first
         try:
+            logger.info(f"Fetching GeoJSON data from {GEOJSON_URL}...")
             response = requests.get(GEOJSON_URL, timeout=10)
             response.raise_for_status()
             _geojson_cache = response.json()
-            logger.info("GeoJSON data successfully loaded and cached")
+            logger.info("GeoJSON data successfully loaded from URL and cached")
         except requests.exceptions.RequestException as e:
-            logger.error(f"Failed to fetch GeoJSON data: {e}")
-            raise RuntimeError(
-                f"Failed to fetch GeoJSON data from {GEOJSON_URL}. "
-                f"Please check your internet connection or verify the URL is accessible. "
-                f"Error: {e}"
-            ) from e
+            logger.warning(f"Failed to fetch GeoJSON from URL: {e}")
+
+            # Fallback to local file
+            if os.path.exists(GEOJSON_LOCAL_PATH):
+                logger.info(f"Using local GeoJSON fallback from {GEOJSON_LOCAL_PATH}")
+                try:
+                    with open(GEOJSON_LOCAL_PATH, "r", encoding="utf-8") as f:
+                        _geojson_cache = json.load(f)
+                    logger.info("GeoJSON data successfully loaded from local file")
+                except (IOError, ValueError) as local_error:
+                    logger.error(f"Failed to load local GeoJSON file: {local_error}")
+                    raise RuntimeError(
+                        f"Cannot load GeoJSON: URL fetch failed and local file read failed. "
+                        f"URL error: {e}, Local error: {local_error}"
+                    ) from local_error
+            else:
+                logger.error(
+                    f"Local GeoJSON fallback not found at {GEOJSON_LOCAL_PATH}"
+                )
+                raise RuntimeError(
+                    f"Failed to fetch GeoJSON data from {GEOJSON_URL} and no local fallback found at {GEOJSON_LOCAL_PATH}. "
+                    f"Error: {e}"
+                ) from e
         except ValueError as e:
-            logger.error(f"Failed to parse GeoJSON data: {e}")
+            logger.error(f"Failed to parse GeoJSON data from URL: {e}")
             raise RuntimeError(
                 f"Failed to parse GeoJSON data from {GEOJSON_URL}. "
                 f"The response was not valid JSON. Error: {e}"
