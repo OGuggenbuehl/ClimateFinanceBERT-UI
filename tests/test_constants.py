@@ -21,13 +21,13 @@ def test_geojson_lazy_loading():
     assert data1 is data2
 
 
-def test_geojson_fallback_file_exists():
-    """Test that local fallback file exists."""
+def test_geojson_local_file_exists():
+    """Test that local GeoJSON file exists (required for application startup)."""
     from components.constants import GEOJSON_LOCAL_PATH
 
     assert os.path.exists(GEOJSON_LOCAL_PATH), (
-        f"Local GeoJSON fallback not found at {GEOJSON_LOCAL_PATH}. "
-        "This file is required for offline operation."
+        f"Local GeoJSON file not found at {GEOJSON_LOCAL_PATH}. "
+        "This file is required for the application to start."
     )
 
 
@@ -38,7 +38,8 @@ def test_geojson_has_valid_structure():
     data = get_geojson_base()
     assert data["type"] == "FeatureCollection"
     assert isinstance(data["features"], list)
-    assert len(data["features"]) == 180
+    # Natural Earth ne_50m_admin_0_countries has 242 countries including small islands
+    assert len(data["features"]) == 242
 
 
 def test_country_ids_from_geojson():
@@ -47,5 +48,6 @@ def test_country_ids_from_geojson():
 
     country_ids = MapSettings.get_country_ids()
     assert isinstance(country_ids, list)
-    assert len(country_ids) == 180
+    # Natural Earth ne_50m_admin_0_countries has 242 countries including small islands
+    assert len(country_ids) == 242
     assert all(isinstance(cid, str) for cid in country_ids)

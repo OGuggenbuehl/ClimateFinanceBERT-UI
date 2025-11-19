@@ -19,7 +19,6 @@ def create_base_map_layers(style_info: dict) -> list:
     return [
         dl.TileLayer(url=url, attribution=attribution),
         dl.GeoJSON(
-            url=constants.GEOJSON_URL,
             id=ids.COUNTRIES_LAYER,
             style=style_info["style"],
             hoverStyle=arrow_function(dict(weight=4, color="#666", dashArray="")),

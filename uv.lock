@@ -172,7 +172,6 @@ dependencies = [
     { name = "matplotlib" },
     { name = "pandas" },
     { name = "pycountry" },
-    { name = "requests" },
 ]
 
 [package.optional-dependencies]
@@ -202,7 +201,6 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "pycountry", specifier = ">=24.6.1" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=7.4.0" },
-    { name = "requests", specifier = ">=2.32.3" },
 ]
 provides-extras = ["test"]
 

@@ -3,7 +3,6 @@ import time
 from typing import Any, Literal, Optional
 
 import pandas as pd
-import requests
 
 logger = logging.getLogger(__name__)
 
@@ -323,13 +322,11 @@ def calculate_difference(
 
 if __name__ == "__main__":
     """Test code for the data operations module."""
-    from components.constants import DUCKDB_PATH
+    from components.constants import DUCKDB_PATH, get_geojson_base
     from utils.query_duckdb import construct_country_summary_query, query_duckdb
 
-    # Fetch GeoJSON data for testing
-    geojson_url = "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
-    response = requests.get(geojson_url)
-    geojson_data = response.json()
+    # Load GeoJSON data for testing
+    geojson_data = get_geojson_base()
 
     # Query test data
     test_query = construct_country_summary_query(
